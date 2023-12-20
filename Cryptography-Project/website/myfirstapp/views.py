@@ -57,7 +57,7 @@ def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
+            client = MongoClient('...')
             db = client['user']
             log_and_auth = db['logAndAuth']
 
@@ -95,7 +95,7 @@ def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
+            client = MongoClient('...')
             db = client['user']
             users = db['logAndAuth']
 
