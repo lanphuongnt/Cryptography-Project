@@ -1,22 +1,25 @@
 # Cryptography-Project
 ## Environment initialization
 Windows: `MyProjectEnvt\Scripts\activate.bat`
+
 Linux: `source MyProjectEnvt/bin/activate`
 Once the environment is activated, you will see this result in the command prompt:
+
 Windows: `(MyProjectEnvt) C:\Users\...\Cryptography-Project>`
+
 Linux: `(MyProjectEnvt) $ /home/.../Cryptography-Project$`
 
 ## Install dependencies
 Windows: `(MyProjectEnvt) C:\Users\...\Cryptography-Project> py -m install Django`
+
 Linux: `(MyProjectEnvt) $ /home/.../Cryptography-Project$ pip install Django`
 
 **This repo has already set up a project - `Cryptography-Project/website`**
+
 To run the project, you need to go to the directory `Cryptography-Project/website` and run the command:
 `(MyProjectEnvt) C:\Users\...\Cryptography-Project\website> py manage.py runserver`
 
-**This repo has already set up an app - `Cryptography/myfirstapp`**
-To run the app, you need to go to the directory `Cryptography-Project/website` and run the command:
-`(MyProjectEnvt) C:\Users\...\Cryptography-Project\website> py manage.py startapp myfirstapp`
+**This repo has already set up an app - `Cryptography-Project/website/myfirstapp`**
 
 ## Connect to the database
 First, we need to install PyMongo:
