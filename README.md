@@ -14,12 +14,12 @@ Windows: `(MyProjectEnvt) C:\Users\...\Cryptography-Project> py -m install Djang
 
 Linux: `(MyProjectEnvt) $ /home/.../Cryptography-Project$ pip install Django`
 
-**This repo has already set up a project - [Cryptography-Project/website](https://github.com/Cryptography-Project/website)**.
+**This repo has already set up a project - [Cryptography-Project/website](https://github.com/lanphuongnt/Cryptography-Project/tree/main/Cryptography-Project/website)**.
 
 To run the project, you need to go to the directory `Cryptography-Project/website` and run the command:
 `(MyProjectEnvt) C:\Users\...\Cryptography-Project\website> py manage.py runserver`
 
-**This repo has already set up an app - [Cryptography-Project/website/myfirstapp](https://github.com/Cryptography-Project/website/tree/main/myfirstapp)**
+**This repo has already set up an app - [Cryptography-Project/website/myfirstapp](https://github.com/lanphuongnt/Cryptography-Project/tree/main/Cryptography-Project/website/myfirstapp)**
 
 ## Connect to the database
 First, we need to install PyMongo:
