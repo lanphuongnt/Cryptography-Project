@@ -5,14 +5,10 @@ from pymongo import MongoClient
 import random
 from faker import Faker
 from django.contrib.auth.models import User
-from django.contrib.auth import login
-from .forms import SignUpForm
-# myfirstapp/views.py
-from django.shortcuts import render, redirect
-from pymongo import MongoClient
-from .forms import LoginForm
-from django.contrib.auth.hashers import check_password
-import re
+from django.contrib.auth import login, authenticate
+from .forms import SignUpForm, LoginForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.hashers import check_password, make_password
 
 def get_db_handle(db_name, host, port, username, password):
     client = MongoClient(host=host,
@@ -57,13 +53,18 @@ def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            client = MongoClient('...')
+            client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
             db = client['user']
             log_and_auth = db['logAndAuth']
 
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+
+            hashed_password = make_password(password)
+
             user_data = {
-                'username': form.cleaned_data.get('username'),
-                'password': form.cleaned_data.get('password'),
+                'username': username,
+                'password': hashed_password,
             }
 
             log_and_auth.insert_one(user_data)
@@ -95,7 +96,7 @@ def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            client = MongoClient('...')
+            client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
             db = client['user']
             users = db['logAndAuth']
 
@@ -106,8 +107,6 @@ def login_view(request):
 
             for user in user_data:
                 stored_password = user['password']
-                stored_password = re.sub(r'\$', '', stored_password)  # Remove "$" character from stored password
-
                 if check_password(password, stored_password):
                     request.session['user'] = user
                     if 'user' in user:
