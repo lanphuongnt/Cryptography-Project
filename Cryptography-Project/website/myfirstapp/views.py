@@ -11,6 +11,9 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import check_password, make_password
 
 from .source.mypackages.CA import CentralizedAuthority
+from django.contrib import messages
+from django.contrib.auth import login
+from bson import ObjectId
 
 server_CA = CentralizedAuthority()
 
@@ -50,10 +53,6 @@ def home(request):
     template = loader.get_template('myfirst.html')
     return HttpResponse(template.render())
 
-def template(request):
-    template = loader.get_template('myfirst.html')
-    return HttpResponse(template.render())
-
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -90,23 +89,6 @@ def signup(request):
     template = loader.get_template('signup.html')
     return HttpResponse(template.render({'form': form}, request))
 
-# myfirstapp/views.py
-def staff_profile(request):
-    user_data = request.session.get('user')
-
-    if user_data and 'staff' in user_data:
-        return render(request, 'staff_profile.html', {'user_data': user_data})
-    else:
-        return redirect('login')
-    
-def patient_profile(request):
-    user_data = request.session.get('user')
-
-    if user_data and 'patient' in user_data:
-        return render(request, 'patient_profile.html', {'user_data': user_data})
-    else:
-        return redirect('login')
-
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -121,6 +103,8 @@ def login_view(request):
             user = collection.find_one({'username': username})
             stored_password = user['password']
             if check_password(password, stored_password):
+                # Convert ObjectId to string
+                user['_id'] = str(user['_id'])
                 request.session['user'] = user
                 if user['role'] == 'user':
                     return redirect('myfirstapp:patient_profile')
@@ -135,11 +119,17 @@ def login_view(request):
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
 
+# myfirstapp/views.py
+def staff_profile(request):
+    template = loader.get_template('staff_profile.html')
+    return HttpResponse(template.render())
+    
+def patient_profile(request):
+    template = loader.get_template('patient_profile.html')
+    return HttpResponse(template.render())
+
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
 # It is the default password hashing algorithm used by Django for user authentication.
-
-
-
 
 # log_and_auth.insert_one(user_data)
 #             user = log_and_auth.find_one({'username', username})

@@ -51,8 +51,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'website.urls'
-LOGIN_URL = '/accounts/login/'
-# AUTH_USER_MODEL = 'myfirstapp.CustomUser'
+# LOGIN_URL = '/accounts/login/'
+# LOGIN_REDIRECT_URL = '/home/'
 
 TEMPLATES = [
     {
