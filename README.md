@@ -66,3 +66,6 @@ medicines_collection = makemyrx_db['medicinedetails']
 ```
 Hacked by duplicate
 ```
+```
+Hack tiep ne 
+```
