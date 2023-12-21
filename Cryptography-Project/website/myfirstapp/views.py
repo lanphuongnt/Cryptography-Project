@@ -59,15 +59,24 @@ def signup(request):
 
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
+            role = form.cleaned_data.get('role')
 
             hashed_password = make_password(password)
 
             user_data = {
                 'username': username,
                 'password': hashed_password,
+                'role': role,
             }
 
             log_and_auth.insert_one(user_data)
+
+            # Generate new key for new user
+
+            # log_and_auth.find_one()
+
+            # =============================
+
 
             return redirect('myfirstapp:home')
     else:
@@ -98,23 +107,21 @@ def login_view(request):
         if form.is_valid():
             client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
             db = client['user']
-            users = db['logAndAuth']
+            collection = db['logAndAuth']
 
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
 
-            user_data = users.find({'username': username})
-
-            for user in user_data:
-                stored_password = user['password']
-                if check_password(password, stored_password):
-                    request.session['user'] = user
-                    if 'user' in user:
-                        return redirect('myfirstapp:patient_profile')
-                    elif 'staff' in user:
-                        return redirect('myfirstapp:staff_profile')
-                    else:
-                        return redirect('myfirstapp:home')
+            user = collection.find_one({'username': username})
+            stored_password = user['password']
+            if check_password(password, stored_password):
+                request.session['user'] = user
+                if user['role'] == 'user':
+                    return redirect('myfirstapp:patient_profile')
+                elif user['role'] == 'staff':
+                    return redirect('myfirstapp:staff_profile')
+                else:
+                    return redirect('myfirstapp:home')
             
             # If no matching username and password found
             return redirect('myfirstapp:home')
