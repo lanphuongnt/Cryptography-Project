@@ -69,14 +69,13 @@ def signup(request):
                 'role': role,
             }
 
-            log_and_auth.insert_one(user_data)
+            result = log_and_auth.insert_one(user_data)
 
-            # Generate new key for new user
+            # Get the ObjectId
+            object_id = result.inserted_id
 
-            # log_and_auth.find_one()
-
-            # =============================
-
+            # Update the document to set the username to the ObjectId
+            log_and_auth.update_one({'_id': object_id}, {'$set': {'username': str(object_id)}})
 
             return redirect('myfirstapp:home')
     else:
