@@ -5,21 +5,27 @@ from pymongo import MongoClient
 import random
 from faker import Faker
 from django.contrib.auth.models import User
-from django.contrib.auth import login
-from .forms import SignUpForm
-# myfirstapp/views.py
-from django.shortcuts import render, redirect
-from pymongo import MongoClient
-from .forms import LoginForm
-from django.contrib.auth.hashers import check_password
-import re
-import hashlib
+from django.contrib.auth import login, authenticate
+from .forms import SignUpForm, LoginForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.hashers import check_password, make_password
 from .source.mypackages.CA import CentralizedAuthority
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.template import loader
+from pymongo import MongoClient
+import random
+from faker import Faker
+from django.contrib.auth.models import User
+from django.contrib.auth import login, authenticate
+from .forms import SignUpForm, LoginForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.hashers import check_password, make_password
 
 
 
-connection_string = 'mongodb+srv://lanphuongnt:keandk27@cluster0.hfwbqyp.mongodb.net/'
 server_CA = CentralizedAuthority()
+connection_string = 'mongodb+srv://lanphuongnt:keandk27@cluster0.hfwbqyp.mongodb.net/'
 
 def get_db_handle(db_name, host, port, username, password):
     client = MongoClient(host=host,
@@ -67,10 +73,15 @@ def signup(request):
             client = MongoClient(connection_string)
             db = client['user']
             log_and_auth = db['logAndAuth']
+
             username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+
+            hashed_password = make_password(password)
+
             user_data = {
                 'username': username,
-                'password': hashlib.sha3_512(form.cleaned_data.get('password').encode()).hexdigest(),
+                'password': hashed_password,
             }
 
             log_and_auth.insert_one(user_data)
@@ -118,8 +129,6 @@ def login_view(request):
                 return redirect('myfirstapp:home')
             else:
                 stored_password = user['password']
-                # stored_password = re.sub(r'\$', '', stored_password)  # Remove "$" character from stored password
-
                 if check_password(password, stored_password):
                     request.session['user'] = user
                     if user['role'] == 'user':
