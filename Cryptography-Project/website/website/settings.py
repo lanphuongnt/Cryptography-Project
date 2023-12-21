@@ -51,7 +51,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'website.urls'
-# LOGIN_URL = '/accounts/login/'
+LOGIN_URL = 'login/'
 # LOGIN_REDIRECT_URL = '/home/'
 
 TEMPLATES = [
@@ -128,3 +128,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SESSION_COOKIE_AGE = 60 * 30  # 30 minutes
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
