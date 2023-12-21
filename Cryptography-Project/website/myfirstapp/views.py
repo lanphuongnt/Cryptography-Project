@@ -16,6 +16,7 @@ from django.contrib.auth import login
 from bson import ObjectId
 
 server_CA = CentralizedAuthority()
+# server_CA.AddPolicy()
 
 
 def get_db_handle(db_name, host, port, username, password):
