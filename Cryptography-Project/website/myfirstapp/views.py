@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.template import loader
 from pymongo import MongoClient
 import random
-from faker import Faker
+# from faker import Faker
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from .forms import SignUpForm, LoginForm
