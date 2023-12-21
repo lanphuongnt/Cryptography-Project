@@ -62,3 +62,5 @@ makemyrx_db = client['sample_medicines']
 #collection object
 medicines_collection = makemyrx_db['medicinedetails']
 ```
+
+# dupliCat3
