@@ -13,6 +13,13 @@ from pymongo import MongoClient
 from .forms import LoginForm
 from django.contrib.auth.hashers import check_password
 import re
+import hashlib
+from .source.mypackages.CA import CentralizedAuthority
+
+
+
+connection_string = 'mongodb+srv://lanphuongnt:keandk27@cluster0.hfwbqyp.mongodb.net/'
+server_CA = CentralizedAuthority()
 
 def get_db_handle(db_name, host, port, username, password):
     client = MongoClient(host=host,
@@ -57,17 +64,19 @@ def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            client = MongoClient('...')
+            client = MongoClient(connection_string)
             db = client['user']
             log_and_auth = db['logAndAuth']
-
+            username = form.cleaned_data.get('username')
             user_data = {
-                'username': form.cleaned_data.get('username'),
-                'password': form.cleaned_data.get('password'),
+                'username': username,
+                'password': hashlib.sha3_512(form.cleaned_data.get('password').encode()).hexdigest(),
             }
 
             log_and_auth.insert_one(user_data)
-
+            user = log_and_auth.find_one({'username', username})
+            # set tam cai ID
+            server_CA.Setup(user['_id'])
             return redirect('myfirstapp:home')
     else:
         form = SignUpForm()
@@ -91,34 +100,36 @@ def patient_profile(request):
     else:
         return redirect('login')
 
+
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            client = MongoClient('...')
+            client = MongoClient(connection_string)
             db = client['user']
-            users = db['logAndAuth']
+            collection = db['logAndAuth']
 
             username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
+            password = hashlib.sha3_512(form.cleaned_data.get('password').encode()).hexdigest()
 
-            user_data = users.find({'username': username})
-
-            for user in user_data:
+            user = collection.find_one({'username': username})
+            # HttpResponse(str(user))
+            if user is None:
+                return redirect('myfirstapp:home')
+            else:
                 stored_password = user['password']
-                stored_password = re.sub(r'\$', '', stored_password)  # Remove "$" character from stored password
+                # stored_password = re.sub(r'\$', '', stored_password)  # Remove "$" character from stored password
 
                 if check_password(password, stored_password):
                     request.session['user'] = user
-                    if 'user' in user:
+                    if user['role'] == 'user':
                         return redirect('myfirstapp:patient_profile')
-                    elif 'staff' in user:
+                    elif user['role'] == 'staff':
                         return redirect('myfirstapp:staff_profile')
                     else:
                         return redirect('myfirstapp:home')
-            
+
             # If no matching username and password found
-            return redirect('myfirstapp:home')
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})

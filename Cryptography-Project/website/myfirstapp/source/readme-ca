@@ -1,0 +1,28 @@
+CPABE
+
+1.
+Attribute : lấy về là json (dict)
+Attribute : Tạo private key là 1 array
+=> Cần hàm convertJsonToArrayValue(json) : -> array 
+-> lấy từ user về theo format của CA
+
+2. 
+Policy : lấy về là json
+Policy sử dụng là 1 chuỗi logic code 
+-> Một là lưu policy là logic code luôn
+-> Hai là viết hàm convert từ json (condition) về logic code
+-> Cần tạo db để lưu policy abe
+
+3. 
+Public key và Master key lưu trên db CA 
+=> Cần tạo 1 db để lưu key (chỉ CA có quyền truy cập)
+
+4. 
+CA : Gen Private 
+
+
+ABAC:
+1 Attribute : À tui nghĩ nên gom 2 cái repo abe với abac lại, nào cần thì query đến cái ấy thoi.
+2 Còn mình có thể chia document ra nma db thì 2 cái dc r.
+
+Done!
