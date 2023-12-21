@@ -18,6 +18,7 @@ from bson import ObjectId
 from django.views.decorators.cache import never_cache
 
 server_CA = CentralizedAuthority()
+# server_CA.AddPolicy()
 
 
 def get_db_handle(db_name, host, port, username, password):
