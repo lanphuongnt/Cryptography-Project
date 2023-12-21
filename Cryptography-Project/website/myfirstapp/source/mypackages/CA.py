@@ -19,10 +19,10 @@ class CentralizedAuthority:
     '''
 
     def Setup(self, userID):
-        (public_key, master_key) = self.ac17.setup()
+        (public_key, master_key) = self.cpabe.ac17.setup()
         db = self.client['CA']
         collection = db['key']
-        new_key = json.dumps({'_id' : userID , 'public_key' : public_key, 'master_key' : master_key})
+        new_key = json.dumps({'userID' : str(userID) , 'public_key' : public_key, 'master_key' : master_key})
         collection.insert_one(new_key)
         return 
 
