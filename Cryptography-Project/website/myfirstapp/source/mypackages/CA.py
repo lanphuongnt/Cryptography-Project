@@ -2,8 +2,9 @@
 from charm.toolbox.pairinggroup import PairingGroup, GT
 from charm.schemes.abenc.ac17 import AC17CPABE
 from pymongo import MongoClient
+from charm.core.engine.util import objectToBytes, bytesToObject
 from .CPABE import CPABE
-import json
+import pickle
 
 class CentralizedAuthority:
     def __init__(self):
@@ -22,9 +23,13 @@ class CentralizedAuthority:
         (public_key, master_key) = self.cpabe.ac17.setup()
         db = self.client['CA']
         collection = db['key']
-        new_key = json.dumps({'userID' : str(userID) , 'public_key' : public_key, 'master_key' : master_key})
+        new_key = {
+            'userID' : str(userID),
+            'public_key' : objectToBytes(public_key, self.cpabe.ac17.group),
+            'master_key' : objectToBytes(master_key, self.cpabe.ac17.group)
+        }
         collection.insert_one(new_key)
-        return 
+        return
 
     def GetSubjectAttribute(self, userID): # 
         # Load public key 

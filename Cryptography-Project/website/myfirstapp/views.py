@@ -12,7 +12,7 @@ from django.contrib.auth.hashers import check_password, make_password
 
 from .source.mypackages.CA import CentralizedAuthority
 
-# server_CA = CentralizedAuthority()
+server_CA = CentralizedAuthority()
 
 
 def get_db_handle(db_name, host, port, username, password):
@@ -80,9 +80,9 @@ def signup(request):
             object_id = result.inserted_id
 
             # Update the document to set the username to the ObjectId
-            # log_and_auth.update_one({'_id': object_id}, {'$set': {'username': str(object_id)}})
+            log_and_auth.update_one({'_id': object_id}, {'$set': {'username': str(object_id)}})
 
-            # server_CA.Setup(str(object_id))
+            server_CA.Setup(str(object_id))
 
             return redirect('myfirstapp:home')
     else:
