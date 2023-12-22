@@ -23,11 +23,11 @@ server_CA = CentralizedAuthority()
 
 
 def create_new_EHR(request, userID):
-    status = request.POST.get('role')
-    if status == 'patient':
+    status = request.POST['status']
+    if status == 'Patient':
         addition = {
                 "patient_info": {
-                    "name": request.POST.get('username'),
+                    "name": request.POST['name'],
                     "dob": "",
                     "gender": "",
                     "cccd": "",
@@ -46,7 +46,7 @@ def create_new_EHR(request, userID):
     else:
         addition = {
             "staff_info": {
-                "name": request.POST.get('username'),
+                "name": request.POST['name'],
                 "dob": "",
                 "gender": "",
                 "role": status,
@@ -66,7 +66,7 @@ def create_new_EHR(request, userID):
     addition['_id'] = userID
 
     db = server_CA.client['data']
-    if status == 'patient':
+    if status == 'Patient':
         ehr_col = db['ehr']
     else:
         ehr_col = db['staff']
@@ -79,47 +79,45 @@ def index(request):
 @never_cache
 def signup(request):
     if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            db = server_CA.client['user']
-            log_and_auth = db['logAndAuth']
+        db = server_CA.client['user']
+        log_and_auth = db['logAndAuth']
 
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            status = form.cleaned_data.get('role')
+        name = request.POST['name']
+        email = request.POST['email']
+        username = request.POST['username']
+        password = request.POST['password']
+        status = request.POST['status']
 
-            if status == 'patient':
-                role = 'user'
-            else:
-                role = 'staff'
+        if status == 'Patient':
+            role = 'user'
+        else:
+            role = 'staff'
 
-            hashed_password = make_password(password)
+        hashed_password = make_password(password)
 
-            user_data = {
-                'password': hashed_password,
-                'role': role,
-                'status': status
-            }
+        user_data = {
+            'name': name,
+            'email': email,
+            'username': username,
+            'password': hashed_password,
+            'role': role,
+            'status': status
+        }
+        result = log_and_auth.insert_one(user_data)
 
-            result = log_and_auth.insert_one(user_data)
+        # Get the ObjectId
+        object_id = result.inserted_id
 
-            # Get the ObjectId
-            object_id = result.inserted_id
+        # Generate public key master key for new user
+        server_CA.Setup(str(object_id))
 
-            # Update the document to set the username to the ObjectId
-            log_and_auth.update_one({'_id': object_id}, {'$set': {'username': str(object_id)}})
-            # Generate public key master key for new user
-            server_CA.Setup(str(object_id))
+        # Generate EHR document for new user
+        create_new_EHR(request, str(object_id))
 
-            # Generate EHR document for new user
-            create_new_EHR(request, str(object_id))
-
-            return redirect('myfirstapp:index')
+        return redirect('myfirstapp:index')
     else:
-        form = SignUpForm()
-    template = loader.get_template('pages-register.html')
-    return HttpResponse(template.render({'form': form}, request))
-
+        return render(request, 'pages-register.html')
+    
 def custom_login_required(view_func):
     def _wrapped_view_func(request, *args, **kwargs):
         if 'user' in request.session:
@@ -131,34 +129,27 @@ def custom_login_required(view_func):
 @never_cache
 def login_view(request):
     if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            # client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
-            db = server_CA.client['user']
-            collection = db['logAndAuth']
+        # client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
+        db = server_CA.client['user']
+        collection = db['logAndAuth']
 
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
+        username = request.POST['username']
+        password = request.POST['password']
 
-            user = collection.find_one({'username': username})
-            stored_password = user['password']
-            if check_password(password, stored_password):
-                # Convert ObjectId to string
-                user['_id'] = str(user['_id'])
-                request.session['user'] = user
-                if user['role'] == 'user':
-                    return redirect('myfirstapp:patient_profile')
-                elif user['role'] == 'staff':
-                    return redirect('myfirstapp:staff_profile')
-                else:
-                    return redirect('myfirstapp:index')
-            
-            # If no matching username and password found
-            return redirect('myfirstapp:index')
+        user = collection.find_one({'username': username})
+        stored_password = user['password']
+        if check_password(password, stored_password):
+            # Convert ObjectId to string
+            user['_id'] = str(user['_id'])
+            request.session['user'] = user
+            if user['role'] == 'user':
+                return redirect('myfirstapp:patient_profile')
+            else:
+                return redirect('myfirstapp:staff_profile')
+        # If no matching username and password found
+        return redirect('myfirstapp:index')
     else:
-        form = LoginForm()
-    template = loader.get_template('pages-login1.html')
-    return render(request, 'pages-login1.html', {'form': form})
+        return render(request, 'pages-login1.html')
 
 def logout(request):
     request.session.pop('user', None)
@@ -199,7 +190,7 @@ def patient_profile(request):
             return redirect('myfirstapp:index')
 
     user_id = str(user['_id'])
-    template = loader.get_template('patient_profile.html')
+    template = loader.get_template('users-profile.html')
     return HttpResponse(template.render({'user_id': user_id}, request))
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
 # It is the default password hashing algorithm used by Django for user authentication.

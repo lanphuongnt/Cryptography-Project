@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Pages / Register - NiceAdmin Bootstrap Template</title>
+  <title>Register - KPI Hospital</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -66,7 +66,8 @@
                     <p class="text-center small">Enter your personal details to create account</p>
                   </div>
 
-                  <form class="row g-3 needs-validation" novalidate>
+                  <form class="row g-3 needs-validation" action="{% url 'myfirstapp:signup' %}" method="post" novalidate>
+                    {% csrf_token %}
                     <div class="col-12">
                       <label for="yourName" class="form-label">Your Name</label>
                       <input type="text" name="name" class="form-control" id="yourName" required>
@@ -95,6 +96,18 @@
                     </div>
 
                     <div class="col-12">
+                      <label for="status" class="form-label">Status</label>
+                      <select name="status" class="form-select" id="status" required>
+                        <option value="Patient">Patient</option>
+                        <option value="Doctor">Doctor</option>
+                        <option value="Nurse">Nurse</option>
+                        <option value="Emergency">Emergency</option>
+                        <option value="Admin">Admin</option>
+                      </select>
+                      <div class="invalid-feedback">Please choose your role.</div>
+                    </div>
+
+                    <div class="col-12">
                       <div class="form-check">
                         <input class="form-check-input" name="terms" type="checkbox" value="" id="acceptTerms" required>
                         <label class="form-check-label" for="acceptTerms">I agree and accept the <a href="#">terms and conditions</a></label>
@@ -105,7 +118,7 @@
                       <button class="btn btn-primary w-100" type="submit">Create Account</button>
                     </div>
                     <div class="col-12">
-                      <p class="small mb-0">Already have an account? <a href="pages-login.html">Log in</a></p>
+                      <p class="small mb-0">Already have an account? <a href="{% url 'myfirstapp:login' %}">Log in</a></p>
                     </div>
                   </form>
 
