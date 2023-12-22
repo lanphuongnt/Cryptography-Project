@@ -1,8 +1,9 @@
 <!-- myfirstapp/templates/login.html -->
-<h2>Login</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-</form>
-<script src="{% static 'Cryptography-Project/website/myfirstapp/static/app/(auth)/authentication/sign-in/page.js' %}"></script>
+{% load static %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<!-- ... rest of your HTML ... -->
+<head>
+    <script src="{% static 'app/(auth)/authentication/sign-in/page.js' %}"></script>
+</head>
