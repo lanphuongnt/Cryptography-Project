@@ -62,3 +62,14 @@ makemyrx_db = client['sample_medicines']
 #collection object
 medicines_collection = makemyrx_db['medicinedetails']
 ```
+
+# FIX BUG :
+```
+OperatorOR = Literal("OR").setParseAction(downcaseTokens) | Literal("or")
+NameError: name 'downcaseTokens' is not defined
+```
+The problem seems to be the later version of pyparsing module no longer has that attribute. Downgrading it works for me.
+run:
+```
+pip install pyparsing==2.4.2
+```
