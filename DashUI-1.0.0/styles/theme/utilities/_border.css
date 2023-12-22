@@ -1,0 +1,29 @@
+.border-white-color-40 {
+  border-color: rgba(233, 236, 239, 0.4) !important;
+}
+
+.border-dashed {
+  border: 1px dashed gray-300 !important;
+}
+
+.divider {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.divider::after, .divider::before {
+  -ms-flex: 1 1 0%;
+  flex: 1 1 0%;
+  border-top: 0.0625rem solid gray-400;
+  content: "";
+  margin-top: 0.0625rem;
+}
+.divider::before {
+  margin-right: 1.5rem;
+}
+.divider::after {
+  margin-left: 1.5rem;
+}
+
+/*# sourceMappingURL=_border.css.map */

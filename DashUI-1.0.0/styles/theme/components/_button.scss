@@ -5,17 +5,17 @@
 
 // btn outline white
 .btn-outline-white {
-    border-color: $gray-300;
-    color: $body-color;
+    border-color: gray-300;
+    color: body-color;
     &:hover, &:focus {
-        background-color: $gray-100;
-        border-color: $gray-400;
-        color: $body-color;
+        background-color: gray-100;
+        border-color: gray-400;
+        color: body-color;
     }
     &.active {
-        background-color: $gray-100;
-        border-color: $gray-400;
-        color: $body-color;
+        background-color: gray-100;
+        border-color: gray-400;
+        color: body-color;
     }
 }
 

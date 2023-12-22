@@ -12,12 +12,12 @@ h4,
 }
 
 .text-inherit {
-    color: $gray-900;
+    color: gray-900;
 }
 
 
 .text-primary-hover{
     &:hover{
-        color: $primary !important;
+        color: primary !important;
     }
 }

@@ -1,6 +1,6 @@
 // Prism
 
-
+$font-family-base: Arial, sans-serif;
 
 /* Code blocks */
 code[class*="language-"], pre[class*="language-"]{
@@ -16,7 +16,7 @@ pre[class*="language-"] {
 }
 :not(pre) > code[class*="language-"],
 pre[class*="language-"] {
-  background: $gray-900;
+  background: gray-900;
 }
 
 
@@ -47,7 +47,7 @@ div.code-toolbar {
       button {
         background: none;
         border: 0;
-        color: $dark;
+        color: dark;
         font: inherit;
         line-height: normal;
         overflow: visible;
@@ -56,24 +56,24 @@ div.code-toolbar {
       }
 
       a, button, span {
-        color: $dark;
+        color: dark;
         font-size: .75rem;
         padding: .25rem .5rem;
-        background: $white;
+        background: white;
       font-weight: 600;
         border-radius: .25rem;
       }
 
       a {
         &:hover, &:focus {
-          color: $dark;
+          color: dark;
           text-decoration: none;
         }
       }
 
       button {
         &:hover, &:focus {
-          color: $dark;
+          color: dark;
           text-decoration: none;
         }
       }

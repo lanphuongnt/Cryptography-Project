@@ -1,3 +1,11 @@
+// Avatar Size
+$avatar-size-xs: 1.5rem;
+$avatar-size-sm: 2rem;
+$avatar-size-md: 3rem;
+$avatar-size-lg: 4rem;
+$avatar-size-xl: 5rem;
+$avatar-size-xxl: 6rem;
+
 // Avatar
 .avatar {
     position: relative;
@@ -57,7 +65,7 @@
     width: 30%;
     height: 30%;
     border-radius: 50%;
-    border: 2px solid $white;
+    border: 2px solid white;
     display: table;
 }
 
@@ -70,23 +78,23 @@
 
 // Avatar indicators
 .avatar-offline:before {
-    background-color: $gray-400;
+    background-color: gray-400;
 }
 
 .avatar-online:before {
-    background-color: $success;
+    background-color: success;
 }
 
 .avatar-away:before {
-    background-color: $warning;
+    background-color: warning;
 }
 
 .avatar-busy:before {
-    background-color: $danger;
+    background-color: danger;
 }
 
 .avatar-info:before {
-    background-color: $info;
+    background-color: info;
 }
 
 // Avatar intials
@@ -105,36 +113,36 @@
 // Color varient
 
 .avatar-primary .avatar-initials {
-  color: $white;
-  background-color: $primary;
+  color: white;
+  background-color: primary;
 }
 .avatar-secondary .avatar-initials {
-  color: $white;
-  background-color: $secondary;
+  color: white;
+  background-color: secondary;
 }
 .avatar-success .avatar-initials {
-  color: $white;
-  background-color: $success;
+  color: white;
+  background-color: success;
 }
 .avatar-warning .avatar-initials {
-  color: $white;
-  background-color: $warning;
+  color: white;
+  background-color: warning;
 }
 .avatar-info .avatar-initials {
-  color: $white;
-  background-color: $info;
+  color: white;
+  background-color: info;
 }
 .avatar-danger .avatar-initials {
-  color: $white;
-  background-color: $danger;
+  color: white;
+  background-color: danger;
 }
 .avatar-light .avatar-initials {
-  color: $white;
-  background-color: $light;
+  color: white;
+  background-color: light;
 }
 .avatar-dark .avatar-initials {
-  color: $white;
-  background-color: $dark;
+  color: white;
+  background-color: dark;
 }
 
 
@@ -150,7 +158,7 @@
 // Avatar border
 .avatar-group img,
 .avatar-group .avatar .avatar-initials {
-    border: 2px solid $white;
+    border: 2px solid white;
 }
 
 // Image aspect ratio 4:3
