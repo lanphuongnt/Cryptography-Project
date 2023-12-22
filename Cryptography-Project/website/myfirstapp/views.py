@@ -117,7 +117,7 @@ def signup(request):
             return redirect('myfirstapp:index')
     else:
         form = SignUpForm()
-    template = loader.get_template('signup.html')
+    template = loader.get_template('pages-register.html')
     return HttpResponse(template.render({'form': form}, request))
 
 def custom_login_required(view_func):
@@ -157,7 +157,8 @@ def login_view(request):
             return redirect('myfirstapp:index')
     else:
         form = LoginForm()
-    return render(request, 'login.html', {'form': form})
+    template = loader.get_template('pages-login1.html')
+    return render(request, 'pages-login1.html', {'form': form})
 
 def logout(request):
     request.session.pop('user', None)
