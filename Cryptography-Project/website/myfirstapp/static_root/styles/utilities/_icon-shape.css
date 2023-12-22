@@ -1,0 +1,51 @@
+.icon-xxs {
+  width: 10px;
+  height: 10px;
+  line-height: 10px;
+}
+
+.icon-xs {
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+}
+
+.icon-sm {
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+}
+
+.icon-md {
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+}
+
+.icon-lg {
+  width: 48px;
+  height: 48px;
+  line-height: 48px;
+}
+
+.icon-xl {
+  width: 64px;
+  height: 64px;
+  line-height: 64px;
+}
+
+.icon-xxl {
+  width: 96px;
+  height: 96px;
+  line-height: 96px;
+}
+
+.icon-shape {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/*# sourceMappingURL=_icon-shape.css.map */
