@@ -1,5 +1,104 @@
-<!-- myfirstapp/templates/patient_profile.html -->
+<!-- myfirstapp/templates/patient_profile.html
 <h2>Patient Profile</h2>
 <p>Name: {{ user_data.name }}</p>
 <p>DOB: {{ user_data.dob }}</p>
-<p>Medical history: {{ user_data.medical_history }}</p>
+<p>Medical history: {{ user_data.medical_history }}</p> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bệnh Án Điện Tử</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            max-width: 400px;
+            margin: auto;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .patient-data {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Thông Tin Bệnh Nhân</h2>
+
+    <form method="post" id="patientForm" onsubmit="submitForm(event)">
+        <label for="name">Họ và Tên:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="dob">Ngày Sinh:</label>
+        <input type="date" id="dob" name="dob" required>
+
+        <label for="gender">Giới Tính:</label>
+        <select id="gender" name="gender" required>
+            <option value="male">Nam</option>
+            <option value="female">Nữ</option>
+        </select>
+
+        <label for="medicalHistory">Lịch Sử Bệnh:</label>
+        <textarea id="medicalHistory" name="medicalHistory" rows="4"></textarea>
+
+        <button type="submit">Gửi Bệnh Án</button>
+    </form>
+
+    <div class="patient-data" id="patientData"></div>
+
+    <script>
+        function submitForm(event) {
+            event.preventDefault();
+
+            const form = document.getElementById('patientForm');
+            const formData = new FormData(form);
+
+            fetch('/submit_patient_data/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayPatientData(data);
+            });
+        }
+
+        function displayPatientData(data) {
+            const patientDataDiv = document.getElementById('patientData');
+            patientDataDiv.innerHTML = `<h2>Thông Tin Bệnh Nhân</h2>
+                                       <p><strong>Họ và Tên:</strong> ${data.name}</p>
+                                       <p><strong>Ngày Sinh:</strong> ${data.dob}</p>
+                                       <p><strong>Giới Tính:</strong> ${data.gender}</p>
+                                       <p><strong>Lịch Sử Bệnh:</strong> ${data.medicalHistory}</p>`;
+        }
+    </script>
+
+</body>
+</html>
