@@ -9,11 +9,13 @@ from django.contrib.auth import login, authenticate
 from .forms import SignUpForm, LoginForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth.decorators import login_required
 
 from .source.mypackages.CA import CentralizedAuthority
 from django.contrib import messages
 from django.contrib.auth import login
 from bson import ObjectId
+from django.views.decorators.cache import never_cache
 
 server_CA = CentralizedAuthority()
 # server_CA.AddPolicy()
@@ -54,6 +56,7 @@ def home(request):
     template = loader.get_template('myfirst.html')
     return HttpResponse(template.render())
 
+@never_cache
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -90,6 +93,15 @@ def signup(request):
     template = loader.get_template('signup.html')
     return HttpResponse(template.render({'form': form}, request))
 
+def custom_login_required(view_func):
+    def _wrapped_view_func(request, *args, **kwargs):
+        if 'user' in request.session:
+            return view_func(request, *args, **kwargs)
+        else:
+            return redirect('myfirstapp:login')
+    return _wrapped_view_func
+
+@never_cache
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -120,14 +132,28 @@ def login_view(request):
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
 
+def logout(request):
+    request.session.pop('user', None)
+    return redirect('myfirstapp:home')
+
 # myfirstapp/views.py
+@never_cache
+@custom_login_required
 def staff_profile(request):
+    user = request.session['user']
+
+    user_id = str(user['_id'])
     template = loader.get_template('staff_profile.html')
-    return HttpResponse(template.render())
-    
+    return HttpResponse(template.render({'user_id': user_id}, request))
+
+@never_cache
+@custom_login_required
 def patient_profile(request):
+    user = request.session['user']
+
+    user_id = str(user['_id'])
     template = loader.get_template('patient_profile.html')
-    return HttpResponse(template.render())
+    return HttpResponse(template.render({'user_id': user_id}, request))
 
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
 # It is the default password hashing algorithm used by Django for user authentication.
