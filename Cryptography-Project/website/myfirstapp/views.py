@@ -16,7 +16,7 @@ from django.contrib import messages
 from django.contrib.auth import login
 from bson import ObjectId
 from django.views.decorators.cache import never_cache
-
+from flatten_json import flatten, unflatten
 import json
 
 server_CA = CentralizedAuthority()
@@ -188,6 +188,7 @@ def patient_profile(request):
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
 # It is the default password hashing algorithm used by Django for user authentication.
 
+
 def insert_data(request):
     # Request (dict) include: database, collection, username(ObjectID), {'$set' : {'dataname1': datavalue1}, {data}}
     # Example : request = {'database' : 'data', 'collection' : 'ehr', 'username' : '65845045be5cf517d0a932e1', {'height' : 153}}
@@ -195,20 +196,59 @@ def insert_data(request):
     collection = db[request['collection']]
 
     update_data = request['$set']
+    encrypted_data = {}
+    flatten(update_data)
 
-    CA_db = server_CA.client['CA']
-    attribute_col = CA_db['subject_attribute']
-    user_attribute = attribute_col.find_one({"_id" : ObjectId(request['username'])})    
+    policy_col = server_CA.client['policy_repository']['abe']
+    policy = policy_col.find_one({'request' : 'insert'})['policy']
+
+    # CA_db = server_CA.client['CA']
+    # attribute_col = CA_db['subject_attribute']
+    # user_attribute = attribute_col.find_one({"_id" : ObjectId(request['username'])})    
     
-    server_CA.GeneratePrivateKey()
+    # private_key, public_key = server_CA.GeneratePrivateKey(request['username'], user_attribute)
+    public_key = server_CA.GetPublicKey(request['username'])
 
+    for data in update_data.item():
+        encrypted_data[data.key()] = server_CA.cpabe.encrypt(public_key, data.value, policy)
 
-    collection.update_many({'_id': ObjectId(request['username'])}, {'$set': request['$set']})
+    unflatten(encrypted_data)
+
+    collection.update_many({'_id': ObjectId(request['username'])}, {'$set': encrypted_data})
     response = collection.find_one({'_id': ObjectId(request['username'])})
     if response:
         return True
     else:
         return False
+    
+def get_data(request):
+    # Request (dict) include: database, collection, username(ObjectID), {'$get' : {'dataname1': datavalue1}, {data}}
+    # Example : request = {'database' : 'data', 'collection' : 'ehr', 'username' : '65845045be5cf517d0a932e1', {'height' : 153}}
+    db = server_CA.client[request['database']]
+    collection = db[request['collection']]
+    encryted_data = collection.find(request['$get'])
+
+    if encryted_data:
+        flatten(encryted_data)
+        recovered_data = {}
+        CA_db = server_CA.client['CA']
+        attribute_col = CA_db['subject_attribute']
+        user_attribute = attribute_col.find_one(request['$get'])    
+
+        private_key = server_CA.GeneratePrivateKey(request['username'], user_attribute)
+        public_key = server_CA.GetPublicKey(request['username'])
+
+
+
+        for ed in encryted_data:
+            recovered_data[ed.key()] = server_CA.cpabe.decrypt(public_key, ed.value(), private_key)
+
+        unflatten(recovered_data)
+
+        return recovered_data
+    else:
+        return None
+    
     
 
 

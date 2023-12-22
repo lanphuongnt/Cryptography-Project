@@ -32,6 +32,20 @@ class CentralizedAuthority:
         collection.insert_one(new_key)
         return
 
+    def GetPublicKey(self, userID):
+        db = self.client['CA']
+        collection = db['key']
+        key_info = collection.find_one({'userID' : userID})
+        public_key = bytesToObject(key_info['public_key'])
+        return public_key
+
+    def GetMasterKey(self, userID):
+        db = self.client['CA']
+        collection = db['key']
+        key_info = collection.find_one({'userID' : userID})
+        master_key = bytesToObject(key_info['master_key'])
+        return master_key
+
     def GeneratePrivateKey(self, userID, attribute): # Attribute of user as dict
         # Convert to list attribute
         list_attribute = []
@@ -42,13 +56,11 @@ class CentralizedAuthority:
             value.upper()
             list_attribute.append()
 
-        db = self.client['CA']
-        collection = db['key']
-        key_info = collection.find_one({'userID' : userID})
-        master_key = bytesToObject(key_info['master_key'])
-        public_key = bytesToObject(key_info['public_key'])
+        public_key = self.GetPublicKey(userID)
+        master_key = self.GetMasterKey(userID)
+
         private_key = self.cpabe.ac17.keygen(public_key, master_key, list_attribute)
-        return private_key
+        return private_key, public_key
 
     def AddPolicy(self): # Call by admin
         policy1 = '(DOCTOR or NURSE or PATIENT)'
