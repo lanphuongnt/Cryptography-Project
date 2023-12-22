@@ -3,7 +3,6 @@ from django.http import HttpResponse
 from django.template import loader
 from pymongo import MongoClient
 import random
-# from faker import Faker
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from .forms import SignUpForm, LoginForm
@@ -24,30 +23,52 @@ server_CA = CentralizedAuthority()
 
 
 def create_new_EHR(request, userID):
-    # '''
-    # Example: request
-    addition = {
-                "patient_info": {
-                    "name": request.POST.get('username'),
-                    "dob": "",
-                    "gender": "",
-                    "cccd": "",
-                    "contact": {
-                        "phone": "",
-                        "email": ""
-                    },
-                    "address": {
-                        "street": "",
-                        "city": "",
-                        "state": "",
-                        "zip": ""
+    status = request.POST.get('role')
+    if status == 'patient':
+        addition = {
+                    "patient_info": {
+                        "name": request.POST.get('username'),
+                        "dob": "",
+                        "gender": "",
+                        "cccd": "",
+                        "contact": {
+                            "phone": "",
+                            "email": ""
+                        },
+                        "address": {
+                            "street": "",
+                            "city": "",
+                            "state": "",
+                            "zip": ""
+                        }
                     }
+                } 
+    else:
+        addition = {
+            "staff_info": {
+                "name": request.POST.get('username'),
+                "dob": "",
+                "gender": "",
+                "position": "",
+                "contact": {
+                    "phone": "",
+                    "email": ""
+                },
+                "address": {
+                    "street": "",
+                    "city": "",
+                    "state": "",
+                    "zip": ""
                 }
-            } 
-    # ''' 
+            }
+        }
     addition['_id'] = userID
 
-    ehr_col = server_CA.client['data']['ehr']
+    db = server_CA.client['data']
+    if status == 'patient':
+        ehr_col = db['ehr']
+    else:
+        ehr_col = db['staff']
     ehr_col.insert_one(addition)
 
 def get_db_handle(db_name, host, port, username, password):
