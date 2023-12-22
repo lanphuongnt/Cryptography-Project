@@ -1,12 +1,13 @@
 from pymongo import MongoClient
-from py_abac import PDP, Policy, AccessRequest
+from py_abac import PDP, Policy, Request
 from py_abac.storage.mongo import MongoStorage
 
-connection_string = 'mongodb+srv://lanphuongnt:keandk27@cluster0.hfwbqyp.mongodb.net/'
-
+# from CA import CentralizedAuthority
+# server_CA = CentralizedAuthority()
 # Policy definition in JSON
+connect_string = 'mongodb+srv://lanphuongnt:keandk27@cluster0.hfwbqyp.mongodb.net/'
 policy_json = {
-    "uid": "1",
+    "uid": "3",
     "description": "Max and Nina are allowed to create, delete, get any "
                    "resources only if the client IP matches.",
     "effect": "allow",
@@ -26,10 +27,10 @@ policy_json = {
 policy = Policy.from_json(policy_json)
 
 # Setup policy storage
-client = MongoClient()
+client = MongoClient(connect_string)
 storage = MongoStorage(client)
 # Add policy to storage
-storage.add(policy)
+# storage.add(policy)
 
 # Create policy decision point
 pdp = PDP(storage)
@@ -37,15 +38,15 @@ pdp = PDP(storage)
 # A sample access request JSON
 request_json = {
     "subject": {
-        "id": "", 
+        "id": "2",
         "attributes": {"name": "Max"}
     },
     "resource": {
-        "id": "", 
+        "id": "2",
         "attributes": {"name": "myrn:example.com:resource:123"}
     },
     "action": {
-        "id": "", 
+        "id": "3",
         "attributes": {"method": "get"}
     },
     "context": {
@@ -53,8 +54,11 @@ request_json = {
     }
 }
 # Parse JSON and create access request object
-request = AccessRequest.from_json(request_json)
+request = Request.from_json(request_json)
 
-# Check if access request is allowed. Evaluates to True since 
+# Check if access request is allowed. Evaluates to True since
 # Max is allowed to get any resource when client IP matches.
-print(pdp.is_allowed(request))
+if pdp.is_allowed(request):
+    print("LMAO")
+else:
+    print("NOT OK")
