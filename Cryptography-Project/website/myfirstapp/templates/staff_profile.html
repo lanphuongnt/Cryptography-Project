@@ -3,3 +3,7 @@
 <p>Name: {{ user_id }}</p>
 <p>DOB: {{ user_data.dob }}</p>
 <p>Branch of work: {{ user_data.branch_of_work }}</p>
+<form action="{% url 'myfirstapp:logout' %}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Logout">
+</form>

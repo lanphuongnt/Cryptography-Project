@@ -95,13 +95,19 @@ def signup(request):
 
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            role = form.cleaned_data.get('role')
+            status = form.cleaned_data.get('role')
+
+            if status == 'patient':
+                role = 'user'
+            else:
+                role = 'staff'
 
             hashed_password = make_password(password)
 
             user_data = {
                 'password': hashed_password,
                 'role': role,
+                'status': status
             }
 
             result = log_and_auth.insert_one(user_data)
@@ -172,6 +178,14 @@ def logout(request):
 def staff_profile(request):
     user = request.session['user']
 
+    # Check if the user's role is 'staff'
+    if user['role'] != 'staff':
+        # If not, redirect them to their correct profile or home page
+        if user['role'] == 'user':
+            return redirect('myfirstapp:patient_profile')
+        else:
+            return redirect('myfirstapp:home')
+
     user_id = str(user['_id'])
     template = loader.get_template('staff_profile.html')
     return HttpResponse(template.render({'user_id': user_id}, request))
@@ -181,10 +195,17 @@ def staff_profile(request):
 def patient_profile(request):
     user = request.session['user']
 
+    # Check if the user's role is 'user'
+    if user['role'] != 'user':
+        # If not, redirect them to their correct profile or home page
+        if user['role'] == 'staff':
+            return redirect('myfirstapp:staff_profile')
+        else:
+            return redirect('myfirstapp:home')
+
     user_id = str(user['_id'])
     template = loader.get_template('patient_profile.html')
     return HttpResponse(template.render({'user_id': user_id}, request))
-
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
 # It is the default password hashing algorithm used by Django for user authentication.
 

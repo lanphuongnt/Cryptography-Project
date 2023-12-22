@@ -2,10 +2,10 @@
 // utilities.scss
 // Extended from Bootstrap
 //
-// @import "bootstrap/scss/functions";
-// @import "~bootstrap/scss/variables";
-// @import "~bootstrap/scss/maps";
-// @import "~bootstrap/scss/mixins";
+@import "/home/keenlykean/thay_tunn/Cryptography-Project/DashUI-1.0.0/node_modules/bootstrap/scss/_functions";
+@import "/home/keenlykean/thay_tunn/Cryptography-Project/DashUI-1.0.0/node_modules/bootstrap/scss/_variables copy";
+@import "/home/keenlykean/thay_tunn/Cryptography-Project/DashUI-1.0.0/node_modules/bootstrap/scss/_maps";
+@import "/home/keenlykean/thay_tunn/Cryptography-Project/DashUI-1.0.0/node_modules/bootstrap/scss/_mixins";
 @import "/home/keenlykean/thay_tunn/Cryptography-Project/DashUI-1.0.0/node_modules/bootstrap/scss/_utilities";
 
 $utilities: () !default;
@@ -177,7 +177,7 @@ $utilities: map-merge(
             "gray-900": $gray-900,
             "white": $white,
             "body": $body-color,
-            "muted": $text-muted,
+            // "muted": $text-muted,
             "black-50": rgba($black, 0.5),
             "white-50": rgba($white, 0.5),
             "reset": inherit,
@@ -212,7 +212,7 @@ $utilities: map-merge(
   )
 );
 
-@import "~bootstrap/scss/utilities/api";
+// @import "/home/keenlykean/thay_tunn/Cryptography-Project/DashUI-1.0.0/node_modules/bootstrap/scss/utilities/_api.scss";
 
 // Utilities
 
