@@ -62,3 +62,11 @@ makemyrx_db = client['sample_medicines']
 #collection object
 medicines_collection = makemyrx_db['medicinedetails']
 ```
+
+
+
+
+
+
+
+https://stackoverflow.com/questions/69780351/attributeerror-module-pyparsing-has-no-attribute-downcasetokens-rasa

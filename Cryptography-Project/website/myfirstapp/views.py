@@ -17,9 +17,38 @@ from django.contrib.auth import login
 from bson import ObjectId
 from django.views.decorators.cache import never_cache
 
+import json
+
 server_CA = CentralizedAuthority()
 # server_CA.AddPolicy()
 
+
+def create_new_EHR(request, userID):
+    # '''
+    # Example: request
+    addition = {
+                "patient_info": {
+                    "name": request.POST.get('username'),
+                    "dob": "",
+                    "gender": "",
+                    "cccd": "",
+                    "contact": {
+                        "phone": "",
+                        "email": ""
+                    },
+                    "address": {
+                        "street": "",
+                        "city": "",
+                        "state": "",
+                        "zip": ""
+                    }
+                }
+            } 
+    # ''' 
+    addition['_id'] = userID
+
+    ehr_col = server_CA.client['data']['ehr']
+    ehr_col.insert_one(addition)
 
 def get_db_handle(db_name, host, port, username, password):
     client = MongoClient(host=host,
@@ -71,7 +100,6 @@ def signup(request):
             hashed_password = make_password(password)
 
             user_data = {
-                'username': username,
                 'password': hashed_password,
                 'role': role,
             }
@@ -83,8 +111,11 @@ def signup(request):
 
             # Update the document to set the username to the ObjectId
             log_and_auth.update_one({'_id': object_id}, {'$set': {'username': str(object_id)}})
-
+            # Generate public key master key for new user
             server_CA.Setup(str(object_id))
+
+            # Generate EHR document for new user
+            create_new_EHR(request, str(object_id))
 
             return redirect('myfirstapp:home')
     else:
@@ -158,11 +189,31 @@ def patient_profile(request):
 # It is the default password hashing algorithm used by Django for user authentication.
 
 def insert_data(request):
-    # Request (json) include: database, collection, username(ObjectID), {'$set' : {'dataname1': datavalue1}, {data}}
+    # Request (dict) include: database, collection, username(ObjectID), {'$set' : {'dataname1': datavalue1}, {data}}
     # Example : request = {'database' : 'data', 'collection' : 'ehr', 'username' : '65845045be5cf517d0a932e1', {'height' : 153}}
     db = server_CA.client[request['database']]
     collection = db[request['collection']]
-    user = collection.find_one(ObjectId(request['id']))
-    user.updae
+
+    update_data = request['$set']
+
+    CA_db = server_CA.client['CA']
+    attribute_col = CA_db['subject_attribute']
+    user_attribute = attribute_col.find_one({"_id" : ObjectId(request['username'])})    
+    
+    server_CA.GeneratePrivateKey()
+
+
+    collection.update_many({'_id': ObjectId(request['username'])}, {'$set': request['$set']})
+    response = collection.find_one({'_id': ObjectId(request['username'])})
+    if response:
+        return True
+    else:
+        return False
     
 
+
+def GetSubjectAttribute(self, userID, attribute_name): # attribute name is a list string 
+    # Load public key 
+    attribute = {} 
+    return attribute
+    

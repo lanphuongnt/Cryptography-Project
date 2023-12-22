@@ -4,8 +4,11 @@ from django.contrib.auth.models import User
 
 class SignUpForm(forms.ModelForm):
     ROLE_CHOICES = [
-        ('user', 'User'),
-        ('staff', 'Staff'),
+        ('patient', 'Patient'),
+        ('doctor', 'Doctor'),
+        ('nurse', 'Nurse'),
+        ('emergency', 'Emergency'),
+        ('admin', 'Admin'),
     ]
 
     role = forms.ChoiceField(choices=ROLE_CHOICES)

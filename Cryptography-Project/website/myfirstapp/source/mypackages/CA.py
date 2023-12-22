@@ -5,6 +5,7 @@ from pymongo import MongoClient
 from charm.core.engine.util import objectToBytes, bytesToObject
 from .CPABE import CPABE
 import pickle
+from bson import ObjectId
 
 class CentralizedAuthority:
     def __init__(self):
@@ -24,25 +25,29 @@ class CentralizedAuthority:
         db = self.client['CA']
         collection = db['key']
         new_key = {
-            'userID' : str(userID),
+            '_id' : userID,
             'public_key' : objectToBytes(public_key, self.cpabe.ac17.group),
             'master_key' : objectToBytes(master_key, self.cpabe.ac17.group)
         }
         collection.insert_one(new_key)
         return
 
-    def GetSubjectAttribute(self, userID, attribute_name): # attribute name is a list string 
-        # Load public key 
-        attribute = {} 
-        return attribute
+    def GeneratePrivateKey(self, userID, attribute): # Attribute of user as dict
+        # Convert to list attribute
+        list_attribute = []
+        for x in attribute:
+            value = x.value()
+            if type(value) is not str:
+                x = str(value)
+            value.upper()
+            list_attribute.append()
 
-    def GeneratePrivateKey(self, userID, attribute):
         db = self.client['CA']
         collection = db['key']
         key_info = collection.find_one({'userID' : userID})
         master_key = bytesToObject(key_info['master_key'])
         public_key = bytesToObject(key_info['public_key'])
-        private_key = self.cpabe.ac17.keygen(public_key, master_key, attribute)
+        private_key = self.cpabe.ac17.keygen(public_key, master_key, list_attribute)
         return private_key
 
     def AddPolicy(self): # Call by admin

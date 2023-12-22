@@ -11,8 +11,8 @@ def encrypttest():
 
     (pubkey, masterkey) = cpabe.setup()
 
-    # attibute = {'role' : 'DOCTOR', 'major' : 'STOMATCH'}
-    attibute = ['DOCTOR', 'STOMATCH']
+    attibute = {'role' : 'DOCTOR', 'major' : 'STOMATCH'}
+    # attibute = ['DOCTOR', 'STOMATCH']
     key = cpabe.keygen(pubkey, masterkey, attibute)
     print("public key", pubkey)
     print("masterkey", masterkey)
