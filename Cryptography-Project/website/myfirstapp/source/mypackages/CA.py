@@ -6,6 +6,7 @@ from charm.core.engine.util import objectToBytes, bytesToObject
 from .CPABE import CPABE
 import pickle
 from bson import ObjectId
+from flatten_json import flatten, unflatten
 
 class CentralizedAuthority:
     def __init__(self):
@@ -48,6 +49,7 @@ class CentralizedAuthority:
 
     def GeneratePrivateKey(self, userID, attribute): # Attribute of user as dict
         # Convert to list attribute
+        flatten(attribute)
         list_attribute = []
         for x in attribute:
             value = x.value()

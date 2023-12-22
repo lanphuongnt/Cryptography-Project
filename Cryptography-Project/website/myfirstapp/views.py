@@ -259,8 +259,6 @@ def get_data(request):
         private_key = server_CA.GeneratePrivateKey(request['username'], user_attribute)
         public_key = server_CA.GetPublicKey(request['username'])
 
-
-
         for ed in encryted_data:
             recovered_data[ed.key()] = server_CA.cpabe.decrypt(public_key, ed.value(), private_key)
 
