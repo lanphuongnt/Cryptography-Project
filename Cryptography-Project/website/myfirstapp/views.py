@@ -61,8 +61,7 @@ def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
-            db = client['user']
+            db = server_CA.client['user']
             log_and_auth = db['logAndAuth']
 
             username = form.cleaned_data.get('username')
@@ -106,8 +105,8 @@ def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
-            db = client['user']
+            # client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
+            db = server_CA.client['user']
             collection = db['logAndAuth']
 
             username = form.cleaned_data.get('username')
@@ -158,7 +157,12 @@ def patient_profile(request):
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
 # It is the default password hashing algorithm used by Django for user authentication.
 
-# log_and_auth.insert_one(user_data)
-#             user = log_and_auth.find_one({'username', username})
-#             # set tam cai ID # 
-            # server_CA.Setup(user['_id'])
+def insert_data(request):
+    # Request (json) include: database, collection, username(ObjectID), {'$set' : {'dataname1': datavalue1}, {data}}
+    # Example : request = {'database' : 'data', 'collection' : 'ehr', 'username' : '65845045be5cf517d0a932e1', {'height' : 153}}
+    db = server_CA.client[request['database']]
+    collection = db[request['collection']]
+    user = collection.find_one(ObjectId(request['id']))
+    user.updae
+    
+
