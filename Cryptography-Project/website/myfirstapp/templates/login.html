@@ -1,8 +1,61 @@
 <!-- myfirstapp/templates/login.html -->
-<h2>Login</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-</form>
-<script src="{% static 'Cryptography-Project/website/myfirstapp/static/app/(auth)/authentication/sign-in/page.js' %}"></script>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Login Page</title>
+        {% load static %}
+</head>
+<body>
+    <div class="row align-items-center justify-content-center g-0 min-vh-100">
+        <div class="col-xxl-4 col-lg-6 col-md-8 col-xs-12 py-8 py-xl-0">
+          <!-- Card -->
+          <div class="card smooth-shadow-md">
+            <!-- Card body -->
+            <div class="card-body p-6">
+              <div class="mb-4">
+                <!-- <a href="/"><img src="{% static 'images/brand/logo/logo-primary.svg' %}" class="mb-2" alt="" /></a> -->
+                <p class="mb-6">Please enter your user information.</p>
+              </div>
+              <!-- Form -->
+              <form action="{% url 'myfirstapp:login' %}" method="POST">
+                {% csrf_token %}
+                <!-- Username -->
+                <div class="form-group mb-3" id="username">
+                  <label>Username or email</label>
+                  <input type="email" name="username" class="form-control" placeholder="Enter username here" required="" />
+                </div>
+      
+                <!-- Password -->
+                <div class="form-group mb-3" id="password">
+                  <label>Password</label>
+                  <input type="password" name="password" class="form-control" placeholder="**************" required="" />
+                </div>
+      
+                <!-- Checkbox -->
+                <div class="d-lg-flex justify-content-between align-items-center mb-4">
+                  <input type="checkbox" id="rememberme" />
+                  <label for="rememberme">Remember me</label>
+                </div>
+      
+                <!-- Submit button -->
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-primary">Sign In</button>
+                </div>
+      
+                <div class="d-md-flex justify-content-between mt-4">
+                  <div class="mb-2 mb-md-0">
+                    <a href="{% url 'myfirstapp:signup' %}" class="fs-5">Create An Account </a>
+                  </div>
+                  <div>
+                    <a href="{% url 'myfirstapp:forgot_password' %}" class="text-inherit fs-5">Forgot your password?</a>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script src="{% static 'app/(auth)/authentication/sign-in/page.js' %}"></script>
+      <script src="{% static 'app/(auth)/authentication/layout.js' %}"></script>
+</body>
+</html>

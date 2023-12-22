@@ -163,6 +163,9 @@ def logout(request):
     request.session.pop('user', None)
     return redirect('myfirstapp:index')
 
+def forgot_password(request):
+    return render(request, 'forgot_password.html')
+
 # myfirstapp/views.py
 @never_cache
 @custom_login_required
