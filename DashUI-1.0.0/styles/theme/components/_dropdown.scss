@@ -7,7 +7,7 @@
 .dropdown-menu {
     font-size: 0.875rem;
     line-height: 1.375rem;
-    color: $gray-700;
+    color: gray-700;
     border: none;
     box-shadow: 0px 0px 1px rgba(60, 66, 87, 0.05), 0px 3px 6px rgba(60, 66, 87, 0.1), 0px 9px 24px rgba(60, 66, 87, 0.2);
     border-radius: 0.5rem;
@@ -16,7 +16,7 @@
 
 // Dropdown header
 .dropdown-header {
-    color: $gray-500;
+    color: gray-500;
     padding: 0.25rem 1.2rem;
     margin-bottom: 0.2rem;
     text-transform: uppercase;
@@ -28,7 +28,7 @@
 // Dropdown text
 .dropdown-text {
     padding: 0.25rem 1.2rem;
-    color: $gray-500;
+    color: gray-500;
     font-size: 0.75rem;
     line-height: 1.4;
 }
@@ -38,58 +38,58 @@
     font-size: 0.875rem;
     line-height: 28px;
     font-weight: 500;
-    color: $gray-900;
+    color: gray-900;
     padding: 0.125rem 1.2rem;
     &:hover {
-        color: $primary;
+        color: primary;
         text-decoration: none;
-        background-color: $light;
+        background-color: light;
         border-radius: 0rem;
     }
     &.active {
-        color: $primary;
+        color: primary;
         text-decoration: none;
-        background-color: $light;
+        background-color: light;
     }
     &:last-child {
         border-bottom: 0rem;
     }
     &:focus {
-        color: $primary;
+        color: primary;
         text-decoration: none;
-        background-color: $gray-300;
+        background-color: gray-300;
         border-radius: 0rem;
-        color: $primary;
+        color: primary;
         text-decoration: none;
-        background-color: $light;
+        background-color: light;
         border-radius: 0rem;
         .dropdown-toggle {
             &::after {
-                color: $primary;
+                color: primary;
             }
         }
         &:hover {
-            color: $primary;
+            color: primary;
             text-decoration: none;
-            background-color: $light;
+            background-color: light;
             border-radius: 0rem;
         }
         &:active {
-            color: $black;
+            color: black;
             text-decoration: none;
-            background-color: $light;
+            background-color: light;
             border-radius: 0.25rem;
         }
     }
     &:hover.dropdown-toggle {
         &::after {
-            color: $primary;
+            color: primary;
         }
     }
     &:hover {
-        color: $primary;
+        color: primary;
         text-decoration: none;
-        background-color: $light;
+        background-color: light;
         border-radius: 0px;
     }
 }
@@ -172,7 +172,7 @@
     opacity: 0.7;
     font-size: 1rem;
     width: 1.5rem;
-    color: $gray-600;
+    color: gray-600;
 }
 
 // Responsive breakpoints for dropdown

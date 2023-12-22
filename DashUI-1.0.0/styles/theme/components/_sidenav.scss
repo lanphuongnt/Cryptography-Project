@@ -13,7 +13,7 @@
   // Docs nav sidebar
   .docs-nav-sidebar {
     .navbar-toggler {
-      background-color: $white;
+      background-color: white;
     }
     width: 100%;
     position: relative;
@@ -43,7 +43,7 @@
 .doc-sidebar{
   z-index: 2;
   width: 13.625rem;
-  border-right: 1px solid $gray-300;
+  border-right: 1px solid gray-300;
   position: fixed;
   height: 100%;
   overflow: auto;
@@ -76,28 +76,28 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       font-weight: 600;
-      color: $gray-400;
+      color: gray-400;
       margin-bottom: 0rem;
     }
     span {
-      color: $gray-600;
+      color: gray-600;
     }
   }
   .nav-item {
     .nav-link {
-      color: $gray-800;
+      color: gray-800;
       font-size: .875rem;
       line-height: 1.25rem;
       padding: 0.25rem 1rem;
-      font-family: $font-family-sans-serif;
+      font-family: font-family-sans-serif;
       font-weight: 500;
 
       &:hover {
-        color: $primary;
+        color: primary;
       }
     }
     .nav-link.active {
-      color: $primary;
+      color: primary;
     }
   }
 }

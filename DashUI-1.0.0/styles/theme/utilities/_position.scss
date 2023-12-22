@@ -2,6 +2,11 @@
 // Extended from bootstrap
 //
 // Position
+$position-values: (
+    small: 10px,
+    medium: 20px,
+    large: 30px
+);
 @each $size,
 $value in $position-values {
     .top-#{$size} {

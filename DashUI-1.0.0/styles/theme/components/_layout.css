@@ -1,0 +1,90 @@
+.header .navbar {
+  padding: 0.625rem 1.5rem;
+}
+.header .navbar #nav-toggle {
+  font-size: 20px;
+  color: gray-700;
+  line-height: 0.5;
+}
+@media (max-width: 576px) {
+  .header .navbar .navbar-nav {
+    flex-direction: row;
+  }
+}
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .header .navbar .navbar-nav {
+    flex-direction: row;
+  }
+}
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .header .navbar .navbar-nav {
+    flex-direction: row;
+  }
+}
+
+#db-wrapper {
+  overflow-x: hidden;
+  display: flex;
+}
+
+#page-content {
+  min-height: 100vh;
+  min-width: 100vw;
+  margin-left: 15.625rem;
+  -webkit-transition: margin 0.25s ease-out;
+  -moz-transition: margin 0.25s ease-out;
+  -o-transition: margin 0.25s ease-out;
+  transition: margin 0.25s ease-out;
+}
+
+#db-wrapper.toggled .navbar-vertical {
+  margin-left: 0;
+}
+
+#db-wrapper.toggled #page-content {
+  margin-left: 0;
+}
+
+#db-wrapper.toggled #page-content .inner-wrapper-sticky {
+  left: 20px !important;
+}
+
+#db-wrapper.toggled #page-content .inner-wrapper-sticky .setting-nav {
+  width: 354px;
+}
+@media (max-width: 1024px) {
+  #db-wrapper.toggled #page-content .inner-wrapper-sticky .setting-nav {
+    width: 204px;
+  }
+}
+
+@media (max-width: 576px) {
+  #page-content {
+    margin-left: 0rem;
+  }
+  #db-wrapper.toggled #page-content {
+    margin-left: 15.6875rem;
+  }
+}
+@media (min-width: 768px) {
+  .navbar-vertical {
+    margin-left: 0rem;
+  }
+  #page-content {
+    min-width: 0rem;
+    width: 100%;
+  }
+  #db-wrapper.toggled .navbar-vertical {
+    margin-left: -16rem;
+  }
+}
+@media (min-width: 576px) and (max-width: 767.98px) {
+  #page-content {
+    margin-left: 0rem;
+  }
+  #db-wrapper.toggled #page-content {
+    margin-left: 15.6875rem;
+  }
+}
+
+/*# sourceMappingURL=_layout.css.map */

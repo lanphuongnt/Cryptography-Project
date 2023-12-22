@@ -10,7 +10,7 @@
 }
 
 .border-dashed {
-    border: 1px dashed $gray-300 !important;
+    border: 1px dashed gray-300 !important;
 }
 
 // divider
@@ -23,7 +23,7 @@
 &::after, &::before {
     -ms-flex: 1 1 0%;
     flex: 1 1 0%;
-    border-top: .0625rem solid $gray-400;
+    border-top: .0625rem solid gray-400;
     content: "";
     margin-top: .0625rem;
 }
