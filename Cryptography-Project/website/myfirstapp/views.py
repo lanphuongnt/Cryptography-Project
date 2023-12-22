@@ -26,29 +26,30 @@ def create_new_EHR(request, userID):
     status = request.POST.get('role')
     if status == 'patient':
         addition = {
-                    "patient_info": {
-                        "name": request.POST.get('username'),
-                        "dob": "",
-                        "gender": "",
-                        "cccd": "",
-                        "contact": {
-                            "phone": "",
-                            "email": ""
-                        },
-                        "address": {
-                            "street": "",
-                            "city": "",
-                            "state": "",
-                            "zip": ""
-                        }
+                "patient_info": {
+                    "name": request.POST.get('username'),
+                    "dob": "",
+                    "gender": "",
+                    "cccd": "",
+                    "contact": {
+                        "phone": "",
+                        "email": ""
+                    },
+                    "address": {
+                        "street": "",
+                        "city": "",
+                        "state": "",
+                        "zip": ""
                     }
-                } 
+                }
+            } 
     else:
         addition = {
             "staff_info": {
                 "name": request.POST.get('username'),
                 "dob": "",
                 "gender": "",
+                "role": status,
                 "position": "",
                 "contact": {
                     "phone": "",
@@ -71,38 +72,7 @@ def create_new_EHR(request, userID):
         ehr_col = db['staff']
     ehr_col.insert_one(addition)
 
-def get_db_handle(db_name, host, port, username, password):
-    client = MongoClient(host=host,
-                         port=int(port),
-                         username=username,
-                         password=password
-                        )
-    db_handle = client[db_name]
-    return db_handle, client
-
-def test_create_record(db_handle):
-    test_data = {"name": "Test", "email": "test@example.com"}
-    result = db_handle.myCollection.insert_one(test_data)
-    return result.inserted_id
-
-def transfer_records(src_db_handle, dest_db_handle):
-    # Get all documents from the source collection
-    src_documents = src_db_handle.stomach.find()
-
-    # Initialize a Faker instance
-    fake = Faker()
-
-    # Iterate over the documents
-    for doc in src_documents:
-        # Generate random data
-        doc['name'] = fake.name()
-        doc['email'] = fake.email()
-        doc['age'] = random.randint(20, 60)
-
-        # Insert each document into the destination collection
-        dest_db_handle.ehr.insert_one(doc)
-
-def home(request):
+def index(request):
     template = loader.get_template('myfirst.html')
     return HttpResponse(template.render())
 
@@ -144,7 +114,7 @@ def signup(request):
             # Generate EHR document for new user
             create_new_EHR(request, str(object_id))
 
-            return redirect('myfirstapp:home')
+            return redirect('myfirstapp:index')
     else:
         form = SignUpForm()
     template = loader.get_template('signup.html')
@@ -181,17 +151,17 @@ def login_view(request):
                 elif user['role'] == 'staff':
                     return redirect('myfirstapp:staff_profile')
                 else:
-                    return redirect('myfirstapp:home')
+                    return redirect('myfirstapp:index')
             
             # If no matching username and password found
-            return redirect('myfirstapp:home')
+            return redirect('myfirstapp:index')
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
 
 def logout(request):
     request.session.pop('user', None)
-    return redirect('myfirstapp:home')
+    return redirect('myfirstapp:index')
 
 # myfirstapp/views.py
 @never_cache
@@ -205,7 +175,7 @@ def staff_profile(request):
         if user['role'] == 'user':
             return redirect('myfirstapp:patient_profile')
         else:
-            return redirect('myfirstapp:home')
+            return redirect('myfirstapp:index')
 
     user_id = str(user['_id'])
     template = loader.get_template('staff_profile.html')
@@ -218,11 +188,11 @@ def patient_profile(request):
 
     # Check if the user's role is 'user'
     if user['role'] != 'user':
-        # If not, redirect them to their correct profile or home page
+        # If not, redirect them to their correct profile or index page
         if user['role'] == 'staff':
             return redirect('myfirstapp:staff_profile')
         else:
-            return redirect('myfirstapp:home')
+            return redirect('myfirstapp:index')
 
     user_id = str(user['_id'])
     template = loader.get_template('patient_profile.html')
@@ -289,9 +259,6 @@ def get_data(request):
     else:
         return None
     
-    
-
-
 def GetSubjectAttribute(self, userID, attribute_name): # attribute name is a list string 
     # Load public key 
     attribute = {} 
