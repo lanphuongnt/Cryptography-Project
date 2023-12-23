@@ -36,20 +36,20 @@ class CentralizedAuthority:
     def GetPublicKey(self, userID):
         db = self.client['CA']
         collection = db['key']
-        key_info = collection.find_one({'userID' : userID})
-        public_key = bytesToObject(key_info['public_key'])
+        key_info = collection.find_one({'_id' : userID})
+        public_key = bytesToObject(key_info['public_key'], self.cpabe.groupObj)
         return public_key
 
     def GetMasterKey(self, userID):
         db = self.client['CA']
         collection = db['key']
-        key_info = collection.find_one({'userID' : userID})
-        master_key = bytesToObject(key_info['master_key'])
+        key_info = collection.find_one({'_id' : userID})
+        master_key = bytesToObject(key_info['master_key'], self.cpabe.groupObj)
         return master_key
 
     def GeneratePrivateKey(self, userID, attribute): # Attribute of user as dict
         # Convert to list attribute
-        flatten(attribute)
+        attribute = flatten(attribute, ".")
         list_attribute = []
         for x in attribute:
             value = x.value()

@@ -1,18 +1,42 @@
 # Import Charm-Crypto
 from charm.toolbox.pairinggroup import PairingGroup, GT
 from charm.schemes.abenc.ac17 import AC17CPABE
-
+from flatten_json import flatten, unflatten
 import json
+from charm.core.engine.util import objectToBytes, bytesToObject
+
 
 def encrypttest(): 
+
+    # update = {'patientinfo': {'address': {'city': '', 'state': '', 'street': '', 'zip': ''},
+    #               'cccd': '',
+    #               'contact': {'email': '', 'phone': ''},
+    #               '1': '',
+    #               '0': '',
+    #               'name': 'Nguyen Tran Lan Phuong'}}
+    # update = flatten(update, '.')
+    # print(update)
+    # update['patientinfo.name'] = {'haha' : {'clm' : ['oke', 'oki'], 'omg': 'notok'}}
+    # update = flatten(update, '.')
+    # print(update)
+    # again = unflatten(update, '.')
+    # print(again)
+    # dict = {'lmao' : 'haha', 'key' : 'value'}
+    # js = json.dumps(dict)
+    # lst = list(dict.items())
+    # print(type(lst))
+    # print(lst)
+    # for x in dict.items():
+    #     print(x[0])
     pairing_group = PairingGroup('SS512')
 
     cpabe = AC17CPABE(pairing_group, 2)
 
     (pubkey, masterkey) = cpabe.setup()
 
-    attibute = {'role' : 'DOCTOR', 'major' : 'STOMATCH'}
-    # attibute = ['DOCTOR', 'STOMATCH']
+
+    # attibute = {'role' : 'DOCTOR', 'major' : 'STOMATCH'}
+    attibute = ['DOCTOR', 'STOMATCH']
     key = cpabe.keygen(pubkey, masterkey, attibute)
     print("public key", pubkey)
     print("masterkey", masterkey)
@@ -22,13 +46,13 @@ def encrypttest():
     # msg = b"lmao"
     policy = "((DOCTOR or PATIENT) and STOMATCH)"
     ctxt = cpabe.encrypt(pubkey, msg, policy)
-    print("type", type(ctxt))
+    print("ctxt", objectToBytes(ctxt))
     rec = cpabe.decrypt(pubkey, ctxt, key)
     if rec:
         print(rec)
     # print("public key", pubkey)
     # print("key", key)
-    # print("msg", msg)
+    print("msg", msg)
     
 encrypttest()
 
