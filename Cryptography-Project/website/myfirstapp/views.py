@@ -55,9 +55,9 @@ def signup(request):
         server_CA.Setup(str(object_id))
 
         # Generate EHR document for new user
-        lmao = create_new_EHR(request, str(object_id))
+        create_new_EHR(request, str(object_id))
 
-        return HttpResponse(lmao)
+        # return HttpResponse(lmao)
         return redirect('myfirstapp:index')
     else:
         return render(request, 'pages-register.html')

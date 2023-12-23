@@ -4,7 +4,7 @@ from charm.schemes.abenc.ac17 import AC17CPABE
 from Crypto.Cipher import AES
 import hashlib
 import json
-
+import base64
 from .SerializeCTXT import *
 
 class CPABE:
@@ -12,33 +12,49 @@ class CPABE:
         if scheme == "AC17":
             self.groupObj = PairingGroup("SS512")
             self.ac17 = AC17CPABE(self.groupObj, 2)
+            self.serialized = SerializeCTXT()
     def encrypt(self, public_key, message, policy):
         random_key = self.groupObj.random(GT)
         
         # Encrypt random_key using CP-ABES
         encrypted_key = self.ac17.encrypt(public_key, random_key, policy)
-        
+        # Serialize to save to database
+        encrypted_key_b = self.serialized.jsonify_ctxt(encrypted_key)
         # Create key for AES by random_key
-
         hash = hashlib.sha256(str(random_key).encode())
         key = hash.digest()
-        message = message.encode('utf-8')
         aes = AES.new(key, AES.MODE_GCM)
-        ciphertext, authTag = aes.encrypt_and_digest(message)
+
+        if type(message) != bytes:
+            if type(message) != str:
+                message = str(message)
+    
+        ciphertext, authTag = aes.encrypt_and_digest(message.encode())
         nonce = aes.nonce
 
         # Final ciphertext that will be sent to database
         ciphertext = nonce + ciphertext + authTag
-        encrypted_data = {'encrypted_key' : encrypted_key, 'ciphertext' : ciphertext.hex()}
+        
+        # 
+        len_encrypted_data = len(encrypted_key_b)
+        encrypted_data = len_encrypted_data.to_bytes(8, byteorder='big') + encrypted_key_b.encode() + ciphertext
+        # Encode Base64 for encrypted_key and ciphertext
+
+        encrypted_data = base64.b64encode(encrypted_data).decode()
         return encrypted_data
     
     def decrypt(self, public_key, encrypted_data, private_key): # encrypted_data is dict type (not json)
-        
-        encrypted_key = encrypted_data['encrypted_data']['encrypted_key']
+        encrypted_data = base64.b64decode(encrypted_data.encode())
+        len_encrypted_key = int.from_bytes(encrypted_data[:8], byteorder='big')
+        encrypted_key_b = encrypted_data[8:8 + len_encrypted_key]
+        ciphertext = encrypted_data[8 + len_encrypted_key:]
+
+        encrypted_key_b.decode()
+        encrypted_key = self.serialized.unjsonify_ctxt(encrypted_key_b)
+
         recovered_random_key = self.decrypt(public_key, encrypted_key, private_key)
         
         if recovered_random_key:
-            ciphertext = encrypted_data['encrypted_data']['ciphertext']
             nonce = ciphertext[:16]
             authTag = ciphertext[-16:]
             ciphertext = ciphertext[16:-16]

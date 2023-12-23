@@ -22,7 +22,10 @@ def encrypttest():
            '_id' : '658696add564fb6fdf9ff0f2',
            'status' : 'patient',
            'set' : {
-                'name' : 'Nguyen Tran Lan Phuong',
+                'name' : {
+                    'firstname' : 'Phuong',
+                    'lastname' : 'Nguyen',
+                },
                 'email' : '22521168@gm.uit.edu.vn',   
                 'specialty' : 'stomach',
             }
@@ -33,16 +36,16 @@ def encrypttest():
     ac17 = AC17CPABE(groupObj, 2)
     (public_key, master_key) = ac17.setup()
 
-    attibute = ['DOCTOR', 'STOMATCH']
+    attibute = ['DOCTOR', 'STOMACH']
     key = ac17.keygen(public_key, master_key, attibute)
     # print("public_key:", public_key)
     # print("master_key:", master_key)
-    # random_key = groupObj.random(GT)
-    # print(f"random_key : {random_key}")
-    # policy = "((DOCTOR and STOMATCH) or PATIENT)"
-    # ctxt = ac17.encrypt(public_key, random_key, policy)
+    random_key = groupObj.random(GT)
+    print(f"random_key : {random_key}")
+    policy = "((DOCTOR and STOMACH) or PATIENT)"
+    ctxt = ac17.encrypt(public_key, random_key, policy)
     # print(f"ctxt : {ctxt}")
-    # ctxt_b = serialize_encoder.jsonify_ctxt(ctxt)
+    ctxt_b = serialize_encoder.jsonify_ctxt(ctxt)
     # print(f"ctxt_b : {ctxt_b}")
     
     # js = {'encrypted_key' : ctxt_b}
@@ -51,9 +54,9 @@ def encrypttest():
     lmao = col.find_one({'_id' : ObjectId('6586a05af5501fe0ee1b8747')})
     enc_key = lmao['encrypted_key']
     ctxt = serialize_encoder.unjsonify_ctxt(enc_key)
-    rec = ac17.decrypt(public_key, ctxt, key)
+    # rec = ac17.decrypt(public_key, ctxt, key)
 
-    print(rec)
+    # print(rec)
 
     # if random_key == rec:
         # print("Successfully")
@@ -67,10 +70,10 @@ def encrypttest():
     
     # # Create key for AES by random_key
 
-    # hash = hashlib.sha256(str(random_key).encode())
-    # key = hash.digest()
-    # message = message.encode('utf-8')
-    # aes = AES.new(key, AES.MODE_GCM)
+    hash = hashlib.sha256(str(random_key).encode())
+    key = hash.digest()
+    message = message.encode('utf-8')
+    aes = AES.new(key, AES.MODE_GCM)
     # ciphertext, authTag = aes.encrypt_and_digest(message)
     # nonce = aes.nonce
 
