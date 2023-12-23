@@ -83,14 +83,24 @@ def create_new_EHR(request, userID):
                 }
             }
         }
-    addition['_id'] = userID
 
     db = server_CA.client['data']
     if status == 'Patient':
         ehr_col = db['ehr']
     else:
         ehr_col = db['staff']
-    ehr_col.insert_one(addition)
+    ehr_col.insert_one({'_id' : ObjectId(userID)})
+
+    # Tui test cai nay
+    new_request = {'$set' : addition}
+    new_request['_id'] = userID
+    new_request['database'] = 'data'
+    if status == 'Patient':
+        new_request['collection'] = 'ehr'
+    else:
+        new_request['collection'] = 'staff'
+    
+    insert_data(new_request)
 
 def get_data(request):
     # Request (dict) include: database, collection, username(ObjectID), {'$get' : {'dataname1': datavalue1}, {data}}
@@ -100,19 +110,20 @@ def get_data(request):
     encryted_data = collection.find(request['$get'])
 
     if encryted_data:
-        flatten(encryted_data)
+        encryted_data = flatten(encryted_data, ".")
         recovered_data = {}
         CA_db = server_CA.client['CA']
         attribute_col = CA_db['subject_attribute']
         user_attribute = attribute_col.find_one(request['$get'])    
 
-        private_key = server_CA.GeneratePrivateKey(request['username'], user_attribute)
-        public_key = server_CA.GetPublicKey(request['username'])
+        private_key = server_CA.GeneratePrivateKey(request['_id'], user_attribute)
+        public_key = server_CA.GetPublicKey(request['_id'])
 
-        for ed in encryted_data:
-            recovered_data[ed.key()] = server_CA.cpabe.decrypt(public_key, ed.value(), private_key)
+        for ed in encryted_data.items():
+            recovered_data[ed[0]] = server_CA.cpabe.decrypt(public_key, ed[1], private_key)
 
-        unflatten(recovered_data)
+        recovered_data = flatten(recovered_data, ".")
+        recovered_data = unflatten(recovered_data, ".")
 
         return recovered_data
     else:
@@ -131,7 +142,7 @@ def insert_data(request):
 
     update_data = request['$set']
     encrypted_data = {}
-    flatten(update_data)
+    update_data = flatten(update_data, ".")
 
     policy_col = server_CA.client['policy_repository']['abe']
     policy = policy_col.find_one({'request' : 'insert'})['policy']
@@ -141,15 +152,15 @@ def insert_data(request):
     # user_attribute = attribute_col.find_one({"_id" : ObjectId(request['username'])})    
     
     # private_key, public_key = server_CA.GeneratePrivateKey(request['username'], user_attribute)
-    public_key = server_CA.GetPublicKey(request['username'])
+    public_key = server_CA.GetPublicKey(request['_id'])
 
-    for data in update_data.item():
-        encrypted_data[data.key()] = server_CA.cpabe.encrypt(public_key, data.value, policy)
+    for data in update_data.items():
+        encrypted_data[data[0]] = server_CA.cpabe.encrypt(public_key, data[1], policy)
+    encrypted_data = flatten(encrypted_data, ".")
+    encrypted_data = unflatten(encrypted_data, ".")
 
-    unflatten(encrypted_data)
-
-    collection.update_many({'_id': ObjectId(request['username'])}, {'$set': encrypted_data})
-    response = collection.find_one({'_id': ObjectId(request['username'])})
+    collection.update_one({'_id': ObjectId(request['_id'])}, {'$set': encrypted_data})
+    response = collection.find_one({'_id': ObjectId(request['_id'])})
     if response:
         return True
     else:
