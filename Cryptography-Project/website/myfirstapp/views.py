@@ -129,6 +129,23 @@ def patient_profile(request):
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
 # It is the default password hashing algorithm used by Django for user authentication.
 
+def patient_view(request, patient_id):
+    user = request.session['user']
+    user_id = str(user['_id'])
+    template = loader.get_template('patient_view.html')
+
+    # Retrieve the encrypted patient data from the database
+    db = server_CA.client['data']
+    collection = db['ehr']
+    patient_data = collection.find_one({'_id': ObjectId(patient_id)})
+
+    # Decrypt the patient data
+    decrypted_data = {}
+    for key, value in patient_data.items():
+        if key != '_id':
+            decrypted_data[key] = server_CA.cpabe.decrypt(server_CA.private_key, value)
+
+    return HttpResponse(template.render({'patient_data': decrypted_data}, request))
 
 def insert_data(new_request):
     # Request (dict) include: database, collection, username(ObjectID), {'$set' : {'dataname1': datavalue1}, {data}}
