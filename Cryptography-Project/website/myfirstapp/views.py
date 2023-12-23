@@ -2,19 +2,11 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
 from pymongo import MongoClient
-import random
-from django.contrib.auth.models import User
-from django.contrib.auth import login, authenticate
-from .forms import SignUpForm, LoginForm
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import check_password, make_password
-from django.contrib.auth.decorators import login_required
 
-from .source.mypackages.CA import CentralizedAuthority
-from django.contrib import messages
-from django.contrib.auth import login
 from bson import ObjectId
 from django.views.decorators.cache import never_cache
+<<<<<<< HEAD
 from flatten_json import flatten, unflatten
 import json
 from charm.core.engine.util import objectToBytes, bytesToObject
@@ -83,6 +75,14 @@ def create_new_EHR(request, userID):
     #     col = db['staff']
     return insert_data(addition)
 
+=======
+from .source.mypackages.CA import CentralizedAuthority
+from.utils import create_new_EHR, get_data, insert_data
+
+server_CA = CentralizedAuthority()
+# server_CA.AddPolicy()
+
+>>>>>>> 2ca04390a5fa85d4962ed274da8ab99d4dec3ab9
 def index(request):
     template = loader.get_template('myfirst.html')
     return HttpResponse(template.render())
@@ -176,14 +176,6 @@ def forgot_password(request):
 def staff_profile(request):
     user = request.session['user']
 
-    # Check if the user's role is 'staff'
-    if user['role'] != 'staff':
-        # If not, redirect them to their correct profile or home page
-        if user['role'] == 'user':
-            return redirect('myfirstapp:patient_profile')
-        else:
-            return redirect('myfirstapp:index')
-
     user_id = str(user['_id'])
     template = loader.get_template('staff_profile.html')
     return HttpResponse(template.render({'user_id': user_id}, request))
@@ -192,20 +184,19 @@ def staff_profile(request):
 @custom_login_required
 def patient_profile(request):
     user = request.session['user']
+    # user_id = str(user['_id'])
+    # client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
+    # collection = client['data']['ehr']
+    # patient_info = collection.find_one({'_id': ObjectId(user_id)})
 
     # Check if the user's role is 'user'
-    if user['role'] != 'user':
-        # If not, redirect them to their correct profile or index page
-        if user['role'] == 'staff':
-            return redirect('myfirstapp:staff_profile')
-        else:
-            return redirect('myfirstapp:index')
-
-    user_id = str(user['_id'])
-    template = loader.get_template('users-profile copy.html')
-    return HttpResponse(template.render({'user_id': user_id}, request))
+    # if user['role'] != 'user':
+    # template = loader.get_template('users-profile copy.html')
+    return render(request, 'users-profile copy.html')
+    # return HttpResponse(template.render({'patient_info': patient_info}, request))
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
 # It is the default password hashing algorithm used by Django for user authentication.
+<<<<<<< HEAD
 
 
 def insert_data(new_request):
@@ -278,3 +269,6 @@ def GetSubjectAttribute(self, userID, attribute_name): # attribute name is a lis
     attribute = {} 
     return attribute
     
+=======
+        
+>>>>>>> 2ca04390a5fa85d4962ed274da8ab99d4dec3ab9
