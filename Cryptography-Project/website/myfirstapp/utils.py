@@ -105,21 +105,24 @@ def create_new_EHR(request, userID):
 def get_data(request):
     # Request (dict) include: database, collection, username(ObjectID), {'$get' : {'dataname1': datavalue1}, {data}}
     # Example : request = {'database' : 'data', 'collection' : 'ehr', 'username' : '65845045be5cf517d0a932e1', {'height' : 153}}
-    db = server_CA.client[request['data']]
-    collection = db[request['ehr']]
-    encryted_data = collection.find(request['$get'])
+    db = server_CA.client[request['database']]
+    collection = db[request['collection']] 
+    encryted_data = collection.find_one({'_id' : ObjectId(request['_id'])})
 
     if encryted_data:
         encryted_data = flatten(encryted_data, ".")
         recovered_data = {}
         CA_db = server_CA.client['CA']
         attribute_col = CA_db['subject_attribute']
-        user_attribute = attribute_col.find_one(request['$get'])    
-
-        private_key = server_CA.GeneratePrivateKey(request['_id'], user_attribute)
-        public_key = server_CA.GetPublicKey(request['_id'])
+        user_attribute = attribute_col.find_one({'_id' : ObjectId(request['_id'])})    
+        user_attribute['_id'] = str(user_attribute['_id'])
+        private_key, public_key = server_CA.GeneratePrivateKey(request['_id'], user_attribute)
+        # public_key = server_CA.GetPublicKey(request['_id'])
 
         for ed in encryted_data.items():
+            if ed[0] == '_id':
+                recovered_data[ed[0]] = ed[1]
+                continue
             recovered_data[ed[0]] = server_CA.cpabe.decrypt(public_key, ed[1], private_key)
 
         recovered_data = flatten(recovered_data, ".")

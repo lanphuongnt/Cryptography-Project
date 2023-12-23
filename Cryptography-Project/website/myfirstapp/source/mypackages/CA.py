@@ -51,12 +51,16 @@ class CentralizedAuthority:
         # Convert to list attribute
         attribute = flatten(attribute, ".")
         list_attribute = []
-        for x in attribute:
-            value = x.value()
+        # list_attribute = list(attribute.values())
+        for x in attribute.items():
+            value = x[1]
             if type(value) is not str:
-                x = str(value)
-            value.upper()
-            list_attribute.append()
+                value = str(value)
+            value = value.upper()
+            list_attribute.append(value)
+
+        # DEBUG
+        # list_attribute = ['PATIENT', 'STOMACH', 'STOMATCH', 'ABE']
 
         public_key = self.GetPublicKey(userID)
         master_key = self.GetMasterKey(userID)

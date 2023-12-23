@@ -113,6 +113,16 @@ def staff_profile(request):
 @custom_login_required
 def patient_profile(request):
     user = request.session['user']
+    new_request = {
+        'database' : 'data',
+        'collection' : 'ehr',
+        '_id' : user['_id'],
+    }
+    patient_info = get_data(new_request)
+    # HttpResponse(patient_info)
+    # col = server_CA.client['data']['ehr']
+    # patient_doc = col.find_one({'_id' : user['_id']})
+    
     # user_id = str(user['_id'])
     # client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
     # collection = client['data']['ehr']
@@ -121,6 +131,7 @@ def patient_profile(request):
     # Check if the user's role is 'user'
     # if user['role'] != 'user':
     # template = loader.get_template('users-profile copy.html')
+    return render(request, 'patient-profile.html', {'patient_info': patient_info['patient_info']})
     return render(request, 'patient-profile.html')
     # return HttpResponse(template.render({'patient_info': patient_info}, request))
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
