@@ -31,7 +31,15 @@
 
 </body>
 </html>
-<!-- Add login button -->
-<a href="{% url 'myfirstapp:login' %}">Login</a>
-<!-- Add register button -->
-<a href="{% url 'myfirstapp:signup' %}">Register</a>
+<form action="{% url 'myfirstapp:logout' %}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Logout">
+</form>
+<form action="{% url 'myfirstapp:signup' %}" method="get">
+    {% csrf_token %}
+    <input type="submit" value="Sign up">
+</form>
+<form action="{% url 'myfirstapp:login' %}" method="get">
+    {% csrf_token %}
+    <input type="submit" value="Login">
+</form>
