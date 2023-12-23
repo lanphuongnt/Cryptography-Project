@@ -3,6 +3,7 @@ import json
 from .source.mypackages.CA import CentralizedAuthority
 from bson import ObjectId
 from faker import Faker
+import random
 
 fake = Faker()        
 server_CA = CentralizedAuthority()
@@ -32,6 +33,8 @@ def create_new_EHR(request, userID):
                     "phone": fake.phone_number(),
                     "email": fake.email()
                 },
+                "disease": random.choice(["Dermatology", "Stomach"]),
+                "doctorID": "",
                 "medical_history": {
                     "blood_type": fake.random_element(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]),
                     "height": fake.random_int(min=150, max=200),
@@ -59,7 +62,48 @@ def create_new_EHR(request, userID):
                             "prescription": fake.sentence()
                         }
                     ],
-                    "notes": fake.paragraph()
+                    "notes": fake.paragraph(),
+                    "presentingComplaint": {
+                        "complaint": fake.sentence()
+                    },
+                    "clinicalFindings": {
+                        "findings": fake.sentence()
+                    },
+                    "allergenTesting": {
+                        "testing": fake.sentence()
+                    },
+                    "diagnosis": {
+                        "diagnosisDescription": {
+                            "description": fake.sentence()
+                        },
+                        "diagnosisDate": fake.date_between(start_date='-1y', end_date='today').strftime("%Y-%m-%d"),
+                        "diagnosisLocation": {
+                            "location": fake.city()
+                        },
+                        "diagnosisType": {
+                            "type": fake.word()
+                        }
+                    },
+                    "treatmentPlan": {
+                        "allergenAvoidance": fake.sentence(),
+                        "topicalSteroids": fake.sentence(),
+                        "antihistamines": fake.sentence(),
+                        "treatmentPlanDescription": {
+                            "description": fake.sentence()
+                        },
+                        "treatmentPlanDate": fake.date_between(start_date='-1y', end_date='today').strftime("%Y-%m-%d"),
+                        "treatmentPlanLocation": {
+                            "location": fake.city()
+                        },
+                        "treatmentPlanType": {
+                            "type": fake.word()
+                        }
+                    },
+                    "patientEducation": fake.paragraph(),
+                    "followUpPlan": {
+                        "followUpAppointmentDate": fake.date_between(start_date='today', end_date='+1y').strftime("%Y-%m-%d"),
+                        "prognosis": fake.sentence()
+                    }
                 }
             }
         }
