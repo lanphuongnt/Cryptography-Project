@@ -6,83 +6,15 @@ from django.contrib.auth.hashers import check_password, make_password
 
 from bson import ObjectId
 from django.views.decorators.cache import never_cache
-<<<<<<< HEAD
 from flatten_json import flatten, unflatten
 import json
 from charm.core.engine.util import objectToBytes, bytesToObject
-server_CA = CentralizedAuthority()
-# server_CA.AddPolicy()
-
-
-def create_new_EHR(request, userID):
-    status = request.POST['status']
-    if status == 'Patient':
-        addition = {
-                # Set up source request
-                '_id' : userID,
-                'database' :  'data',
-                'collection': 'ehr',
-                '$set' : {
-                    "patientinfo": {
-                        "name": request.POST['name'],
-                        "dob": "",
-                        "gender": "",
-                        "cccd": "",
-                        "contact": {
-                            "phone": "",
-                            "email": ""
-                        },
-                        "address": {
-                            "street": "",
-                            "city": "",
-                            "state": "",
-                            "zip": ""
-                        }
-                    }
-                }
-            } 
-    else:
-        addition = {
-                # Set up source request
-                '_id' : userID,
-                'database' :  'data',
-                'collection': 'staff',
-                '$set' : {
-                    "staffinfo": {
-                        "name": request.POST['name'],
-                        "dob": "",
-                        "gender": "",
-                        "cccd": "",
-                        "contact": {
-                            "phone": "",
-                            "email": ""
-                        },
-                        "address": {
-                            "street": "",
-                            "city": "",
-                            "state": "",
-                            "zip": ""
-                        }
-                    }
-                }
-            } 
-
-
-    # db = server_CA.client['data']
-    # if status == 'Patient':
-    #     col = db['ehr']
-    # else:
-    #     col = db['staff']
-    return insert_data(addition)
-
-=======
 from .source.mypackages.CA import CentralizedAuthority
 from.utils import create_new_EHR, get_data, insert_data
 
 server_CA = CentralizedAuthority()
 # server_CA.AddPolicy()
 
->>>>>>> 2ca04390a5fa85d4962ed274da8ab99d4dec3ab9
 def index(request):
     template = loader.get_template('myfirst.html')
     return HttpResponse(template.render())
@@ -196,7 +128,6 @@ def patient_profile(request):
     # return HttpResponse(template.render({'patient_info': patient_info}, request))
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
 # It is the default password hashing algorithm used by Django for user authentication.
-<<<<<<< HEAD
 
 
 def insert_data(new_request):
@@ -269,6 +200,4 @@ def GetSubjectAttribute(self, userID, attribute_name): # attribute name is a lis
     attribute = {} 
     return attribute
     
-=======
         
->>>>>>> 2ca04390a5fa85d4962ed274da8ab99d4dec3ab9
