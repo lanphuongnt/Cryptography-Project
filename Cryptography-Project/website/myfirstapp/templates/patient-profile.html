@@ -355,7 +355,7 @@
             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
               <img src="{% static 'assets/img/profile-img.jpg' %}" alt="Profile" class="rounded-circle">
-              <h2>Kevin Anderson</h2>
+              <h2>{{ patient_info.full_name }}</h2>
               <h3>Patient</h3>
             </div>
           </div>
@@ -384,27 +384,27 @@
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label ">Full Name</div>
-                    <div class="col-lg-9 col-md-8">Kevin Anderson</div>
+                    <div class="col-lg-9 col-md-8">{{ patient_info.full_name }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Date of Birth</div>
-                    <div class="col-lg-9 col-md-8">January 1, 1990</div>
+                    <div class="col-lg-9 col-md-8">{{ patient_info.dob }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Gender</div>
-                    <div class="col-lg-9 col-md-8">Male</div>
+                    <div class="col-lg-9 col-md-8">{{ patient_info.gender }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">ID</div>
-                    <div class="col-lg-9 col-md-8">000125489</div>
+                    <div class="col-lg-9 col-md-8"> {{ patient_info.ID }} </div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Address</div>
-                    <div class="col-lg-9 col-md-8">A108 Adam Street, New York, NY 535022</div>
+                    <div class="col-lg-9 col-md-8">{{ patient_info.address.street|safe }}, {{ patient_info.address.city|safe }}, {{ patient_info.address.state|safe }} {{ patient_info.address.zip|safe }}</div>
                   </div>
 
                   <div class="row">
@@ -644,6 +644,10 @@
 
   <!-- Template Main JS File -->
   <script src="{% static 'assets/js/main.js' %}"></script>
+
+  <script>
+
+  </script>
 
 </body>
 

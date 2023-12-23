@@ -49,17 +49,15 @@ class CPABE:
         encrypted_key_b = encrypted_data[8:8 + len_encrypted_key]
         ciphertext = encrypted_data[8 + len_encrypted_key:]
 
-        encrypted_key_b.decode()
-        encrypted_key = self.serialized.unjsonify_ctxt(encrypted_key_b)
-
-        recovered_random_key = self.decrypt(public_key, encrypted_key, private_key)
+        encrypted_key = self.serialized.unjsonify_ctxt(encrypted_key_b.decode('utf-8'))
+        recovered_random_key = self.ac17.decrypt(public_key, encrypted_key, private_key)
         
         if recovered_random_key:
             nonce = ciphertext[:16]
             authTag = ciphertext[-16:]
             ciphertext = ciphertext[16:-16]
         
-            key = hashlib.sha256(str(recovered_random_key)).digest()
+            key = hashlib.sha256(str(recovered_random_key).encode()).digest()
         
             aes = AES.new(key, AES.MODE_GCM, nonce)
             recovered_message = aes.decrypt_and_verify(ciphertext, authTag)
