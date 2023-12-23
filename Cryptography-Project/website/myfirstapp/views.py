@@ -16,7 +16,7 @@ def index(request):
     template = loader.get_template('myfirst.html')
     return HttpResponse(template.render())
 
-@never_cache
+# @never_cache
 def signup(request):
     if request.method == 'POST':
         db = server_CA.client['user']
@@ -67,7 +67,7 @@ def custom_login_required(view_func):
             return redirect('myfirstapp:login')
     return _wrapped_view_func
 
-@never_cache
+# @never_cache
 def login_view(request):
     if request.method == 'POST':
         # client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
@@ -103,11 +103,11 @@ def forgot_password(request):
 @never_cache
 @custom_login_required
 def staff_profile(request):
-    user = request.session['user']
+    # user = request.session['user']
 
-    user_id = str(user['_id'])
-    template = loader.get_template('staff_profile.html')
-    return HttpResponse(template.render({'user_id': user_id}, request))
+    # user_id = str(user['_id'])
+    # template = loader.get_template('staff_profile.html')
+    return render(request, 'staff-profile.html')
 
 @never_cache
 @custom_login_required
@@ -121,7 +121,7 @@ def patient_profile(request):
     # Check if the user's role is 'user'
     # if user['role'] != 'user':
     # template = loader.get_template('users-profile copy.html')
-    return render(request, 'users-profile copy.html')
+    return render(request, 'patient-profile.html')
     # return HttpResponse(template.render({'patient_info': patient_info}, request))
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
 # It is the default password hashing algorithm used by Django for user authentication.
