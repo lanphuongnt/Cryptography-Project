@@ -202,7 +202,7 @@ def patient_profile(request):
             return redirect('myfirstapp:index')
 
     user_id = str(user['_id'])
-    template = loader.get_template('users-profile.html')
+    template = loader.get_template('users-profile copy.html')
     return HttpResponse(template.render({'user_id': user_id}, request))
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
 # It is the default password hashing algorithm used by Django for user authentication.
