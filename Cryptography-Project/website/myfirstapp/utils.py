@@ -78,6 +78,13 @@ def create_new_staff(request, userID):
 
     insert_data(new_request)
 
+def get_subject_attribute(userID): # attribute name is a list string 
+    # Load public key 
+    CA_db = server_CA.client['CA']
+    attribute_col = CA_db['subject_attribute']
+    user_attribute = attribute_col.find_one({'_id' : ObjectId(userID)})    
+    user_attribute['_id'] = str(user_attribute['_id'])
+    return user_attribute
 
 
 def create_new_EHR(request, userID):
@@ -105,8 +112,8 @@ def create_new_EHR(request, userID):
             },
         },
         "medical_history": {
-            "disease": random.choice(["Dermatology", "Stomach"]),
-            "doctorID": "",
+            "disease": random.choice(["Stomach"]),
+            "doctorID": "6587c812fcc17eb2aa0f2bc8",
             "blood_type": fake.random_element(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]),
             "height": fake.random_int(min=150, max=200),
             "weight": fake.random_int(min=50, max=150),
@@ -208,7 +215,14 @@ def create_new_EHR(request, userID):
 
 def get_data(request):
     # Request (dict) include: database, collection, username(ObjectID), {'$get' : {'dataname1': datavalue1}, {data}}
-    # Example : request = {'database' : 'data', 'collection' : 'ehr', 'username' : '65845045be5cf517d0a932e1', {'height' : 153}}
+    '''
+    Example : 
+    request = {
+        'database' : 'data', 
+        'collection' : 'ehr', 
+        '_id' : '65845045be5cf517d0a932e1', 
+        'requester_id' : '....',
+    '''
     db = server_CA.client[request['database']]
     collection = db[request['collection']] 
     encryted_data = collection.find_one({'_id' : ObjectId(request['_id'])})
@@ -216,11 +230,9 @@ def get_data(request):
     if encryted_data:
         encryted_data = flatten(encryted_data, ".")
         recovered_data = {}
-        CA_db = server_CA.client['CA']
-        attribute_col = CA_db['subject_attribute']
-        user_attribute = attribute_col.find_one({'_id' : ObjectId(request['_id'])})    
-        user_attribute['_id'] = str(user_attribute['_id'])
-        private_key, public_key = server_CA.GeneratePrivateKey(request['_id'], user_attribute)
+        
+        requester_attribute = get_subject_attribute(request['requester_id'])
+        private_key, public_key = server_CA.GeneratePrivateKey(request['requester_id'], requester_attribute)
         # public_key = server_CA.GetPublicKey(request['_id'])
 
         for ed in encryted_data.items():
@@ -236,14 +248,20 @@ def get_data(request):
     else:
         return None
     
-def GetSubjectAttribute(self, userID, attribute_name): # attribute name is a list string 
-    # Load public key 
-    attribute = {} 
-    return attribute
 
 def insert_data(request):
     # Request (dict) include: database, collection, username(ObjectID), {'$set' : {'dataname1': datavalue1}, {data}}
-    # Example : request = {'database' : 'data', 'collection' : 'ehr', 'username' : '65845045be5cf517d0a932e1', 'source' : medical_history}
+    '''
+    Example : 
+    request = {
+        'database' : 'data', 
+        'collection' : 'ehr', 
+        '_id' : '65845045be5cf517d0a932e1', 
+        'source' : medical_history,
+        'requester_id' : '....', (optional)
+        '$set' : {},
+    }
+    '''
     db = server_CA.client[request['database']]
     collection = db[request['collection']]
 
@@ -269,3 +287,19 @@ def insert_data(request):
         return True
     else:
         return False
+
+
+def get_ehr_by_specialty(staff_ID):
+    '''
+        request = {
+            'database' : 'data', 
+            'collection' : 'ehr', 
+            '_id' : '65845045be5cf517d0a932e1',
+    '''
+
+    staff_attribute = get_subject_attribute(staff_ID)
+    list_patient = server_CA.client['CA']['subject_attribute'].find({'specialty' : staff_attribute['specialty'], 'status' : 'patient'})
+    list_patient_id = []
+    for patient in list_patient:
+        list_patient_id.append(str(patient['_id']))
+    return {patient : list_patient_id}
