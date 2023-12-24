@@ -122,38 +122,27 @@ def patient_profile(request):
         '_id' : user['_id'],
     }
     patient_info = get_data(new_request)
-    # HttpResponse(patient_info)
-    # col = server_CA.client['data']['ehr']
-    # patient_doc = col.find_one({'_id' : user['_id']})
-    
-    # user_id = str(user['_id'])
-    # client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
-    # collection = client['data']['ehr']
-    # patient_info = collection.find_one({'_id': ObjectId(user_id)})
-
-    # Check if the user's role is 'user'
-    # if user['role'] != 'user':
-    # template = loader.get_template('users-profile copy.html')
     return render(request, 'patient-profile.html', {'patient_info': patient_info['patient_info']})
-    return render(request, 'patient-profile.html')
-    # return HttpResponse(template.render({'patient_info': patient_info}, request))
-# The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
-# It is the default password hashing algorithm used by Django for user authentication.
 
 def patient_view(request, patient_id):
     user = request.session['user']
-    user_id = str(user['_id'])
-    template = loader.get_template('patient_view.html')
+    # user_id = str(user['_id'])
+    # template = loader.get_template('patient_view.html')
 
-    # Retrieve the encrypted patient data from the database
-    db = server_CA.client['data']
-    collection = db['ehr']
-    patient_data = collection.find_one({'_id': ObjectId(patient_id)})
+    # # Retrieve the encrypted patient data from the database
+    # db = server_CA.client['data']
+    # collection = db['ehr']
+    # patient_data = collection.find_one({'_id': ObjectId(patient_id)})
 
-    # Decrypt the patient data
-    decrypted_data = {}
-    for key, value in patient_data.items():
-        if key != '_id':
-            decrypted_data[key] = server_CA.cpabe.decrypt(server_CA.private_key, value)
+    # # Decrypt the patient data
+    # decrypted_data = {}
+    # for key, value in patient_data.items():
+    #     if key != '_id':
+    #         decrypted_data[key] = server_CA.cpabe.decrypt(server_CA.private_key, value)
 
-    return HttpResponse(template.render({'patient_data': decrypted_data}, request))
+    # return HttpResponse(template.render({'patient_data': decrypted_data}, request))
+    new_request = {
+        'database' : 'data',
+        'collection' : 'ehr',
+        '_id' : patient_id,
+    }
