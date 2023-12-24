@@ -144,18 +144,23 @@ def patient_profile(request):
 
 def patient_view(request, patient_id):
     user = request.session['user']
-    user_id = str(user['_id'])
-    template = loader.get_template('patient_view.html')
+    # user_id = str(user['_id'])
+    # template = loader.get_template('patient_view.html')
 
-    # Retrieve the encrypted patient data from the database
-    db = server_CA.client['data']
-    collection = db['ehr']
-    patient_data = collection.find_one({'_id': ObjectId(patient_id)})
+    # # Retrieve the encrypted patient data from the database
+    # db = server_CA.client['data']
+    # collection = db['ehr']
+    # patient_data = collection.find_one({'_id': ObjectId(patient_id)})
 
-    # Decrypt the patient data
-    decrypted_data = {}
-    for key, value in patient_data.items():
-        if key != '_id':
-            decrypted_data[key] = server_CA.cpabe.decrypt(server_CA.private_key, value)
+    # # Decrypt the patient data
+    # decrypted_data = {}
+    # for key, value in patient_data.items():
+    #     if key != '_id':
+    #         decrypted_data[key] = server_CA.cpabe.decrypt(server_CA.private_key, value)
 
-    return HttpResponse(template.render({'patient_data': decrypted_data}, request))
+    # return HttpResponse(template.render({'patient_data': decrypted_data}, request))
+    new_request = {
+        'database' : 'data',
+        'collection' : 'ehr',
+        '_id' : patient_id,
+    }
