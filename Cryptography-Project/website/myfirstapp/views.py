@@ -133,6 +133,7 @@ def patient_profile(request):
         'database' : 'data',
         'collection' : 'ehr',
         '_id' : user['_id'],
+        'requester_id' : user['_id']
     }
     ehr_patient = get_data(new_request)
  
