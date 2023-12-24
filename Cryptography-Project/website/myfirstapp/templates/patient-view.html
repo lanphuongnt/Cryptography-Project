@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient View</title>
+</head>
+<body>
+    <pre id="json-data"></pre>
+
+    <script>
+        // Assuming you have received JSON data from somewhere
+        var jsonData = {
+            "name": "John Doe",
+            "age": 30,
+            "email": "johndoe@example.com"
+        };
+
+        // Convert JSON to a string with indentation for readability
+        var formattedJson = JSON.stringify(jsonData, null, 4);
+
+        // Display the formatted JSON in the <pre> element
+        document.getElementById("json-data").textContent = formattedJson;
+    </script>
+</body>
+</html>

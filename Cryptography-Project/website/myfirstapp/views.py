@@ -108,23 +108,16 @@ def forgot_password(request):
 @custom_login_required
 def staff_profile(request): # Tao lo code lon cho
     # request GET ehr following SPECIALTY
-    request_specialty = {
-        ''
-    }
     user = request.session['user']
-    '''
-    Example :
-    list_patient_id = {
-        'patient' : [
-            '22521168',
-            '22520706,
-        ]
+    new_request = {
+        'database' : 'data',
+        'collection' : 'ehr',
+        '_id' : user['_id'],
+        'requester_id' : user['_id']
     }
-    '''
-    list_patient_id = get_ehr_by_specialty(user['_id'])
-    # template = loader.get_template('staff_profile.html')
-    return render(request, 'staff-profile.html')
-
+    staff_info = get_data(new_request)
+ 
+    return render(request, 'staff-profile.html', staff_info)
 @never_cache
 @custom_login_required
 def patient_profile(request):
