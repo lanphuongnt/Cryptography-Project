@@ -373,6 +373,10 @@
                 </li>
 
                 <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#medical-history">Medical History</button>
+                </li>
+
+                <li class="nav-item">
                   <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
                 </li>
 
@@ -409,19 +413,22 @@
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Phone</div>
-                    <div class="col-lg-9 col-md-8">(436) 486-3538 x29071</div>
+                    <div class="col-lg-9 col-md-8">{{ patient_info.contact.phone }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Email</div>
-                    <div class="col-lg-9 col-md-8">k.anderson@example.com</div>
+                    <div class="col-lg-9 col-md-8">{{ patient_info.contact.email }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Emergency Contact</div>
-                    <div class="col-lg-9 col-md-8">John Doe</div>
+                    <div class="col-lg-9 col-md-8">{{ patient_profile.emergency_contact.name }}</div>
                   </div>
 
+                </div>
+
+                <div class="tab-pane fade medical-history pt3" id="medical-history">
                   <h5 class="card-title">Medical History</h5>
 
                   <div class="row">
@@ -431,68 +438,67 @@
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Height</div>
-                    <div class="col-lg-9 col-md-8">1.80m</div>
+                    <div class="col-lg-9 col-md-8">{{ medical_history.height }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Weight</div>
-                    <div class="col-lg-9 col-md-8">70kg</div>
+                    <div class="col-lg-9 col-md-8">{{ medical_history.weight }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Allergies</div>
-                    <div class="col-lg-9 col-md-8">Pollen</div>
+                    <div class="col-lg-9 col-md-8">{{ medical_history.allergies }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Chronic Diseases</div>
-                    <div class="col-lg-9 col-md-8">Asthma</div>
+                    <div class="col-lg-9 col-md-8">{{ medical_history.chronic_diseases }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Medications</div>
-                    <div class="col-lg-9 col-md-8">Ibuprofen</div>
+                    <div class="col-lg-9 col-md-8">{{ medical_history.medications }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Surgeries</div>
-                    <div class="col-lg-9 col-md-8">Appendectomy</div>
+                    <div class="col-lg-9 col-md-8">{{ medical_history.surgeries }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Vaccines</div>
-                    <div class="col-lg-9 col-md-8">COVID-19</div>
+                    <div class="col-lg-9 col-md-8">{{ medical_history.vaccines }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Family History</div>
-                    <div class="col-lg-9 col-md-8">Diabetes</div>
+                    <div class="col-lg-9 col-md-8">{{ medical_history.family_history }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Insurance</div>
-                    <div class="col-lg-9 col-md-8">Yes</div>
+                    <div class="col-lg-9 col-md-8">{{ medical_history.insurance }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Insurance Number</div>
-                    <div class="col-lg-9 col-md-8">123456789</div>
+                    <div class="col-lg-9 col-md-8">{{ medical_history.insurance_number }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Insurance Company</div>
-                    <div class="col-lg-9 col-md-8">ABC Insurance</div>
+                    <div class="col-lg-9 col-md-8">{{ medical_history.insurance_company }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Visits</div>
                     <div class="col-lg-9 col-md-8">
                       <div class="row">
-                        <div class="col-lg-12">On: March 14, 2015</div>
-                        <div class="col-lg-12">By: Dr. Ken F. (Cardiology)</div>
-                        <div class="col-lg-12">Reason: Heart palpitations</div>
-                        <div class="col-lg-12">Prescription: Take meds</div>
-                        <div class="col-lg-12">On: March 14, 2015</div>
+                        <div class="col-lg-12">On: {{ visits_history.date }}</div>
+                        <div class="col-lg-12">By: {{ visits_history.by_who }}</div>
+                        <div class="col-lg-12">Reason: {{ visits_history.reason }}</div>
+                        <div class="col-lg-12">Prescription: {{ visits_history.prescription }}</div>
                       </div>
                     </div>
                   </div>
@@ -508,7 +514,6 @@
                       </div>
                     </div>
                   </div>
-
 
                 </div>
 
@@ -604,7 +609,6 @@
                   </form><!-- End Profile Edit Form -->
         
                 </div>
-
               </div><!-- End Bordered Tabs -->
 
             </div>
