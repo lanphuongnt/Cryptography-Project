@@ -10,7 +10,7 @@ from flatten_json import flatten, unflatten
 import json
 from charm.core.engine.util import objectToBytes, bytesToObject
 from .source.mypackages.CA import CentralizedAuthority
-from.utils import create_new_EHR, get_data, insert_data, create_new_staff
+from.utils import create_new_EHR, get_data, insert_data, create_new_staff, get_ehr_by_specialty
 
 server_CA = CentralizedAuthority()
 # server_CA.AddPolicy()
@@ -106,10 +106,22 @@ def forgot_password(request):
 # myfirstapp/views.py
 @never_cache
 @custom_login_required
-def staff_profile(request):
-    # user = request.session['user']
-
-    # user_id = str(user['_id'])
+def staff_profile(request): # Tao lo code lon cho
+    # request GET ehr following SPECIALTY
+    request_specialty = {
+        ''
+    }
+    user = request.session['user']
+    '''
+    Example :
+    list_patient_id = {
+        'patient' : [
+            '22521168',
+            '22520706,
+        ]
+    }
+    '''
+    list_patient_id = get_ehr_by_specialty(user['_id'])
     # template = loader.get_template('staff_profile.html')
     return render(request, 'staff-profile.html')
 
@@ -123,26 +135,13 @@ def patient_profile(request):
         '_id' : user['_id'],
     }
     ehr_patient = get_data(new_request)
-    # HttpResponse(patient_info)
-    # col = server_CA.client['data']['ehr']
-    # patient_doc = col.find_one({'_id' : user['_id']})
-    
-    # user_id = str(user['_id'])
-    # client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
-    # collection = client['data']['ehr']
-    # patient_info = collection.find_one({'_id': ObjectId(user_id)})
-
-    # Check if the user's role is 'user'
-    # if user['role'] != 'user':
-    # template = loader.get_template('users-profile copy.html')
-    # print(ehr_patient)
+ 
     return render(request, 'patient-profile.html', ehr_patient)
-    return render(request, 'patient-profile.html')
     # return HttpResponse(template.render({'patient_info': patient_info}, request))
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
 # It is the default password hashing algorithm used by Django for user authentication.
 
-def patient_view(request, patient_id):
+def ehr_view(request):
     user = request.session['user']
     # user_id = str(user['_id'])
     # template = loader.get_template('patient_view.html')
@@ -162,5 +161,39 @@ def patient_view(request, patient_id):
     new_request = {
         'database' : 'data',
         'collection' : 'ehr',
-        '_id' : patient_id,
+        # '_id' : patient_id,
     }
+
+
+def reference_by_specialty(request): # Call by staff_profile 
+     # request GET ehr following SPECIALTY
+    request_specialty = {
+        ''
+    }
+    user = request.session['user']
+    '''
+    Example :
+    list_patient_id = {
+        'patient' : [
+            '22521168',
+            '22520706,
+        ]
+    }
+    '''
+    list_patient_id = get_ehr_by_specialty(user['_id']) # ID cua doctor(staff)
+    
+    # template = loader.get_template('staff_profile.html')
+    return render(request, 'choose-ehr-by-specialty.html', list_patient_id)
+
+def get_medical_history(request): # Call when staff click userID (request is POST) 
+    patient_id = request.POST.get('patient_id') # name in html is the same this ('userID')
+    staff_id = request.POST.get('staff_id') # Co j m fix cho nay nha @kean
+    request = { # Dont mofify this request (template)
+        'database' : 'data', 
+        'collection' : 'ehr', 
+        '_id' : patient_id, 
+        'requester_id' : staff_id,
+    }
+    patient_data = get_data(request)
+    return render(request, "ehr-view-a-patient.html", patient_data)
+    
