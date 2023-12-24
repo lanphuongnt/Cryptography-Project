@@ -11,6 +11,7 @@ def AttributeBaseAccessControl():
         self.storage = MongoStorage(server_CA.client, db_name=self.position['database'], collection=self.position['collection'])
         self.pdp = PDP(self.storage)
     
+    # In the case that staff request to get data of user in ehr
     def inform_request(request):
         patient_attribute = server_CA.GetSubjectAttribute(request.GET.get('patient_id'))
         requester_attribute = server_CA.GetSubjectAttribute(request.session['user']['_id'])
