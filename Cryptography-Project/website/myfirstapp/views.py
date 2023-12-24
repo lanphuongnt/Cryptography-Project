@@ -10,7 +10,7 @@ from flatten_json import flatten, unflatten
 import json
 from charm.core.engine.util import objectToBytes, bytesToObject
 from .source.mypackages.CA import CentralizedAuthority
-from.utils import create_new_EHR, get_data, insert_data
+from.utils import create_new_EHR, get_data, insert_data, create_new_staff
 
 server_CA = CentralizedAuthority()
 # server_CA.AddPolicy()
@@ -53,10 +53,11 @@ def signup(request):
 
         # Generate public key master key for new user
         server_CA.Setup(str(object_id))
-
-        # Generate EHR document for new user
-        create_new_EHR(request, str(object_id))
-
+        if role == 'user':
+            # Generate EHR document for new user
+            create_new_EHR(request, str(object_id))
+        else:
+            create_new_staff(request, str(object_id))
         # return HttpResponse(lmao)
         return redirect('myfirstapp:index')
     else:
