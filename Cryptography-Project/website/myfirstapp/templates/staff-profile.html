@@ -290,51 +290,78 @@
             <li class="nav-item"><a class="nav-link" href="patients-list.html">Patients List</a></li>
             <li class="nav-item"><a class="nav-link" href="patients-add.html">Add Patient</a></li>
             <li class="nav-item"><a class="nav-link" href="patients-profile.html">Patient Profile</a></li>
-            <li class="nav-item" id="patientDataContainer">
-                <h6>Data received:</h6>
-            </li>
         </ul>
     </li><!-- End Patients Nav -->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-      $(document).ready(function () {
-        $("#loadPatients").click(function () {
-          $.ajax({
-            url: "{% url 'myfirstapp:patient_view' %}",  // replace with the path to your Django view
-            type: "get",
-            success: function(response){
-              // update your page based on the response
-              var resultString = response.patient;  // assuming the response is a dictionary with a 'patient' key
-              var patientId = resultString.split(": ")[1];  // split the string by ": " and take the second part
-              var resultElement = document.createElement("button");
-              resultElement.innerText = "View Medical History";
-              resultElement.onclick = function() {
-                  $.ajax({
-                      url: "{% url 'myfirstapp:patient_get_ehr' %}",  // replace with the path to your Django view
-                      type: "post",
-                      data: {
-                          'patient_id': patientId,
-                          'staff_id': 'your_staff_id'  // replace with your staff ID
-                      },
-                      success: function(response){
-                          // update your page based on the response
-                          // for example, redirect to the medical history page
-                          window.location.href = "{% url 'myfirstapp:patient_ehr' %}";  // replace with the path to your Django view
-                      }
-                  });
-              };
-              document.getElementById("patientDataContainer").appendChild(resultElement);
-}          });
-        });
-      });
-    </script>
       
+
     <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#reference-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-journal-text"></i><span>Reference</span>
-        </a>
-      </li><!-- End Reference Nav -->
+      <button id="loadReference" class="nav-link collapsed" data-bs-target="#reference-nav" data-bs-toggle="collapse">
+          <i class="bi bi-menu-button-wide"></i><span>Reference</span>
+      </button>
+      <ul id="reference-nav" class="nav nav-pills flex-column collapse">
+          <!-- <li class="nav-item"><a class="nav-link" href="patients-list.html">Patients List</a></li>
+          <li class="nav-item"><a class="nav-link" href="patients-add.html">Add Patient</a></li>
+          <li class="nav-item"><a class="nav-link" href="patients-profile.html">Patient Profile</a></li>
+            Danh sach se duoc hien thi o day -->
+        </ul>
+    </li><!-- End Patients Nav -->
+
+
+    <script>
+        // Tạo một đối tượng XMLHttpRequest
+        var xhr = new XMLHttpRequest();
+
+        // Thiết lập phương thức và URL cho request (điều này phụ thuộc vào cách bạn thiết kế URL)
+        xhr.open("GET",  "/staff_profile/reference", true);
+        // console.log(window.location.href)
+        // Xử lý sự kiện khi request hoàn thành
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                // Xử lý kết quả khi request thành công
+                var responseData = JSON.parse(xhr.responseText);
+                console.log(responseData.patient)
+                displayPatientList(responseData.patient);
+            } else if (xhr.readyState == 4 && xhr.status != 200) {
+                // Xử lý khi request không thành công
+                console.log("Error: " + xhr.status);
+            }
+        };
+
+        // Gửi request
+        xhr.send();
+
+        // Hàm để hiển thị danh sách ID bệnh nhân trên trang
+
+        function displayPatientList(patientList) {
+          var listElement = document.getElementById("reference-nav");
+
+          // Clear existing list items
+          listElement.innerHTML = '';
+
+          patientList.forEach(function (patientId) {
+              var listItem = document.createElement("li");
+              listItem.className = "nav-item";
+
+              var link = document.createElement("a");
+              link.className = "nav-link";
+              link.href = "/staff_profile/reference/patient_view.html?patient_id=" + patientId + "&source=medical_history";
+              link.textContent = patientId;
+
+              listItem.appendChild(link);
+              listElement.appendChild(listItem);
+          });
+        }
+    </script>
+
+
+    <!-- <li class="nav-item">
+      <a class="nav-link collapsed" href="{% url 'myfirstapp:reference' %}">
+        <i class="bi bi-grid"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>End Dashboard Nav -->
 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#appointments-nav" data-bs-toggle="collapse" href="#">

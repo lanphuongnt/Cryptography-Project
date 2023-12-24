@@ -12,6 +12,9 @@ from charm.core.engine.util import objectToBytes, bytesToObject
 from .source.mypackages.CA import CentralizedAuthority
 from.utils import create_new_EHR, get_data, insert_data, create_new_staff, get_ehr_by_specialty
 
+
+from django.http import JsonResponse
+
 server_CA = CentralizedAuthority()
 # server_CA.AddPolicy()
 
@@ -172,9 +175,6 @@ def patient_profile(request):
 def ehr_view(request):
     user = request.session['user']
     
-
-
-from django.http import JsonResponse
 
 def reference_by_specialty(request):
     user = request.session['user']
