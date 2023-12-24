@@ -78,14 +78,6 @@ def create_new_staff(request, userID):
 
     insert_data(new_request)
 
-def get_subject_attribute(userID): # attribute name is a list string 
-    # Load public key 
-    CA_db = server_CA.client['CA']
-    attribute_col = CA_db['subject_attribute']
-    user_attribute = attribute_col.find_one({'_id' : ObjectId(userID)})    
-    user_attribute['_id'] = str(user_attribute['_id'])
-    return user_attribute
-
 
 def create_new_EHR(request, userID):
     status = request.POST['status']
@@ -230,8 +222,8 @@ def get_data(request):
     if encryted_data:
         encryted_data = flatten(encryted_data, ".")
         recovered_data = {}
-        
-        requester_attribute = get_subject_attribute(request['requester_id'])
+
+        requester_attribute = server_CA.GetSubjectAttribute(request['requester_id'])
         private_key, public_key = server_CA.GeneratePrivateKey(request['requester_id'], requester_attribute)
         # public_key = server_CA.GetPublicKey(request['_id'])
 
@@ -243,7 +235,7 @@ def get_data(request):
 
         recovered_data = flatten(recovered_data, ".")
         recovered_data = unflatten(recovered_data, ".")
-        print(recovered_data)
+        # print(recovered_data)
         return recovered_data
     else:
         return None
@@ -273,13 +265,13 @@ def insert_data(request):
     # policy = policy_col.find_one({'request' : 'insert'})['policy']
     
     policy = get_policy({'source' : request['source'], 'request' : 'insert'})
-    print(policy)
+    # print(policy)
     public_key = server_CA.GetPublicKey(request['_id'])
 
     for data in update_data.items():
         encrypted_data[data[0]] = server_CA.cpabe.encrypt(public_key, data[1], policy)
     encrypted_data = flatten(encrypted_data, ".")
-    encrypted_data = unflatten(encrypted_data, ".")
+    # encrypted_data = unflatten(encrypted_data, ".")
 
     collection.update_one({'_id': ObjectId(request['_id'])}, {'$set': encrypted_data})
     response = collection.find_one({'_id': ObjectId(request['_id'])})
@@ -297,7 +289,7 @@ def get_ehr_by_specialty(staff_ID):
             '_id' : '65845045be5cf517d0a932e1',
     '''
 
-    staff_attribute = get_subject_attribute(staff_ID)
+    staff_attribute = server_CA.GetSubjectAttribute(staff_ID)
     list_patient = server_CA.client['CA']['subject_attribute'].find({'specialty' : staff_attribute['specialty'], 'status' : 'patient'})
     list_patient_id = []
     for patient in list_patient:

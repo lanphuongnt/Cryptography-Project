@@ -377,7 +377,7 @@
                 </li>
 
                 <li class="nav-item">
-                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Update Health Status</button>
                 </li>
 
               </ul>
@@ -432,7 +432,7 @@
                   <h5 class="card-title">Medical History</h5>
 
                   <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Blood Type</div>
+                    <div class="col-lg-3 col-md-4 label ">Blood Type</div>
                     <div class="col-lg-9 col-md-8">{{ medical_history.blood_type }}</div>
                   </div>
 
@@ -495,10 +495,10 @@
                     <div class="col-lg-3 col-md-4 label">Visits</div>
                     <div class="col-lg-9 col-md-8">
                       <div class="row">
-                        <div class="col-lg-12">On: {{ visits_history.date }}</div>
-                        <div class="col-lg-12">By: {{ visits_history.by_who }}</div>
-                        <div class="col-lg-12">Reason: {{ visits_history.reason }}</div>
-                        <div class="col-lg-12">Prescription: {{ visits_history.prescription }}</div>
+                        <div class="col-lg-12">On: {{ medical_history.visits_history.0.date }}</div>
+                        <div class="col-lg-12">By: {{ medical_history.visits_history.0.by_who }}</div>
+                        <div class="col-lg-12">Reason: {{ medical_history.visits_history.0.reason }}</div>
+                        <div class="col-lg-12">Prescription: {{ medical_history.visits_history.0.prescription }}</div>
                       </div>
                     </div>
                   </div>
@@ -520,7 +520,8 @@
                 <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
 
                   <!-- Profile Edit Form -->
-                  <form>
+                  <form method="POST" action="">
+                    {% csrf_token %} 
                     <div class="row mb-3">
                       <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
                       <div class="col-md-8 col-lg-9">
@@ -533,76 +534,26 @@
                         </div>
                       </div>
                     </div>
-    
+                    
+                    <div class="tab-pane fade show active physical-health" id="physical-health">
+                      <h5 class="card-title">Physical Health</h5>
+
                     <div class="row mb-3">
-                      <label for="emergencyContact" class="col-md-4 col-lg-3 col-form-label">Emergency Contact</label>
+                      <label for="medical_history.height" class="col-md-4 col-lg-3 col-form-label">Height</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="emergencyContact" type="text" class="form-control" id="emergencyContact"
-                          value="{{ patient_info.emergency_contact.name }}">
+                        <input name="medical_history.height" type="text" class="form-control" id="medical_history.height"
+                          value="{{ medical_history.height }}">
                       </div>
                     </div>
-    
+                    
                     <div class="row mb-3">
-                      <label for="Address" class="col-md-4 col-lg-3 col-form-label">Address</label>
+                      <label for="medical_history.weight" class="col-md-4 col-lg-3 col-form-label">Weight</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="address" type="text" class="form-control" id="Address"
-                          value="A108 Adam Street, New York, NY 535022">
+                        <input name="medical_history.weight" type="text" class="form-control" id="medical_history.weight"
+                          value="{{ medical_history.weight }}">
                       </div>
                     </div>
-    
-                    <div class="row mb-3">
-                      <label for="Phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="phone" type="text" class="form-control" id="Phone" value="(436) 486-3538 x29071">
-                      </div>
-                    </div>
-    
-                    <div class="row mb-3">
-                      <label for="Email" class="col-md-4 col-lg-3 col-form-label">Email</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="email" type="email" class="form-control" id="Email" value="k.anderson@example.com">
-                      </div>
-                    </div>
-    
-                    <div class="row mb-3">
-                      <label for="Insurance" class="col-md-4 col-lg-3 col-form-label">Insurance</label>
-                      <div class="col-md-8 col-lg-9">
-                        <select name="insurance" class="form-control" id="Insurance">
-                          <option value="modify">Modify</option>
-                          <option value="keep">Keep current</option>
-                        </select>
-                      </div>
-                    </div>
-    
-                    <div id="insurance-details" style="display: none;">
-                      <div class="row mb-3">
-                        <label for="InsuranceNumber" class="col-md-4 col-lg-3 col-form-label">Insurance Number</label>
-                        <div class="col-md-8 col-lg-9">
-                          <input name="insuranceNumber" type="text" class="form-control" id="InsuranceNumber">
-                        </div>
-                      </div>
-    
-                      <div class="row mb-3">
-                        <label for="InsuranceCompany" class="col-md-4 col-lg-3 col-form-label">Insurance Company</label>
-                        <div class="col-md-8 col-lg-9">
-                          <input name="insuranceCompany" type="text" class="form-control" id="InsuranceCompany">
-                        </div>
-                      </div>
-                    </div>
-    
-                    <script>
-                      const insuranceSelect = document.getElementById('Insurance');
-                      const insuranceDetails = document.getElementById('insurance-details');
-    
-                      insuranceSelect.addEventListener('change', function () {
-                        if (insuranceSelect.value === 'modify') {
-                          insuranceDetails.style.display = 'block';
-                        } else {
-                          insuranceDetails.style.display = 'none';
-                        }
-                      });
-                    </script>
-    
+
                     <div class="text-center">
                       <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
