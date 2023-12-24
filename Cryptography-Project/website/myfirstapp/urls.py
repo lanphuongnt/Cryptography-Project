@@ -11,5 +11,7 @@ urlpatterns = [
     path('logout/', views.logout, name='logout'),
     path('staff_profile/', views.staff_profile, name='staff_profile'),
     path('staff_profile/patients/', views.reference_by_specialty, name='patient_view'),
+    path('staff_profile/patients/', views.get_medical_history, name='patient_get_ehr'),
     path('patient_profile/', views.patient_profile, name='patient_profile'),
+    path('patient_view/', views.ehr_view, name='patient_ehr'),
 ]

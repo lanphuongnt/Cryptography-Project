@@ -171,26 +171,7 @@ def patient_profile(request):
 
 def ehr_view(request):
     user = request.session['user']
-    # user_id = str(user['_id'])
-    # template = loader.get_template('patient_view.html')
-
-    # # Retrieve the encrypted patient data from the database
-    # db = server_CA.client['data']
-    # collection = db['ehr']
-    # patient_data = collection.find_one({'_id': ObjectId(patient_id)})
-
-    # # Decrypt the patient data
-    # decrypted_data = {}
-    # for key, value in patient_data.items():
-    #     if key != '_id':
-    #         decrypted_data[key] = server_CA.cpabe.decrypt(server_CA.private_key, value)
-
-    # return HttpResponse(template.render({'patient_data': decrypted_data}, request))
-    new_request = {
-        'database' : 'data',
-        'collection' : 'ehr',
-        # '_id' : patient_id,
-    }
+    
 
 
 from django.http import JsonResponse
@@ -213,5 +194,4 @@ def get_medical_history(request): # Call when staff click userID (request is POS
     '''
     {'medical_history' : ...}
     '''
-    return render(request, "ehr-view-a-patient.html", patient_data)
-    
+    return JsonResponse(patient_data)    

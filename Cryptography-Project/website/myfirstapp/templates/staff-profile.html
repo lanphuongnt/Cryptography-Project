@@ -305,18 +305,27 @@
             type: "get",
             success: function(response){
               // update your page based on the response
-              // for example, if the response is a dictionary, you can iterate over its keys and values
-              var resultElement = document.createElement("p");
-              var resultText = "";
-              for (var key in response) {
-                if (response.hasOwnProperty(key)) {
-                  resultText += key + ": " + response[key] + ", ";
-                }
-              }
-              resultElement.innerText = "Result: " + resultText;
+              var resultString = response.patient;  // assuming the response is a dictionary with a 'patient' key
+              var patientId = resultString.split(": ")[1];  // split the string by ": " and take the second part
+              var resultElement = document.createElement("button");
+              resultElement.innerText = "View Medical History";
+              resultElement.onclick = function() {
+                  $.ajax({
+                      url: "{% url 'myfirstapp:patient_get_ehr' %}",  // replace with the path to your Django view
+                      type: "post",
+                      data: {
+                          'patient_id': patientId,
+                          'staff_id': 'your_staff_id'  // replace with your staff ID
+                      },
+                      success: function(response){
+                          // update your page based on the response
+                          // for example, redirect to the medical history page
+                          window.location.href = "{% url 'myfirstapp:patient_ehr' %}";  // replace with the path to your Django view
+                      }
+                  });
+              };
               document.getElementById("patientDataContainer").appendChild(resultElement);
-            }          
-          });
+}          });
         });
       });
     </script>
