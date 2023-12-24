@@ -13,6 +13,6 @@ urlpatterns = [
     # path('staff_profile/patients/', views.reference_by_specialty, name='patient_view'),
     # path('staff_profile/patients/', views.get_medical_history, name='patient_get_ehr'),
     path('patient_profile/', views.patient_profile, name='patient_profile'),
-    # path('patient_view/', views.ehr_view, name='patient_ehr'),
+    path('staff_profile/reference/patient_view/', views.ehr_view, name='patient_view'),
     path('staff_profile/reference/', views.reference_by_specialty, name='reference')
 ]

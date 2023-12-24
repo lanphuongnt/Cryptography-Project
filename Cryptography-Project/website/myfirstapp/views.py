@@ -12,11 +12,11 @@ from charm.core.engine.util import objectToBytes, bytesToObject
 from .source.mypackages.CA import CentralizedAuthority
 from.utils import create_new_EHR, get_data, insert_data, create_new_staff, get_ehr_by_specialty
 
-
+from .source.mypackages.ABAC import AttributeBaseAccessControl
 from django.http import JsonResponse
 
 server_CA = CentralizedAuthority()
-# server_CA.AddPolicy()
+abac = AttributeBaseAccessControl()
 
 def index(request):
     template = loader.get_template('myfirst.html')
@@ -116,7 +116,8 @@ def staff_profile(request): # Tao lo code lon cho
         'database' : 'data',
         'collection' : 'staff',
         '_id' : user['_id'],
-        'requester_id' : user['_id']
+        'requester_id' : user['_id'],
+        'source' : 'staff_info'
     }
     staff_info = get_data(new_request)
  
@@ -164,7 +165,8 @@ def patient_profile(request):
             'database' : 'data',
             'collection' : 'ehr',
             '_id' : user['_id'],
-            'requester_id' : user['_id']
+            'requester_id' : user['_id'],
+            'source' : ['patient_info', 'medical_history'],
         }
         ehr_patient = get_data(new_request)
         return render(request, 'patient-profile.html', ehr_patient)
@@ -174,12 +176,25 @@ def patient_profile(request):
 
 def ehr_view(request):
     user = request.session['user']
+    print("user : ", user)
+    ok = abac.request_access(request, requester_id=user['_id'])
+    print(ok, user['_id'])
+    if ok:
+        response_data = get_data({'source' : request.GET.get('source'), 'database' : 'data', 'collection' : 'ehr', '_id' : request.GET.get('patient_id'), 'requester_id' : user['_id']})
+        print(response_data)
+        return render(request, "patient-view.html", response_data)
+    else:
+        return redirect('myfirstapp:reference')
+    
+
     
 
 def reference_by_specialty(request):
     user = request.session['user']
     list_patient_id = get_ehr_by_specialty(user['_id'])
-    return JsonResponse(list_patient_id)
+    list_patient_id_json = json.dumps(list_patient_id)
+    return render(request, 'reference-data.html', {'list_patient_id' : list_patient_id_json})
+    # return JsonResponse(list_patient_id)
 
 def get_medical_history(request): # Call when staff click userID (request is POST) 
     patient_id = request.POST.get('patient_id') # name in html is the same this ('userID')
@@ -189,6 +204,7 @@ def get_medical_history(request): # Call when staff click userID (request is POS
         'collection' : 'ehr', 
         '_id' : patient_id, 
         'requester_id' : staff_id,
+        'source' : 'medical_history',
     }
     patient_data = get_data(request)
     '''

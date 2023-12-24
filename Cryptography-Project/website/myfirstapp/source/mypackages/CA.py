@@ -82,6 +82,7 @@ class CentralizedAuthority:
         attribute_col = CA_db['subject_attribute']
         user_attribute = attribute_col.find_one({'_id' : ObjectId(userID)})    
         user_attribute['_id'] = str(user_attribute['_id'])
+        print("ATTRIBUTE:", user_attribute)
         return user_attribute
 
     

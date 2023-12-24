@@ -13,7 +13,7 @@ class CPABE:
             self.groupObj = PairingGroup("SS512")
             self.ac17 = AC17CPABE(self.groupObj, 2)
             self.serialized = SerializeCTXT()
-    def encrypt(self, public_key, message, policy):
+    def AC17encrypt(self, public_key, message, policy):
         random_key = self.groupObj.random(GT)
         
         # Encrypt random_key using CP-ABES
@@ -21,6 +21,7 @@ class CPABE:
         # Serialize to save to database
         encrypted_key_b = self.serialized.jsonify_ctxt(encrypted_key)
         # Create key for AES by random_key
+        # hash = hashlib.sha256(objectToBytes(random_key, self.groupObj))
         hash = hashlib.sha256(str(random_key).encode())
         key = hash.digest()
         aes = AES.new(key, AES.MODE_GCM)
@@ -43,7 +44,8 @@ class CPABE:
         encrypted_data = base64.b64encode(encrypted_data).decode()
         return encrypted_data
     
-    def decrypt(self, public_key, encrypted_data, private_key): # encrypted_data is dict type (not json)
+    def AC17decrypt(self, public_key, encrypted_data, private_key): # encrypted_data is dict type (not json)
+        # print("CTX :",encrypted_data)
         encrypted_data = base64.b64decode(encrypted_data.encode())
         len_encrypted_key = int.from_bytes(encrypted_data[:8], byteorder='big')
         encrypted_key_b = encrypted_data[8:8 + len_encrypted_key]
@@ -51,18 +53,23 @@ class CPABE:
 
         encrypted_key = self.serialized.unjsonify_ctxt(encrypted_key_b.decode('utf-8'))
         recovered_random_key = self.ac17.decrypt(public_key, encrypted_key, private_key)
-        
+    
         if recovered_random_key:
             nonce = ciphertext[:16]
             authTag = ciphertext[-16:]
             ciphertext = ciphertext[16:-16]
-        
-            key = hashlib.sha256(str(recovered_random_key).encode()).digest()
-        
-            aes = AES.new(key, AES.MODE_GCM, nonce)
-            recovered_message = aes.decrypt_and_verify(ciphertext, authTag)
-        
-            return recovered_message.decode()
+
+            # print("KEY :", objectToBytes(recovered_random_key, self.groupObj))
+            # hash = hashlib.sha256(objectToBytes(recovered_random_key, self.groupObj))
+            hash = hashlib.sha256(str(recovered_random_key).encode())
+            key = hash.digest()
+            try:
+                aes = AES.new(key, AES.MODE_GCM, nonce)
+                recovered_message = aes.decrypt_and_verify(ciphertext, authTag)
+                return recovered_message.decode()
+            except ValueError as e:
+                print("CMM")
+                return None
         else:
             return None
         

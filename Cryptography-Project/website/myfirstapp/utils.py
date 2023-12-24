@@ -205,33 +205,40 @@ def create_new_EHR(request, userID):
     new_request['$set'] = {'medical_history' : addition["medical_history"]}
     insert_data(new_request)
 
-def get_data(request):
+def get_data(request_get_data):
     # Request (dict) include: database, collection, username(ObjectID), {'$get' : {'dataname1': datavalue1}, {data}}
     '''
     Example : 
-    request = {
+    request_get_data = {
         'database' : 'data', 
         'collection' : 'ehr', 
         '_id' : '65845045be5cf517d0a932e1', 
         'requester_id' : '....',
+        'source' : ['medical_history'],
     '''
-    db = server_CA.client[request['database']]
-    collection = db[request['collection']] 
-    encryted_data = collection.find_one({'_id' : ObjectId(request['_id'])})
+    if (type(request_get_data['source']) is not list):
+        request_get_data['source'] = [request_get_data['source']]
 
-    if encryted_data:
-        encryted_data = flatten(encryted_data, ".")
+    db = server_CA.client[request_get_data['database']]
+    collection = db[request_get_data['collection']] 
+    data = collection.find_one({'_id' : ObjectId(request_get_data['_id'])})
+
+    if data:
+        encrypted_data = {}
+        for s in request_get_data['source']:
+            encrypted_data[s] = data[s]
+        encrypted_data = flatten(encrypted_data, ".")
         recovered_data = {}
 
-        requester_attribute = server_CA.GetSubjectAttribute(request['requester_id'])
-        private_key, public_key = server_CA.GeneratePrivateKey(request['requester_id'], requester_attribute)
-        # public_key = server_CA.GetPublicKey(request['_id'])
+        requester_attribute = server_CA.GetSubjectAttribute(request_get_data['requester_id'])
+        private_key, public_key = server_CA.GeneratePrivateKey(request_get_data['_id'], requester_attribute)
+        # public_key = server_CA.GetPublicKey(request_get_data['_id'])
 
-        for ed in encryted_data.items():
+        for ed in encrypted_data.items():
             if ed[0] == '_id':
                 recovered_data[ed[0]] = ed[1]
                 continue
-            recovered_data[ed[0]] = server_CA.cpabe.decrypt(public_key, ed[1], private_key)
+            recovered_data[ed[0]] = server_CA.cpabe.AC17decrypt(public_key, ed[1], private_key)
 
         recovered_data = flatten(recovered_data, ".")
         recovered_data = unflatten(recovered_data, ".")
@@ -263,13 +270,13 @@ def insert_data(request):
 
     # policy_col = server_CA.client['policy_repository']['abe']
     # policy = policy_col.find_one({'request' : 'insert'})['policy']
-    
-    policy = get_policy({'source' : request['source'], 'request' : 'insert'})
-    # print(policy)
+    # user
+    policy = get_policy({'source' : request['source']})
+    # print(f"POLICY : {policy}")
     public_key = server_CA.GetPublicKey(request['_id'])
 
     for data in update_data.items():
-        encrypted_data[data[0]] = server_CA.cpabe.encrypt(public_key, data[1], policy)
+        encrypted_data[data[0]] = server_CA.cpabe.AC17encrypt(public_key, data[1], policy)
     encrypted_data = flatten(encrypted_data, ".")
     # encrypted_data = unflatten(encrypted_data, ".")
 
