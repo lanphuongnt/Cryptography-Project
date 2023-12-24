@@ -77,6 +77,11 @@ class CentralizedAuthority:
         collection.insert_one({'policy' : policy2})
         return 
     
-
+    def GetSubjectAttribute(self, userID): # attribute name is a list string 
+        CA_db = self.client['CA']
+        attribute_col = CA_db['subject_attribute']
+        user_attribute = attribute_col.find_one({'_id' : ObjectId(userID)})    
+        user_attribute['_id'] = str(user_attribute['_id'])
+        return user_attribute
 
     
