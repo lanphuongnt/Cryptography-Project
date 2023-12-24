@@ -294,4 +294,4 @@ def get_ehr_by_specialty(staff_ID):
     list_patient_id = []
     for patient in list_patient:
         list_patient_id.append(str(patient['_id']))
-    return {patient : list_patient_id}
+    return {'patient' : list_patient_id}

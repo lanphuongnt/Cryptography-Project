@@ -111,26 +111,26 @@ def staff_profile(request): # Tao lo code lon cho
     user = request.session['user']
     new_request = {
         'database' : 'data',
-        'collection' : 'ehr',
+        'collection' : 'staff',
         '_id' : user['_id'],
         'requester_id' : user['_id']
     }
     staff_info = get_data(new_request)
  
     return render(request, 'staff-profile.html', staff_info)
-@never_cache
-@custom_login_required
-def patient_profile(request):
-    user = request.session['user']
-    new_request = {
-        'database' : 'data',
-        'collection' : 'ehr',
-        '_id' : user['_id'],
-        'requester_id' : user['_id']
-    }
-    staff_info = get_data(new_request)
+# @never_cache
+# @custom_login_required
+# def patient_profile(request):
+#     user = request.session['user']
+#     new_request = {
+#         'database' : 'data',
+#         'collection' : 'ehr',
+#         '_id' : user['_id'],
+#         'requester_id' : user['_id']
+#     }
+#     staff_info = get_data(new_request)
  
-    return render(request, 'staff-profile.html', staff_info)
+#     return render(request, 'staff-profile.html', staff_info)
 
 @never_cache
 @custom_login_required
@@ -171,47 +171,15 @@ def patient_profile(request):
 
 def ehr_view(request):
     user = request.session['user']
-    # user_id = str(user['_id'])
-    # template = loader.get_template('patient_view.html')
-
-    # # Retrieve the encrypted patient data from the database
-    # db = server_CA.client['data']
-    # collection = db['ehr']
-    # patient_data = collection.find_one({'_id': ObjectId(patient_id)})
-
-    # # Decrypt the patient data
-    # decrypted_data = {}
-    # for key, value in patient_data.items():
-    #     if key != '_id':
-    #         decrypted_data[key] = server_CA.cpabe.decrypt(server_CA.private_key, value)
-
-    # return HttpResponse(template.render({'patient_data': decrypted_data}, request))
-    new_request = {
-        'database' : 'data',
-        'collection' : 'ehr',
-        # '_id' : patient_id,
-    }
-
-
-def reference_by_specialty(request): # Call by staff_profile 
-     # request GET ehr following SPECIALTY
-    request_specialty = {
-        ''
-    }
-    user = request.session['user']
-    '''
-    Example :
-    list_patient_id = {
-        'patient' : [
-            '22521168',
-            '22520706,
-        ]
-    }
-    '''
-    list_patient_id = get_ehr_by_specialty(user['_id']) # ID cua doctor(staff)
     
-    # template = loader.get_template('staff_profile.html')
-    return render(request, 'choose-ehr-by-specialty.html', list_patient_id)
+
+
+from django.http import JsonResponse
+
+def reference_by_specialty(request):
+    user = request.session['user']
+    list_patient_id = get_ehr_by_specialty(user['_id'])
+    return JsonResponse(list_patient_id)
 
 def get_medical_history(request): # Call when staff click userID (request is POST) 
     patient_id = request.POST.get('patient_id') # name in html is the same this ('userID')
@@ -226,5 +194,4 @@ def get_medical_history(request): # Call when staff click userID (request is POS
     '''
     {'medical_history' : ...}
     '''
-    return render(request, "ehr-view-a-patient.html", patient_data)
-    
+    return JsonResponse(patient_data)    
