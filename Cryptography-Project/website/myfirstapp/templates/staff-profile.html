@@ -213,13 +213,13 @@
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
             <img src="{% static 'assets/img/profile-img.jpg' %}" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">{{ staff_profile.full_name }}</span>
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{ staff_info.name }}</span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
-              <h6>{{ staff_profile.full_name }}</h6>
-              <span>{{ staff_profile.status }}</span>
+              <h6>{{ staff_info.name }}</h6>
+              <span>{{ staff_info.status }}</span>
             </li>
             <li>
               <hr class="dropdown-divider">
@@ -348,8 +348,8 @@
             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
               <img src="{% static 'assets/img/profile-img.jpg' %}" alt="Profile" class="rounded-circle">
-              <h2>{{ staff_profile.full_name }}</h2>
-              <h3>{{ staff_profile.status }}</h3>
+              <h2>{{ staff_info.name }}</h2>
+              <h3>{{ staff_info.status }}</h3>
             </div>
           </div>
 
@@ -378,7 +378,7 @@
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label ">Full Name</div>
-                    <div class="col-lg-9 col-md-8">{{ staff_profile.full_name }}</div>
+                    <div class="col-lg-9 col-md-8">{{ staff_info.name }}</div>
                   </div>
 
                   <div class="row">
@@ -388,44 +388,27 @@
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Title</div>
-                    <div class="col-lg-9 col-md-8">{{ staff_profile.status }}</div>
+                    <div class="col-lg-9 col-md-8">{{ staff_info.status }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Branch</div>
-                    <div class="col-lg-9 col-md-8">Cardiology</div>
+                    <div class="col-lg-9 col-md-8">{{ staff_info.specialty }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Address</div>
-                    <div class="col-lg-9 col-md-8">A108 Adam Street, New York, NY 535022</div>
+                    <div class="col-lg-9 col-md-8">{{ staff_info.address.city|safe }}, {{ staff_info.address.state|safe }}, {{ staff_info.address.street|safe }}, {{ staff_info.address.zip|safe }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Phone</div>
-                    <div class="col-lg-9 col-md-8">(436) 486-3538 x29071</div>
+                    <div class="col-lg-9 col-md-8">{{ staff_info.contact.phone }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Email</div>
-                    <div class="col-lg-9 col-md-8">k.anderson@example.com</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Patients</div>
-                    <div class="col-lg-9 col-md-8">
-                      <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="patientDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                          Select a patient
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="patientDropdown">
-                          <li><a class="dropdown-item" href="/ehr/patient1">Patient 1</a></li>
-                          <li><a class="dropdown-item" href="/ehr/patient2">Patient 2</a></li>
-                          <li><a class="dropdown-item" href="/ehr/patient3">Patient 3</a></li>
-                          <!-- Add more patients here -->
-                        </ul>
-                      </div>
-                    </div>
+                    <div class="col-lg-9 col-md-8">{{ staff_info.contact.email }}</div>
                   </div>
 
                   <script>

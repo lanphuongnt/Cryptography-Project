@@ -111,7 +111,7 @@ def staff_profile(request): # Tao lo code lon cho
     user = request.session['user']
     new_request = {
         'database' : 'data',
-        'collection' : 'ehr',
+        'collection' : 'staff',
         '_id' : user['_id'],
         'requester_id' : user['_id']
     }
