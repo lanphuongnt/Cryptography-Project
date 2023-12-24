@@ -283,31 +283,45 @@
       </li><!-- End Dashboard Nav -->
 
       <li class="nav-item">
-        <form action="{% url 'myfirstapp:patient_view' %}" method="post">
-          {% csrf_token %}
-          <button type="submit" class="nav-link collapsed" data-bs-target="#patients-nav" data-bs-toggle="collapse">
+        <button id="loadPatients" class="nav-link collapsed" data-bs-target="#patients-nav" data-bs-toggle="collapse">
             <i class="bi bi-menu-button-wide"></i><span>Patients</span>
-          </button>
-        </form>
+        </button>
         <ul id="patients-nav" class="nav nav-pills flex-column collapse">
-          <li class="nav-item"><a class="nav-link" href="patients-list.html">Patients List</a></li>
-          <li class="nav-item"><a class="nav-link" href="patients-add.html">Add Patient</a></li>
-          <li class="nav-item"><a class="nav-link" href="patients-profile.html">Patient Profile</a></li>
-          {% if patients_data %}
-          <li class="nav-item">
-            <h6>Data received:</h6>
-            <script type="application/json" id="patients-data">{{ patients_data|json_script }}</script>
-            <script>
-              var patientsData = JSON.parse(document.getElementById("patients-data").textContent);
-              console.log(patientsData);
-              // Display the result here, e.g., update the DOM with the data
-            </script>
-          </li>
-          {% endif %}
+            <li class="nav-item"><a class="nav-link" href="patients-list.html">Patients List</a></li>
+            <li class="nav-item"><a class="nav-link" href="patients-add.html">Add Patient</a></li>
+            <li class="nav-item"><a class="nav-link" href="patients-profile.html">Patient Profile</a></li>
+            <li class="nav-item" id="patientDataContainer">
+                <h6>Data received:</h6>
+            </li>
         </ul>
-      </li><!-- End Patients Nav -->
+    </li><!-- End Patients Nav -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#loadPatients").click(function () {
+          $.ajax({
+            url: "{% url 'myfirstapp:patient_view' %}",  // replace with the path to your Django view
+            type: "get",
+            success: function(response){
+              // update your page based on the response
+              // for example, if the response is a dictionary, you can iterate over its keys and values
+              var resultElement = document.createElement("p");
+              var resultText = "";
+              for (var key in response) {
+                if (response.hasOwnProperty(key)) {
+                  resultText += key + ": " + response[key] + ", ";
+                }
+              }
+              resultElement.innerText = "Result: " + resultText;
+              document.getElementById("patientDataContainer").appendChild(resultElement);
+            }          
+          });
+        });
+      });
+    </script>
       
-      <li class="nav-item">
+    <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#reference-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-journal-text"></i><span>Reference</span>
         </a>

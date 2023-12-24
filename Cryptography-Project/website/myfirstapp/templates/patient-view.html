@@ -1,24 +1,42 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Patient View</title>
 </head>
+
 <body>
     <pre id="json-data"></pre>
 
+    <div id="dict-container"></div> <!-- Add this div element -->
+
     <script>
-        // Assuming you have received JSON data from somewhere
-        var jsonData = {
-            "name": "John Doe",
-            "age": 30,
-            "email": "johndoe@example.com"
+        // Assuming you have received a dictionary from Python
+        var myDict = {
+            "key1": "Value 1",
+            "key2": "Value 2",
+            "key3": "Value 3"
         };
 
-        // Convert JSON to a string with indentation for readability
-        var formattedJson = JSON.stringify(jsonData, null, 4);
+        // Function to generate HTML elements for each key-value pair in the dictionary
+        function displayDict() {
+            var dictContainer = document.getElementById("dict-container");
 
-        // Display the formatted JSON in the <pre> element
-        document.getElementById("json-data").textContent = formattedJson;
+            // Clear the container before adding new elements
+            dictContainer.innerHTML = "";
+
+            // Iterate over the dictionary and create <p> elements
+            for (var key in myDict) {
+                var value = myDict[key];
+                var dictItem = document.createElement("p");
+                dictItem.textContent = key + ": " + value;
+                dictContainer.appendChild(dictItem);
+            }
+        }
+
+        // Call the function to display the dictionary
+        displayDict();
     </script>
 </body>
+
 </html>

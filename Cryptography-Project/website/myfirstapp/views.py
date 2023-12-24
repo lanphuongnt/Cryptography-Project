@@ -193,25 +193,12 @@ def ehr_view(request):
     }
 
 
-def reference_by_specialty(request): # Call by staff_profile 
-     # request GET ehr following SPECIALTY
-    request_specialty = {
-        ''
-    }
+from django.http import JsonResponse
+
+def reference_by_specialty(request):
     user = request.session['user']
-    '''
-    Example :
-    list_patient_id = {
-        'patient' : [
-            '22521168',
-            '22520706,
-        ]
-    }
-    '''
-    list_patient_id = get_ehr_by_specialty(user['_id']) # ID cua doctor(staff)
-    
-    # template = loader.get_template('staff_profile.html')
-    return render(request, 'patient-view.html', {'list_patient_id': list_patient_id})
+    list_patient_id = get_ehr_by_specialty(user['_id'])
+    return JsonResponse(list_patient_id)
 
 def get_medical_history(request): # Call when staff click userID (request is POST) 
     patient_id = request.POST.get('patient_id') # name in html is the same this ('userID')
