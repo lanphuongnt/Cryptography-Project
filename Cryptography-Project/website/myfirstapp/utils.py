@@ -230,7 +230,7 @@ def get_data(request):
     if encryted_data:
         encryted_data = flatten(encryted_data, ".")
         recovered_data = {}
-        
+
         requester_attribute = get_subject_attribute(request['requester_id'])
         private_key, public_key = server_CA.GeneratePrivateKey(request['requester_id'], requester_attribute)
         # public_key = server_CA.GetPublicKey(request['_id'])
@@ -243,7 +243,7 @@ def get_data(request):
 
         recovered_data = flatten(recovered_data, ".")
         recovered_data = unflatten(recovered_data, ".")
-        print(recovered_data)
+        # print(recovered_data)
         return recovered_data
     else:
         return None
@@ -273,13 +273,13 @@ def insert_data(request):
     # policy = policy_col.find_one({'request' : 'insert'})['policy']
     
     policy = get_policy({'source' : request['source'], 'request' : 'insert'})
-    print(policy)
+    # print(policy)
     public_key = server_CA.GetPublicKey(request['_id'])
 
     for data in update_data.items():
         encrypted_data[data[0]] = server_CA.cpabe.encrypt(public_key, data[1], policy)
     encrypted_data = flatten(encrypted_data, ".")
-    encrypted_data = unflatten(encrypted_data, ".")
+    # encrypted_data = unflatten(encrypted_data, ".")
 
     collection.update_one({'_id': ObjectId(request['_id'])}, {'$set': encrypted_data})
     response = collection.find_one({'_id': ObjectId(request['_id'])})

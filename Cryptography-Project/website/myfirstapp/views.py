@@ -123,15 +123,35 @@ def staff_profile(request): # Tao lo code lon cho
 @custom_login_required
 def patient_profile(request):
     user = request.session['user']
-    new_request = {
-        'database' : 'data',
-        'collection' : 'ehr',
-        '_id' : user['_id'],
-        'requester_id' : user['_id']
-    }
-    ehr_patient = get_data(new_request)
- 
-    return render(request, 'patient-profile.html', ehr_patient)
+    if request.method == 'POST':
+        post_data = request.POST
+        update_data = {}
+        for key, value in post_data.items():
+            if key != 'csrfmiddlewaretoken':
+                update_data[key] = str(value)
+        print(update_data)
+        update_data = unflatten(update_data, ".")
+        # print(update_data)
+        for key, value in update_data.items():
+            update_request = {
+                'database' : 'data', 
+                'collection' : 'ehr', 
+                '_id' : user['_id'], 
+                'source' : key,
+                'requester_id' : user['_id'],
+                '$set' : {key: value},
+            }
+            insert_data(update_request)
+
+    if request.method == 'GET' or request.method == 'POST':
+        new_request = {
+            'database' : 'data',
+            'collection' : 'ehr',
+            '_id' : user['_id'],
+            'requester_id' : user['_id']
+        }
+        ehr_patient = get_data(new_request)
+        return render(request, 'patient-profile.html', ehr_patient)
     # return HttpResponse(template.render({'patient_info': patient_info}, request))
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
 # It is the default password hashing algorithm used by Django for user authentication.
@@ -190,5 +210,8 @@ def get_medical_history(request): # Call when staff click userID (request is POS
         'requester_id' : staff_id,
     }
     patient_data = get_data(request)
+    '''
+    {'medical_history' : ...}
+    '''
     return render(request, "ehr-view-a-patient.html", patient_data)
     
