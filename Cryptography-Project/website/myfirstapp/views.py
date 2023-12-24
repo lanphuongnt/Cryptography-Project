@@ -12,6 +12,9 @@ from charm.core.engine.util import objectToBytes, bytesToObject
 from .source.mypackages.CA import CentralizedAuthority
 from.utils import create_new_EHR, get_data, insert_data, create_new_staff, get_ehr_by_specialty
 
+from django_otp.plugins.otp_totp.models import TOTPDevice
+import pyotp
+
 server_CA = CentralizedAuthority()
 # server_CA.AddPolicy()
 
@@ -71,6 +74,27 @@ def custom_login_required(view_func):
             return redirect('myfirstapp:login')
     return _wrapped_view_func
 
+def otp_verify(request):
+    if request.method == 'POST':
+        otp = request.POST.get('otp')
+        user = request.session['user']
+        device = TOTPDevice.objects.get(user=user)
+
+        if device.verify_token(otp):
+            device.confirmed = True
+            device.save()
+
+            if user['role'] == 'user':
+                return redirect('myfirstapp:patient_profile')
+            else:
+                return redirect('myfirstapp:staff_profile')
+        else:
+            # Handle incorrect OTP
+            return render(request, 'otp_verify.html', {'error': 'Invalid OTP'})
+
+    else:
+        return render(request, 'otp_verify.html')
+
 # @never_cache
 def login_view(request):
     if request.method == 'POST':
@@ -84,6 +108,8 @@ def login_view(request):
         user = collection.find_one({'username': username})
         stored_password = user['password']
         if check_password(password, stored_password):
+            device = TOTPDevice.objects.create(user=user, confirmed=False)
+            # return redirect('myfirstapp:otp_verify')
             # Convert ObjectId to string
             user['_id'] = str(user['_id'])
             request.session['user'] = user
@@ -171,26 +197,7 @@ def patient_profile(request):
 
 def ehr_view(request):
     user = request.session['user']
-    # user_id = str(user['_id'])
-    # template = loader.get_template('patient_view.html')
-
-    # # Retrieve the encrypted patient data from the database
-    # db = server_CA.client['data']
-    # collection = db['ehr']
-    # patient_data = collection.find_one({'_id': ObjectId(patient_id)})
-
-    # # Decrypt the patient data
-    # decrypted_data = {}
-    # for key, value in patient_data.items():
-    #     if key != '_id':
-    #         decrypted_data[key] = server_CA.cpabe.decrypt(server_CA.private_key, value)
-
-    # return HttpResponse(template.render({'patient_data': decrypted_data}, request))
-    new_request = {
-        'database' : 'data',
-        'collection' : 'ehr',
-        # '_id' : patient_id,
-    }
+    return render(request, 'ehr-view-a-patient.html')
 
 
 from django.http import JsonResponse
@@ -213,5 +220,5 @@ def get_medical_history(request): # Call when staff click userID (request is POS
     '''
     {'medical_history' : ...}
     '''
-    return render(request, "ehr-view-a-patient.html", patient_data)
+    return render(request, "patient-view.html", patient_data)
     

@@ -16,7 +16,9 @@
 
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -284,44 +286,57 @@
 
       <li class="nav-item">
         <button id="loadPatients" class="nav-link collapsed" data-bs-target="#patients-nav" data-bs-toggle="collapse">
-            <i class="bi bi-menu-button-wide"></i><span>Patients</span>
+          <i class="bi bi-menu-button-wide"></i><span>Patients</span>
         </button>
         <ul id="patients-nav" class="nav nav-pills flex-column collapse">
-            <li class="nav-item"><a class="nav-link" href="patients-list.html">Patients List</a></li>
-            <li class="nav-item"><a class="nav-link" href="patients-add.html">Add Patient</a></li>
-            <li class="nav-item"><a class="nav-link" href="patients-profile.html">Patient Profile</a></li>
-            <li class="nav-item" id="patientDataContainer">
-                <h6>Data received:</h6>
-            </li>
+          <li class="nav-item"><a class="nav-link" href="patients-list.html">Patients List</a></li>
+          <li class="nav-item"><a class="nav-link" href="patients-add.html">Add Patient</a></li>
+          <li class="nav-item"><a class="nav-link" href="patients-profile.html">Patient Profile</a></li>
+          <li class="nav-item" id="patientDataContainer">
+            <h6>Data received:</h6>
+          </li>
         </ul>
-    </li><!-- End Patients Nav -->
+      </li><!-- End Patients Nav -->
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-      $(document).ready(function () {
-        $("#loadPatients").click(function () {
-          $.ajax({
-            url: "{% url 'myfirstapp:patient_view' %}",  // replace with the path to your Django view
-            type: "get",
-            success: function(response){
-              // update your page based on the response
-              // for example, if the response is a dictionary, you can iterate over its keys and values
-              var resultElement = document.createElement("p");
-              var resultText = "";
-              for (var key in response) {
-                if (response.hasOwnProperty(key)) {
-                  resultText += key + ": " + response[key] + ", ";
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script>
+        $(document).ready(function () {
+          $("#loadPatients").click(function () {
+            $.ajax({
+              url: "{% url 'myfirstapp:patient_get' %}",  // replace with the path to your Django view
+              type: "get",
+              success: function (response) {
+                // update your page based on the response
+                // for example, if the response is a list of patient IDs, you can iterate over the list
+                for (var i = 0; i < response['patient'].length; i++) {
+                  var resultElement = document.createElement("button");
+                  resultElement.innerText = "View EHR of patient: " + response['patient'][i];
+                  document.getElementById("patientDataContainer").appendChild(resultElement);
+
+                  // Add click event to the result element
+                  $(resultElement).click(function () {
+                    $.ajax({
+                      url: "{% url 'myfirstapp:patient_view' %}",
+                      type: "post",
+                      data: {
+                        patient_id: response['patient'][i],
+                        staff_id: '{{ staff_id }}',  // replace with the Django context variable for the staff ID
+                        csrfmiddlewaretoken: '{{ csrf_token }}'  // Django CSRF token
+                      },
+                      success: function (response) {
+                        // redirect to the EHR view page
+                        window.location.href = "patient-view.html";
+                      }
+                    });
+                  });
                 }
               }
-              resultElement.innerText = "Result: " + resultText;
-              document.getElementById("patientDataContainer").appendChild(resultElement);
-            }          
+            });
           });
         });
-      });
-    </script>
-      
-    <li class="nav-item">
+      </script>
+
+      <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#reference-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-journal-text"></i><span>Reference</span>
         </a>
@@ -396,7 +411,8 @@
               <ul class="nav nav-tabs nav-tabs-bordered">
 
                 <li class="nav-item">
-                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+                  <button class="nav-link active" data-bs-toggle="tab"
+                    data-bs-target="#profile-overview">Overview</button>
                 </li>
 
                 <li class="nav-item">
@@ -431,7 +447,8 @@
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Address</div>
-                    <div class="col-lg-9 col-md-8">{{ staff_info.address.city|safe }}, {{ staff_info.address.state|safe }}, {{ staff_info.address.street|safe }}, {{ staff_info.address.zip|safe }}</div>
+                    <div class="col-lg-9 col-md-8">{{ staff_info.address.city|safe }}, {{ staff_info.address.state|safe
+                      }}, {{ staff_info.address.street|safe }}, {{ staff_info.address.zip|safe }}</div>
                   </div>
 
                   <div class="row">
@@ -445,7 +462,7 @@
                   </div>
 
                   <script>
-                    document.addEventListener("DOMContentLoaded", function() {
+                    document.addEventListener("DOMContentLoaded", function () {
                       var patientDropdown = document.getElementById("patientDropdown");
                       var dropdownItems = document.getElementsByClassName("dropdown-item");
                       var patientCount = dropdownItems.length;
@@ -454,7 +471,7 @@
                     });
                   </script>
                 </div>
-                  
+
                 <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
 
                   <!-- Profile Edit Form -->
@@ -464,8 +481,10 @@
                       <div class="col-md-8 col-lg-9">
                         <img src="{% static 'assets/img/profile-img.jpg' %}" alt="Profile">
                         <div class="pt-2">
-                          <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>
-                          <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
+                          <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i
+                              class="bi bi-upload"></i></a>
+                          <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i
+                              class="bi bi-trash"></i></a>
                         </div>
                       </div>
                     </div>
@@ -480,14 +499,16 @@
                     <div class="row mb-3">
                       <label for="about" class="col-md-4 col-lg-3 col-form-label">About</label>
                       <div class="col-md-8 col-lg-9">
-                        <textarea name="about" class="form-control" id="about" style="height: 100px">Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Tempora libero non est unde veniam est qui dolor. Ut sunt iure rerum quae quisquam autem eveniet perspiciatis odit. Fuga sequi sed ea saepe at unde.</textarea>
+                        <textarea name="about" class="form-control" id="about"
+                          style="height: 100px">Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Tempora libero non est unde veniam est qui dolor. Ut sunt iure rerum quae quisquam autem eveniet perspiciatis odit. Fuga sequi sed ea saepe at unde.</textarea>
                       </div>
                     </div>
 
                     <div class="row mb-3">
                       <label for="company" class="col-md-4 col-lg-3 col-form-label">Company</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="company" type="text" class="form-control" id="company" value="Lueilwitz, Wisoky and Leuschke">
+                        <input name="company" type="text" class="form-control" id="company"
+                          value="Lueilwitz, Wisoky and Leuschke">
                       </div>
                     </div>
 
@@ -508,7 +529,8 @@
                     <div class="row mb-3">
                       <label for="Address" class="col-md-4 col-lg-3 col-form-label">Address</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="address" type="text" class="form-control" id="Address" value="A108 Adam Street, New York, NY 535022">
+                        <input name="address" type="text" class="form-control" id="Address"
+                          value="A108 Adam Street, New York, NY 535022">
                       </div>
                     </div>
 
@@ -529,28 +551,32 @@
                     <div class="row mb-3">
                       <label for="Twitter" class="col-md-4 col-lg-3 col-form-label">Twitter Profile</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="twitter" type="text" class="form-control" id="Twitter" value="https://twitter.com/#">
+                        <input name="twitter" type="text" class="form-control" id="Twitter"
+                          value="https://twitter.com/#">
                       </div>
                     </div>
 
                     <div class="row mb-3">
                       <label for="Facebook" class="col-md-4 col-lg-3 col-form-label">Facebook Profile</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="facebook" type="text" class="form-control" id="Facebook" value="https://facebook.com/#">
+                        <input name="facebook" type="text" class="form-control" id="Facebook"
+                          value="https://facebook.com/#">
                       </div>
                     </div>
 
                     <div class="row mb-3">
                       <label for="Instagram" class="col-md-4 col-lg-3 col-form-label">Instagram Profile</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="instagram" type="text" class="form-control" id="Instagram" value="https://instagram.com/#">
+                        <input name="instagram" type="text" class="form-control" id="Instagram"
+                          value="https://instagram.com/#">
                       </div>
                     </div>
 
                     <div class="row mb-3">
                       <label for="Linkedin" class="col-md-4 col-lg-3 col-form-label">Linkedin Profile</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="linkedin" type="text" class="form-control" id="Linkedin" value="https://linkedin.com/#">
+                        <input name="linkedin" type="text" class="form-control" id="Linkedin"
+                          value="https://linkedin.com/#">
                       </div>
                     </div>
 
@@ -660,7 +686,8 @@
     </div>
   </footer><!-- End Footer -->
 
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
   <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
