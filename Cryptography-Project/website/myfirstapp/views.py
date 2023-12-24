@@ -15,6 +15,8 @@ from.utils import create_new_EHR, get_data, insert_data, create_new_staff, get_e
 from django_otp.plugins.otp_totp.models import TOTPDevice
 import pyotp
 
+from django.http import JsonResponse
+
 server_CA = CentralizedAuthority()
 # server_CA.AddPolicy()
 
@@ -197,10 +199,7 @@ def patient_profile(request):
 
 def ehr_view(request):
     user = request.session['user']
-    return render(request, 'ehr-view-a-patient.html')
-
-
-from django.http import JsonResponse
+    
 
 def reference_by_specialty(request):
     user = request.session['user']
@@ -220,5 +219,4 @@ def get_medical_history(request): # Call when staff click userID (request is POS
     '''
     {'medical_history' : ...}
     '''
-    return render(request, "patient-view.html", patient_data)
-    
+    return JsonResponse(patient_data)    
