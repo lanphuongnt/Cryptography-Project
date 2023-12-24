@@ -63,15 +63,6 @@ makemyrx_db = client['sample_medicines']
 medicines_collection = makemyrx_db['medicinedetails']
 ```
 
-<<<<<<< HEAD
-
-
-
-
-
-
-https://stackoverflow.com/questions/69780351/attributeerror-module-pyparsing-has-no-attribute-downcasetokens-rasa
-=======
 # FIX BUG :
 ```
 OperatorOR = Literal("OR").setParseAction(downcaseTokens) | Literal("or")
@@ -82,4 +73,3 @@ run:
 ```
 pip install pyparsing==2.4.2
 ```
->>>>>>> aac120fa4179e3659f25ad474dc1c414ef789513

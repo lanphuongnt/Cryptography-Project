@@ -213,13 +213,13 @@
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
             <img src="{% static 'assets/img/profile-img.jpg' %}" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{ patient_info.full_name }}</span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
-              <h6>Kevin Anderson</h6>
-              <span>Web Designer</span>
+              <h6>{{ patient_info.full_name }}</h6>
+              <span>Patient</span>
             </li>
             <li>
               <hr class="dropdown-divider">
@@ -533,7 +533,7 @@
                       <label for="emergencyContact" class="col-md-4 col-lg-3 col-form-label">Emergency Contact</label>
                       <div class="col-md-8 col-lg-9">
                         <input name="emergencyContact" type="text" class="form-control" id="emergencyContact"
-                          value="Lueilwitz, Wisoky and Leuschke">
+                          value="{{ patient_info.emergency_contact.name }}">
                       </div>
                     </div>
     
