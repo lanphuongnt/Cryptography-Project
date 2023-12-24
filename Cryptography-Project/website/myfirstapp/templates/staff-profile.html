@@ -283,22 +283,41 @@
       </li><!-- End Dashboard Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-menu-button-wide"></i><span>Patients</span>
-        </a>
-      </li><!-- End Components Nav -->
-
+        <form action="{% url 'myfirstapp:patient_view' %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="nav-link collapsed" data-bs-target="#patients-nav" data-bs-toggle="collapse">
+            <i class="bi bi-menu-button-wide"></i><span>Patients</span>
+          </button>
+        </form>
+        <ul id="patients-nav" class="nav nav-pills flex-column collapse">
+          <li class="nav-item"><a class="nav-link" href="patients-list.html">Patients List</a></li>
+          <li class="nav-item"><a class="nav-link" href="patients-add.html">Add Patient</a></li>
+          <li class="nav-item"><a class="nav-link" href="patients-profile.html">Patient Profile</a></li>
+          {% if patients_data %}
+          <li class="nav-item">
+            <h6>Data received:</h6>
+            <script type="application/json" id="patients-data">{{ patients_data|json_script }}</script>
+            <script>
+              var patientsData = JSON.parse(document.getElementById("patients-data").textContent);
+              console.log(patientsData);
+              // Display the result here, e.g., update the DOM with the data
+            </script>
+          </li>
+          {% endif %}
+        </ul>
+      </li><!-- End Patients Nav -->
+      
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+        <a class="nav-link collapsed" data-bs-target="#reference-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-journal-text"></i><span>Reference</span>
         </a>
-      </li><!-- End Forms Nav -->
+      </li><!-- End Reference Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
+        <a class="nav-link collapsed" data-bs-target="#appointments-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-layout-text-window-reverse"></i><span>Appointments</span>
         </a>
-      </li><!-- End Tables Nav -->
+      </li><!-- End Appointments Nav -->
 
       <li class="nav-heading">Pages</li>
 

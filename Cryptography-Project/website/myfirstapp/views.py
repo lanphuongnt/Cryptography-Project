@@ -118,19 +118,19 @@ def staff_profile(request): # Tao lo code lon cho
     staff_info = get_data(new_request)
  
     return render(request, 'staff-profile.html', staff_info)
-@never_cache
-@custom_login_required
-def patient_profile(request):
-    user = request.session['user']
-    new_request = {
-        'database' : 'data',
-        'collection' : 'ehr',
-        '_id' : user['_id'],
-        'requester_id' : user['_id']
-    }
-    staff_info = get_data(new_request)
+# @never_cache
+# @custom_login_required
+# def patient_profile(request):
+#     user = request.session['user']
+#     new_request = {
+#         'database' : 'data',
+#         'collection' : 'ehr',
+#         '_id' : user['_id'],
+#         'requester_id' : user['_id']
+#     }
+#     staff_info = get_data(new_request)
  
-    return render(request, 'staff-profile.html', staff_info)
+#     return render(request, 'staff-profile.html', staff_info)
 
 @never_cache
 @custom_login_required
@@ -211,7 +211,7 @@ def reference_by_specialty(request): # Call by staff_profile
     list_patient_id = get_ehr_by_specialty(user['_id']) # ID cua doctor(staff)
     
     # template = loader.get_template('staff_profile.html')
-    return render(request, 'choose-ehr-by-specialty.html', list_patient_id)
+    return render(request, 'patient-view.html', {'list_patient_id': list_patient_id})
 
 def get_medical_history(request): # Call when staff click userID (request is POST) 
     patient_id = request.POST.get('patient_id') # name in html is the same this ('userID')
