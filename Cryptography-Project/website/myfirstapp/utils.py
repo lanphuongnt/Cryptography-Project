@@ -9,112 +9,41 @@ fake = Faker()
 server_CA = CentralizedAuthority()
 # server_CA.AddPolicy()
 
-def create_new_EHR(request, userID):
-    status = request.POST['status']
-    if status == 'Patient':
-        addition = {
-            "patient_info": {
-                "full_name": request.POST['name'],
-                "dob": fake.date_of_birth().strftime("%Y-%m-%d"),
-                "gender": fake.random_element(["Male", "Female"]),
-                "ID": fake.random_number(digits=12),
-                "address": {
-                    "street": fake.street_address(),
-                    "city": fake.city(),
-                    "state": fake.state(),
-                    "zip": fake.zipcode()
-                },
-                "contact": {
-                    "phone": fake.phone_number(),
-                    "email": request.POST['email']
-                },
-                "emergency_contact": {
-                    "name": fake.name(),
-                    "phone": fake.phone_number(),
-                    "email": fake.email()
-                },
-                "disease": random.choice(["Dermatology", "Stomach"]),
-                "doctorID": "",
-                "medical_history": {
-                    "blood_type": fake.random_element(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]),
-                    "height": fake.random_int(min=150, max=200),
-                    "weight": fake.random_int(min=50, max=150),
-                    "allergies": fake.random_element(["Pollen", "Dust", "Food", "Medication"]),
-                    "chronic_diseases": fake.random_element(["Diabetes", "Hypertension", "Asthma", "Arthritis"]),
-                    "medications": fake.random_element(["Aspirin", "Paracetamol", "Ibuprofen", "Antibiotics"]),
-                    "surgeries": fake.random_element(["Appendectomy", "Cataract surgery", "Knee replacement"]),
-                    "vaccines": fake.random_element(["Flu", "Hepatitis B", "MMR", "Tetanus"]),
-                    "family_history": fake.random_element(["Heart disease", "Cancer", "Diabetes", "Alzheimer's"]),
-                    "insurance": fake.random_element(["Yes", "No"]),
-                    "insurance_number": fake.random_number(digits=10),
-                    "insurance_company": fake.company(),
-                    "visits_history": [
-                        {
-                            "date": fake.date_between(start_date='-1y', end_date='today').strftime("%Y-%m-%d"),
-                            "by_who": fake.name(),
-                            "reason": fake.sentence(),
-                            "prescription": fake.sentence()
-                        },
-                        {
-                            "date": fake.date_between(start_date='-1y', end_date='today').strftime("%Y-%m-%d"),
-                            "by_who": fake.name(),
-                            "reason": fake.sentence(),
-                            "prescription": fake.sentence()
-                        }
-                    ],
-                    "notes": fake.paragraph(),
-                    "presentingComplaint": {
-                        "complaint": fake.sentence()
-                    },
-                    "clinicalFindings": {
-                        "findings": fake.sentence()
-                    },
-                    "allergenTesting": {
-                        "testing": fake.sentence()
-                    },
-                    "diagnosis": {
-                        "diagnosisDescription": {
-                            "description": fake.sentence()
-                        },
-                        "diagnosisDate": fake.date_between(start_date='-1y', end_date='today').strftime("%Y-%m-%d"),
-                        "diagnosisLocation": {
-                            "location": fake.city()
-                        },
-                        "diagnosisType": {
-                            "type": fake.word()
-                        }
-                    },
-                    "treatmentPlan": {
-                        "allergenAvoidance": fake.sentence(),
-                        "topicalSteroids": fake.sentence(),
-                        "antihistamines": fake.sentence(),
-                        "treatmentPlanDescription": {
-                            "description": fake.sentence()
-                        },
-                        "treatmentPlanDate": fake.date_between(start_date='-1y', end_date='today').strftime("%Y-%m-%d"),
-                        "treatmentPlanLocation": {
-                            "location": fake.city()
-                        },
-                        "treatmentPlanType": {
-                            "type": fake.word()
-                        }
-                    },
-                    "patientEducation": fake.paragraph(),
-                    "followUpPlan": {
-                        "followUpAppointmentDate": fake.date_between(start_date='today', end_date='+1y').strftime("%Y-%m-%d"),
-                        "prognosis": fake.sentence()
-                    }
-                }
-            }
+def get_policy(request):
+    '''
+    Example request
+    {
+        'request' : 'insert',
+        'source' : 'medical_history'
+    }
+    '''
+    policy_col = server_CA.client['policy_repository']['abe']
+    policy = policy_col.find_one(request)['policy']
+    return policy
+
+def create_subject_attribute(request):
+    '''
+        request = {
+            '_id' : ObjectId(userID),
+            'status' : status.lower(),
+            'role' : 'staff',
+            'specialty' : 'stomach', 
         }
-    else:
-        addition = {
+    '''
+    # Create user attribute
+    attr_col = server_CA.client['CA']['subject_attribute']
+    attr_col.insert_one(request)
+
+def create_new_staff(request, userID):
+    status = request.POST['status']
+    addition = {
             "staff_info": {
                 "name": request.POST['name'],
                 "dob": fake.date_of_birth().strftime("%Y-%m-%d"),
                 "gender": fake.random_element(["Male", "Female"]),
                 "cccd": fake.random_number(digits=12),
                 "status": request.POST['status'],
+                "specialty": fake.random_element(["Dermatology", "Stomach"]),
                 "contact": {
                     "phone": fake.phone_number(),
                     "email": request.POST['email']
@@ -127,23 +56,154 @@ def create_new_EHR(request, userID):
                 }
             }
         }
+    db = server_CA.client['data']
+    staff_col = db['staff']
+    staff_col.insert_one({'_id' : ObjectId(userID)})
+
+    request_new_attribute = {
+        '_id' : ObjectId(userID),
+        'status' : status.lower(),
+        'role' : 'staff',
+        'specialty' : addition["staff_info"]["specialty"].lower(),
+    }
+    create_subject_attribute(request_new_attribute)
+
+    new_request = {
+        '_id' : userID, 
+        'database' : 'data', 
+        'collection' : 'staff',
+        'source' : 'staff_info',
+        '$set' : {'staff_info' : addition["staff_info"]}
+    }
+
+    insert_data(new_request)
+
+
+
+def create_new_EHR(request, userID):
+    status = request.POST['status']
+    addition = {
+        "patient_info": {
+            "full_name": request.POST['name'],
+            "dob": fake.date_of_birth().strftime("%Y-%m-%d"),
+            "gender": fake.random_element(["Male", "Female"]),
+            "ID": fake.random_number(digits=12),
+            "address": {
+                "street": fake.street_address(),
+                "city": fake.city(),
+                "state": fake.state(),
+                "zip": fake.zipcode()
+            },
+            "contact": {
+                "phone": fake.phone_number(),
+                "email": request.POST['email']
+            },
+            "emergency_contact": {
+                "name": fake.name(),
+                "phone": fake.phone_number(),
+                "email": fake.email()
+            },
+        },
+        "medical_history": {
+            "disease": random.choice(["Dermatology", "Stomach"]),
+            "doctorID": "",
+            "blood_type": fake.random_element(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]),
+            "height": fake.random_int(min=150, max=200),
+            "weight": fake.random_int(min=50, max=150),
+            "allergies": fake.random_element(["Pollen", "Dust", "Food", "Medication"]),
+            "chronic_diseases": fake.random_element(["Diabetes", "Hypertension", "Asthma", "Arthritis"]),
+            "medications": fake.random_element(["Aspirin", "Paracetamol", "Ibuprofen", "Antibiotics"]),
+            "surgeries": fake.random_element(["Appendectomy", "Cataract surgery", "Knee replacement"]),
+            "vaccines": fake.random_element(["Flu", "Hepatitis B", "MMR", "Tetanus"]),
+            "family_history": fake.random_element(["Heart disease", "Cancer", "Diabetes", "Alzheimer's"]),
+            "insurance": fake.random_element(["Yes", "No"]),
+            "insurance_number": fake.random_number(digits=10),
+            "insurance_company": fake.company(),
+            "visits_history": [
+                {
+                    "date": fake.date_between(start_date='-1y', end_date='today').strftime("%Y-%m-%d"),
+                    "by_who": fake.name(),
+                    "reason": fake.sentence(),
+                    "prescription": fake.sentence()
+                },
+                {
+                    "date": fake.date_between(start_date='-1y', end_date='today').strftime("%Y-%m-%d"),
+                    "by_who": fake.name(),
+                    "reason": fake.sentence(),
+                    "prescription": fake.sentence()
+                }
+            ],
+            "notes": fake.paragraph(),
+            "presentingComplaint": {
+                "complaint": fake.sentence()
+            },
+            "clinicalFindings": {
+                "findings": fake.sentence()
+            },
+            "allergenTesting": {
+                "testing": fake.sentence()
+            },
+            "diagnosis": {
+                "diagnosisDescription": {
+                    "description": fake.sentence()
+                },
+                "diagnosisDate": fake.date_between(start_date='-1y', end_date='today').strftime("%Y-%m-%d"),
+                "diagnosisLocation": {
+                    "location": fake.city()
+                },
+                "diagnosisType": {
+                    "type": fake.word()
+                }
+            },
+            "treatmentPlan": {
+                "allergenAvoidance": fake.sentence(),
+                "topicalSteroids": fake.sentence(),
+                "antihistamines": fake.sentence(),
+                "treatmentPlanDescription": {
+                    "description": fake.sentence()
+                },
+                "treatmentPlanDate": fake.date_between(start_date='-1y', end_date='today').strftime("%Y-%m-%d"),
+                "treatmentPlanLocation": {
+                    "location": fake.city()
+                },
+                "treatmentPlanType": {
+                    "type": fake.word()
+                }
+            },
+            "patientEducation": fake.paragraph(),
+            "followUpPlan": {
+                "followUpAppointmentDate": fake.date_between(start_date='today', end_date='+1y').strftime("%Y-%m-%d"),
+                "prognosis": fake.sentence()
+            }
+        }
+    }
+        
 
     db = server_CA.client['data']
-    if status == 'Patient':
-        ehr_col = db['ehr']
-    else:
-        ehr_col = db['staff']
+    ehr_col = db['ehr']
     ehr_col.insert_one({'_id' : ObjectId(userID)})
 
+    request_new_attribute = {
+        '_id' : ObjectId(userID),
+        'status' : status.lower(),
+        'role' : 'user',
+        'specialty' : addition["medical_history"]["disease"].lower(),
+    }
+    create_subject_attribute(request_new_attribute)
+
     # Tui test cai nay
-    new_request = {'$set' : addition}
-    new_request['_id'] = userID
-    new_request['database'] = 'data'
-    if status == 'Patient':
-        new_request['collection'] = 'ehr'
-    else:
-        new_request['collection'] = 'staff'
-    
+    new_request = {
+        '_id' : userID, 
+        'database' : 'data', 
+        'collection' : 'ehr'
+    }
+
+    new_request['source'] = 'patient_info'
+    new_request['$set'] = {'patient_info' : addition["patient_info"]}
+    insert_data(new_request)
+    new_request['source'] = 'medical_history'
+    new_request['specialty'] = addition["medical_history"]["disease"].lower()
+    new_request['$set'] = {'medical_history' : addition["medical_history"]}
     insert_data(new_request)
 
 def get_data(request):
@@ -183,7 +243,7 @@ def GetSubjectAttribute(self, userID, attribute_name): # attribute name is a lis
 
 def insert_data(request):
     # Request (dict) include: database, collection, username(ObjectID), {'$set' : {'dataname1': datavalue1}, {data}}
-    # Example : request = {'database' : 'data', 'collection' : 'ehr', 'username' : '65845045be5cf517d0a932e1', {'height' : 153}}
+    # Example : request = {'database' : 'data', 'collection' : 'ehr', 'username' : '65845045be5cf517d0a932e1', 'source' : medical_history}
     db = server_CA.client[request['database']]
     collection = db[request['collection']]
 
@@ -191,14 +251,11 @@ def insert_data(request):
     encrypted_data = {}
     update_data = flatten(update_data, ".")
 
-    policy_col = server_CA.client['policy_repository']['abe']
-    policy = policy_col.find_one({'request' : 'insert'})['policy']
-
-    # CA_db = server_CA.client['CA']
-    # attribute_col = CA_db['subject_attribute']
-    # user_attribute = attribute_col.find_one({"_id" : ObjectId(request['username'])})    
+    # policy_col = server_CA.client['policy_repository']['abe']
+    # policy = policy_col.find_one({'request' : 'insert'})['policy']
     
-    # private_key, public_key = server_CA.GeneratePrivateKey(request['username'], user_attribute)
+    policy = get_policy({'source' : request['source'], 'request' : 'insert'})
+
     public_key = server_CA.GetPublicKey(request['_id'])
 
     for data in update_data.items():
