@@ -231,7 +231,7 @@ def get_data(request):
 
         recovered_data = flatten(recovered_data, ".")
         recovered_data = unflatten(recovered_data, ".")
-
+        print(recovered_data)
         return recovered_data
     else:
         return None
@@ -255,7 +255,7 @@ def insert_data(request):
     # policy = policy_col.find_one({'request' : 'insert'})['policy']
     
     policy = get_policy({'source' : request['source'], 'request' : 'insert'})
-
+    print(policy)
     public_key = server_CA.GetPublicKey(request['_id'])
 
     for data in update_data.items():

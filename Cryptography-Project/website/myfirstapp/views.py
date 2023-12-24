@@ -122,7 +122,7 @@ def patient_profile(request):
         'collection' : 'ehr',
         '_id' : user['_id'],
     }
-    patient_info = get_data(new_request)
+    ehr_patient = get_data(new_request)
     # HttpResponse(patient_info)
     # col = server_CA.client['data']['ehr']
     # patient_doc = col.find_one({'_id' : user['_id']})
@@ -135,7 +135,8 @@ def patient_profile(request):
     # Check if the user's role is 'user'
     # if user['role'] != 'user':
     # template = loader.get_template('users-profile copy.html')
-    return render(request, 'patient-profile.html', {'patient_info': patient_info['patient_info']})
+    # print(ehr_patient)
+    return render(request, 'patient-profile.html', ehr_patient)
     return render(request, 'patient-profile.html')
     # return HttpResponse(template.render({'patient_info': patient_info}, request))
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 

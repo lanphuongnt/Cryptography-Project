@@ -26,7 +26,7 @@ class CentralizedAuthority:
         db = self.client['CA']
         collection = db['key']
         new_key = {
-            '_id' : userID,
+            '_id' : ObjectId(userID),
             'public_key' : objectToBytes(public_key, self.cpabe.ac17.group),
             'master_key' : objectToBytes(master_key, self.cpabe.ac17.group)
         }
@@ -36,14 +36,14 @@ class CentralizedAuthority:
     def GetPublicKey(self, userID):
         db = self.client['CA']
         collection = db['key']
-        key_info = collection.find_one({'_id' : userID})
+        key_info = collection.find_one({'_id' : ObjectId(userID)})
         public_key = bytesToObject(key_info['public_key'], self.cpabe.groupObj)
         return public_key
 
     def GetMasterKey(self, userID):
         db = self.client['CA']
         collection = db['key']
-        key_info = collection.find_one({'_id' : userID})
+        key_info = collection.find_one({'_id' : ObjectId(userID)})
         master_key = bytesToObject(key_info['master_key'], self.cpabe.groupObj)
         return master_key
 
