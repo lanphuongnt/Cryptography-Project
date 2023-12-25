@@ -28,8 +28,6 @@ def signup(request):
         db = server_CA.client['user']
         log_and_auth = db['logAndAuth']
 
-        name = request.POST['name']
-        email = request.POST['email']
         username = request.POST['username']
         password = request.POST['password']
         status = request.POST['status']
@@ -42,12 +40,9 @@ def signup(request):
         hashed_password = make_password(password)
 
         user_data = {
-            'name': name,
-            'email': email,
             'username': username,
             'password': hashed_password,
             'role': role,
-            'status': status
         }
         result = log_and_auth.insert_one(user_data)
 
