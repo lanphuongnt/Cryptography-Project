@@ -73,3 +73,24 @@ run:
 ```
 pip install pyparsing==2.4.2
 ```
+
+# Additional packages
+```
+pip install django-otp
+pip install pyotp
+```
+```python
+INSTALLED_APPS = [
+    # ...
+    'django_otp',
+    'django_otp.plugins.otp_totp',
+    # ...
+]
+```
+```python
+MIDDLEWARE = [
+    # ...
+    'django_otp.middleware.OTPMiddleware',
+    # ...
+]
+```

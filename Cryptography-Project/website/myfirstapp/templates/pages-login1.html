@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Pages / Login - NiceAdmin Bootstrap Template</title>
+  <title>Login - KPI Hospital</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -82,6 +82,25 @@
                       <input type="password" name="password" class="form-control" id="yourPassword" required>
                       <div class="invalid-feedback">Please enter your password!</div>
                     </div>
+
+                    <button id="otpButton" onclick="showOtpForm()" class="btn btn-primary w-100">Verify OTP</button>
+                    <form id="otpForm" method="POST" style="display: none;">
+                      {% csrf_token %}
+                      <div class="mb-3">
+                        <input type="text" name="otp" class="form-control" placeholder="Enter OTP">
+                      </div>
+                      <div class="mb-3">
+                        <input type="submit" value="Verify" class="btn btn-primary">
+                      </div>
+                      <p id="otpError" style="color: red;"></p>
+                    </form>
+
+                    <script>
+                      function showOtpForm() {
+                        document.getElementById('loginForm').style.display = 'none';
+                        document.getElementById('otpForm').style.display = 'block';
+                      }
+                    </script>
 
                     <div class="col-12">
                       <div class="form-check">
