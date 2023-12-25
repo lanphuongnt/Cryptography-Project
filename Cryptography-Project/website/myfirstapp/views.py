@@ -108,7 +108,7 @@ def login_view(request):
         user = collection.find_one({'username': username})
         stored_password = user['password']
         if check_password(password, stored_password):
-            device = TOTPDevice.objects.create(user=user, confirmed=False)
+            # device = TOTPDevice.objects.create(user=user, confirmed=False)
             # return redirect('myfirstapp:otp_verify')
             # Convert ObjectId to string
             user['_id'] = str(user['_id'])
