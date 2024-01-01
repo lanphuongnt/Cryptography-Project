@@ -17,7 +17,6 @@ from django.http import JsonResponse
 
 server_CA = CentralizedAuthority()
 abac = AttributeBaseAccessControl()
-
 def index(request):
     template = loader.get_template('myfirst.html')
     return HttpResponse(template.render())
