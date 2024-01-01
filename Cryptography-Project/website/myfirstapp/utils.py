@@ -78,7 +78,7 @@ def create_new_staff(request, userID):
 
     insert_data(new_request)
 
-
+# For signing up purpose
 def create_new_EHR(request, userID):
     status = request.POST['status']
     addition = {
@@ -302,3 +302,15 @@ def get_ehr_by_specialty(staff_ID):
     for patient in list_patient:
         list_patient_id.append(str(patient['_id']))
     return {'patient' : list_patient_id}
+
+# For Receptionist
+def CreateEHR(request):
+    # Check if patient already has EHR
+    patient_ID = request.POST['patient_ID']
+    patient_attribute = server_CA.GetSubjectAttribute(patient_ID)
+    if patient_attribute['role'] == 'user':
+        return False
+    else:
+        create_new_EHR(request, patient_ID)
+        return True
+    
