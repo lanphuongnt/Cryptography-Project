@@ -68,26 +68,6 @@ def custom_login_required(view_func):
             return redirect('myfirstapp:login')
     return _wrapped_view_func
 
-def otp_verify(request):
-    if request.method == 'POST':
-        otp = request.POST.get('otp')
-        user = request.session['user']
-        device = TOTPDevice.objects.get(user=user)
-
-        if device.verify_token(otp):
-            device.confirmed = True
-            device.save()
-
-            if user['role'] == 'user':
-                return redirect('myfirstapp:patient_profile')
-            else:
-                return redirect('myfirstapp:staff_profile')
-        else:
-            # Handle incorrect OTP
-            return render(request, 'otp_verify.html', {'error': 'Invalid OTP'})
-
-    else:
-        return render(request, 'otp_verify.html')
 
 # @never_cache
 def login_view(request):
@@ -102,9 +82,6 @@ def login_view(request):
         user = collection.find_one({'username': username})
         stored_password = user['password']
         if check_password(password, stored_password):
-            # device = TOTPDevice.objects.create(user=user, confirmed=False)
-            # return redirect('myfirstapp:otp_verify')
-            # Convert ObjectId to string
             user['_id'] = str(user['_id'])
             request.session['user'] = user
             if user['role'] == 'user':

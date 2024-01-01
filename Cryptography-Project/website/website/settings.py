@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-ru%n9fa-=$l)zngo(o^4vwr^a$6q%s^76l0#c4)uvn&z5gkfwt
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['duplicate.wuaze.com', '192.168.0.141']
 
 
 # Application definition
@@ -38,8 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myfirstapp',
-    'django_otp',
-    'django_otp.plugins.otp_totp',
 ]
 
 MIDDLEWARE = [
@@ -50,7 +48,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_otp.middleware.OTPMiddleware',
 ]
 
 ROOT_URLCONF = 'website.urls'
