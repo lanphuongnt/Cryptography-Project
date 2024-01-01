@@ -177,7 +177,8 @@ def ehr_view(request):
     ok = abac.request_access(request, requester_id=user['_id'])
     print(ok, user['_id'])
     if ok:
-        response_data = get_data({'source' : request.GET.get('source'), 'database' : 'data', 'collection' : 'ehr', '_id' : request.GET.get('patient_id'), 'requester_id' : user['_id']})
+        response_data = get_data({'source': request.GET.get('source'), 'database': 'data',
+                                 'collection': 'ehr', '_id': request.GET.get('patient_id'), 'requester_id': user['_id']})
         print(response_data)
         return render(request, "patient-view.html", response_data)
     else:
@@ -191,13 +192,12 @@ def reception(request):
         for key, value in post_data.items():
             if key != 'csrfmiddlewaretoken':
                 update_data[key] = str(value)
-        print(update_data)
         update_data = unflatten(update_data, ".")
         # print(update_data)
         for key, value in update_data.items():
             update_request = {
-                'database' : 'data', 
-                'collection' : 'ehr', 
+                'database' : 'HospitalData', 
+                'collection' : 'EHR', 
                 '_id' : user['_id'], 
                 'source' : key,
                 'requester_id' : user['_id'],
@@ -255,11 +255,11 @@ def login_view(request):
             user['_id'] = str(user['_id'])
             request.session['user'] = user
             if user['status'] == 'patient':
-                return redirect('myfirstapp:patient')
+                return redirect('myfirstapp:patient_profile')
             elif user['status'] == 'doctor':
                 return redirect('myfirstapp:doctor')
             elif user['status'] == 'receptionist':
-                return redirect('myfirstapp:receptionist')
+                return redirect('myfirstapp:reception')
             else:
                 return redirect('myfirstapp:index')
         # If no matching username and password found
