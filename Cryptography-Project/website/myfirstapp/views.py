@@ -86,8 +86,10 @@ def login_view(request):
             request.session['user'] = user
             if user['role'] == 'user':
                 return redirect('myfirstapp:patient_profile')
-            else:
+            elif user['role'] == 'staff':
                 return redirect('myfirstapp:staff_profile')
+            elif user['role'] == 'receptionist':
+                return redirect('myfirstapp:reception')
         # If no matching username and password found
         return redirect('myfirstapp:index')
     else:
@@ -180,8 +182,38 @@ def ehr_view(request):
     else:
         return redirect('myfirstapp:reference')
     
+def reception(request):
+    user = request.session['user']
+    if request.method == 'POST':
+        post_data = request.POST
+        update_data = {}
+        for key, value in post_data.items():
+            if key != 'csrfmiddlewaretoken':
+                update_data[key] = str(value)
+        print(update_data)
+        update_data = unflatten(update_data, ".")
+        # print(update_data)
+        for key, value in update_data.items():
+            update_request = {
+                'database' : 'data', 
+                'collection' : 'ehr', 
+                '_id' : user['_id'], 
+                'source' : key,
+                'requester_id' : user['_id'],
+                '$set' : {key: value},
+            }
+            insert_data(update_request)
 
-    
+    if request.method == 'GET' or request.method == 'POST':
+        new_request = {
+            'database' : 'data',
+            'collection' : 'ehr',
+            '_id' : user['_id'],
+            'requester_id' : user['_id'],
+            'source' : ['patient_info', 'medical_history'],
+        }
+        ehr_patient = get_data(new_request)
+        return render(request, 'patient-profile copy.html', ehr_patient)
 
 def reference_by_specialty(request):
     user = request.session['user']
