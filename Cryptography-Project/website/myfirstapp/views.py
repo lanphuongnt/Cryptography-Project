@@ -17,48 +17,51 @@ from django.http import JsonResponse
 
 server_CA = CentralizedAuthority()
 abac = AttributeBaseAccessControl()
+
+client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
+
 def index(request):
     template = loader.get_template('myfirst.html')
     return HttpResponse(template.render())
 
 # @never_cache
-def signup(request):
-    if request.method == 'POST':
-        db = server_CA.client['user']
-        log_and_auth = db['logAndAuth']
+# def signup(request):
+#     if request.method == 'POST':
+#         db = server_CA.client['user']
+#         log_and_auth = db['logAndAuth']
 
-        username = request.POST['username']
-        password = request.POST['password']
-        status = request.POST['status']
+#         username = request.POST['username']
+#         password = request.POST['password']
+#         status = request.POST['status']
 
-        if status == 'Patient':
-            role = 'user'
-        else:
-            role = 'staff'
+#         if status == 'Patient':
+#             role = 'user'
+#         else:
+#             role = 'staff'
 
-        hashed_password = make_password(password)
+#         hashed_password = make_password(password)
 
-        user_data = {
-            'username': username,
-            'password': hashed_password,
-            'role': role,
-        }
-        result = log_and_auth.insert_one(user_data)
+#         user_data = {
+#             'username': username,
+#             'password': hashed_password,
+#             'role': role,
+#         }
+#         result = log_and_auth.insert_one(user_data)
 
-        # Get the ObjectId
-        object_id = result.inserted_id
+#         # Get the ObjectId
+#         object_id = result.inserted_id
 
-        # Generate public key master key for new user
-        server_CA.Setup(str(object_id))
-        if role == 'user':
-            # Generate EHR document for new user
-            create_new_EHR(request, str(object_id))
-        else:
-            create_new_staff(request, str(object_id))
-        # return HttpResponse(lmao)
-        return redirect('myfirstapp:index')
-    else:
-        return render(request, 'pages-register.html')
+#         # Generate public key master key for new user
+#         server_CA.Setup(str(object_id))
+#         if role == 'user':
+#             # Generate EHR document for new user
+#             create_new_EHR(request, str(object_id))
+#         else:
+#             create_new_staff(request, str(object_id))
+#         # return HttpResponse(lmao)
+#         return redirect('myfirstapp:index')
+#     else:
+#         return render(request, 'pages-register.html')
     
 def custom_login_required(view_func):
     def _wrapped_view_func(request, *args, **kwargs):
@@ -70,28 +73,28 @@ def custom_login_required(view_func):
 
 
 # @never_cache
-def login_view(request):
-    if request.method == 'POST':
-        # client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
-        db = server_CA.client['user']
-        collection = db['logAndAuth']
+# def login_view(request):
+#     if request.method == 'POST':
+#         # client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
+#         db = server_CA.client['user']
+#         collection = db['logAndAuth']
 
-        username = request.POST['username']
-        password = request.POST['password']
+#         username = request.POST['username']
+#         password = request.POST['password']
 
-        user = collection.find_one({'username': username})
-        stored_password = user['password']
-        if check_password(password, stored_password):
-            user['_id'] = str(user['_id'])
-            request.session['user'] = user
-            if user['role'] == 'user':
-                return redirect('myfirstapp:patient_profile')
-            else:
-                return redirect('myfirstapp:staff_profile')
-        # If no matching username and password found
-        return redirect('myfirstapp:index')
-    else:
-        return render(request, 'pages-login1.html')
+#         user = collection.find_one({'username': username})
+#         stored_password = user['password']
+#         if check_password(password, stored_password):
+#             user['_id'] = str(user['_id'])
+#             request.session['user'] = user
+#             if user['role'] == 'user':
+#                 return redirect('myfirstapp:patient_profile')
+#             else:
+#                 return redirect('myfirstapp:staff_profile')
+#         # If no matching username and password found
+#         return redirect('myfirstapp:index')
+#     else:
+#         return render(request, 'pages-login1.html')
 
 def logout(request):
     request.session.pop('user', None)
@@ -205,3 +208,107 @@ def get_medical_history(request): # Call when staff click userID (request is POS
     {'medical_history' : ...}
     '''
     return JsonResponse(patient_data)    
+
+# DB: HospitalData - Account
+
+def login_view(request):
+    if request.method == 'POST':
+        db = client['HospitalData']
+        collection = db['Account']
+
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user = collection.find_one({'username': username})
+        stored_password = user['password']
+        if check_password(password, stored_password):
+            user['_id'] = str(user['_id'])
+            request.session['user'] = user
+            if user['status'] == 'patient':
+                return redirect('myfirstapp:patient')
+            elif user['status'] == 'doctor':
+                return redirect('myfirstapp:doctor')
+            elif user['status'] == 'receptionist':
+                return redirect('myfirstapp:receptionist')
+            else:
+                return redirect('myfirstapp:index')
+        # If no matching username and password found
+        return redirect('myfirstapp:index')
+    else:
+        return render(request, 'pages-login1.html')
+
+def signup(request):
+    if request.method == 'POST':
+        db = client['HospitalData']
+        accounts = db['Account']
+
+        username = request.POST['username']
+        password = request.POST['password']
+        status = request.POST['status'].lower()
+
+        hashed_password = make_password(password)
+
+        user_data = {
+            'username': username,
+            'password': hashed_password,
+            'status' : status
+        }
+        result = accounts.insert_one(user_data)
+
+        # Get the ObjectId
+        object_id = result.inserted_id
+
+
+        return redirect('myfirstapp:index')
+    else:
+        return render(request, 'pages-register.html')
+
+
+
+
+def GetDictValue(request):
+    data = {}
+    if request.method == "POST":
+        post_data = request.POST
+        for key, value in post_data.items():
+            if key != 'csrfmiddlewaretoken':
+                data[key] = value
+    elif request.method == "GET":
+        get_param = request.GET 
+    return data
+
+def GetListOfPatientsWithFilter(request):
+    '''
+        Call ABAC to verify that requester can access this resource.
+    '''
+    isAllowed = True
+    if isAllowed:
+        database = 'HospitalData'
+        collection = 'EHR'
+        filter = GetDictValue(request)
+        patients = collection.find(filter)
+    else:
+        return 
+
+def GetHealthRecord(request):
+    '''
+        Call ABAC 
+    '''
+    isAllowed = True
+    if isAllowed:
+        database = 'HospitalData'
+        collection = 'EHR'
+        patientID = request['patientID'] # ID means CCCD
+        patient = collection.findOne({'patientID' : patientID})
+
+    else:
+        return 
+
+
+
+def Doctor(request):
+    '''
+        1. Call GetPatient(request) to get a list of Patient which satisfies with param of request.
+        2. Call UpdateRecord(request) to update health record of patient whose ID and update POST data.
+    '''
+    return 

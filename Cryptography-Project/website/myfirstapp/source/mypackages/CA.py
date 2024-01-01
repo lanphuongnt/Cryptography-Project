@@ -33,21 +33,18 @@ class CentralizedAuthority:
         collection.insert_one(new_key)
         return
 
-    def GetPublicKey(self, userID):
+    def GetKey(self, keyname):
+        '''
+            Key name is either 'public_key' or 'master_key'
+        '''
         db = self.client['CA']
         collection = db['key']
-        key_info = collection.find_one({'_id' : ObjectId(userID)})
-        public_key = bytesToObject(key_info['public_key'], self.cpabe.groupObj)
-        return public_key
+        valid_key = collection.find({'valid' : True})[0]
+        key = bytesToObject(valid_key[keyname], self.cpabe.groupObj)
+        return key
 
-    def GetMasterKey(self, userID):
-        db = self.client['CA']
-        collection = db['key']
-        key_info = collection.find_one({'_id' : ObjectId(userID)})
-        master_key = bytesToObject(key_info['master_key'], self.cpabe.groupObj)
-        return master_key
 
-    def GeneratePrivateKey(self, userID, attribute): # Attribute of user as dict
+    def GetPrivateKey(self, userID): # Attribute of user as dict
         # Convert to list attribute
         attribute = flatten(attribute, ".")
         list_attribute = []

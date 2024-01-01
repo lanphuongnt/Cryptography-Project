@@ -21,7 +21,6 @@ class CPABE:
         # Serialize to save to database
         encrypted_key_b = self.serialized.jsonify_ctxt(encrypted_key)
         # Create key for AES by random_key
-        # hash = hashlib.sha256(objectToBytes(random_key, self.groupObj))
         hash = hashlib.sha256(str(random_key).encode())
         key = hash.digest()
         aes = AES.new(key, AES.MODE_GCM)
@@ -45,7 +44,6 @@ class CPABE:
         return encrypted_data
     
     def AC17decrypt(self, public_key, encrypted_data, private_key): # encrypted_data is dict type (not json)
-        # print("CTX :",encrypted_data)
         encrypted_data = base64.b64decode(encrypted_data.encode())
         len_encrypted_key = int.from_bytes(encrypted_data[:8], byteorder='big')
         encrypted_key_b = encrypted_data[8:8 + len_encrypted_key]
@@ -59,8 +57,6 @@ class CPABE:
             authTag = ciphertext[-16:]
             ciphertext = ciphertext[16:-16]
 
-            # print("KEY :", objectToBytes(recovered_random_key, self.groupObj))
-            # hash = hashlib.sha256(objectToBytes(recovered_random_key, self.groupObj))
             hash = hashlib.sha256(str(recovered_random_key).encode())
             key = hash.digest()
             try:
@@ -68,7 +64,6 @@ class CPABE:
                 recovered_message = aes.decrypt_and_verify(ciphertext, authTag)
                 return recovered_message.decode()
             except ValueError as e:
-                print("CMM")
                 return None
         else:
             return None
