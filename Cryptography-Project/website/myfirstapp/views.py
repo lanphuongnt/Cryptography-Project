@@ -219,11 +219,12 @@ def reception(request):
                 'status': 'patient'
             }
             account_collection.insert_one(new_account)
+            patient_data['cccd'] = request.POST.get('cccd')
             collection.insert_one(patient_data)
             return HttpResponse("Patient account created and data inserted")
         else:
             # patient_data = collection.find_one({'patient_info.cccd': patient_id})
-            collection.update_one({'patient_info.cccd': patient_id}, {'$set': patient_data})
+            collection.update_one({'cccd': patient_id}, {'$set': patient_data})
             return HttpResponse("Patient data updated")
             
     return render(request, 'patient-profile copy.html', patient_data)
