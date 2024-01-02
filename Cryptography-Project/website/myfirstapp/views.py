@@ -218,7 +218,8 @@ def reception(request):
 
 def reference_by_specialty(request):
     user = request.session['user']
-    list_patient_id = get_ehr_by_specialty(user['_id'])
+    # list_patient_id = get_ehr_by_specialty(user['_id'])
+    list_patient_id = GetListOfPatientsWithFilter(request)
     list_patient_id_json = json.dumps(list_patient_id)
     return render(request, 'reference-data.html', {'list_patient_id' : list_patient_id_json})
     # return JsonResponse(list_patient_id)
@@ -305,6 +306,8 @@ def GetDictValue(request):
                 data[key] = value
     elif request.method == "GET":
         get_param = request.GET 
+        for key, value in get_param.items():
+            data[key] = value
     return data
 
 def GetListOfPatientsWithFilter(request):
@@ -313,12 +316,18 @@ def GetListOfPatientsWithFilter(request):
     '''
     isAllowed = True
     if isAllowed:
-        database = 'HospitalData'
-        collection = 'EHR'
+        database = client['HospitalData']
+        collection = database['EHR']
         filter = GetDictValue(request)
+        print(filter)
         patients = collection.find(filter)
+        list_patient_id = []
+        for patient in patients:
+            list_patient_id.append(str(patient['_id']))
+        print({'patient' : list_patient_id})
+        return {'patient' : list_patient_id}
     else:
-        return 
+        return None
 
 def GetHealthRecord(request):
     '''
@@ -326,19 +335,50 @@ def GetHealthRecord(request):
     '''
     isAllowed = True
     if isAllowed:
-        database = 'HospitalData'
-        collection = 'EHR'
+        database = client['HospitalData']
+        collection = database['EHR']
         patientID = request['patientID'] # ID means CCCD
         patient = collection.findOne({'patientID' : patientID})
+        if patient:
+            encrypted_data = {'medical_history' : patient['medical_history']}
+            encrypted_data = flatten(encrypted_data, ".")
+            recovered_data = {}
 
+            private_key = server_CA.GetPrivateKey(request.session['user']['_id'])
+            public_key = server_CA.GetKey('public_key')
+
+            for ed in encrypted_data.items():
+                recovered_data[ed[0]] = server_CA.cpabe.AC17decrypt(public_key, ed[1], private_key)
+
+            recovered_data = flatten(recovered_data, ".")
+            recovered_data = unflatten(recovered_data, ".")
+
+            patient['medical_history'] = recovered_data['medical_history']
+            print(f"PATIENT : {patient}")
+            return patient
+        else:
+            return None
     else:
-        return 
-
-
+        return None
+    
+def InsertMedicalData(request):
+    '''
+    Call ABAC maybe add in doctor.
+    '''
+    isAllowed = True
+    if isAllowed:
+        database = client['HospitalData']
+        collection = database['EHR']
+        patientID = request['patientID']
+        updateData = GetDictValue(request)
+        
+    return 
 
 def Doctor(request):
+    # print(request.GET.items())
+    # return JsonResponse(GetListOfPatientsWithFilter(request))
     '''
         1. Call GetPatient(request) to get a list of Patient which satisfies with param of request.
         2. Call UpdateRecord(request) to update health record of patient whose ID and update POST data.
     '''
-    return 
+    return render(request, 'lanphuong.html')

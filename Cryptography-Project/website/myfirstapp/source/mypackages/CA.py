@@ -45,6 +45,7 @@ class CentralizedAuthority:
 
 
     def GetPrivateKey(self, userID): # Attribute of user as dict
+        attribute = self.GetSubjectAttribute(userID)
         # Convert to list attribute
         attribute = flatten(attribute, ".")
         list_attribute = []
@@ -59,11 +60,11 @@ class CentralizedAuthority:
         # DEBUG
         # list_attribute = ['PATIENT', 'STOMACH', 'STOMATCH', 'ABE']
 
-        public_key = self.GetPublicKey(userID)
-        master_key = self.GetMasterKey(userID)
+        public_key = self.GetKey('public_key')
+        master_key = self.GetKey('master_key')
 
         private_key = self.cpabe.ac17.keygen(public_key, master_key, list_attribute)
-        return private_key, public_key
+        return private_key
 
     def AddPolicy(self): # Call by admin
         policy1 = '(DOCTOR or NURSE or PATIENT)'
