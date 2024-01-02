@@ -213,12 +213,12 @@
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
             <img src="{% static 'assets/img/profile-img.jpg' %}" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">{{ patient_info.full_name }}</span>
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{ reception.full_name }}</span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
-              <h6>{{ ehr_patient.data.patient_info.full_name }}</h6>
+              <h6>{{ ehr_patient.data.reception.full_name }}</h6>
               <span>Patient</span>
             </li>
             <li>
@@ -355,8 +355,8 @@
             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
               <img src="{% static 'assets/img/profile-img.jpg' %}" alt="Profile" class="rounded-circle">
-              <h2>{{ patient_info.full_name }}</h2>
-              <h3>Patient</h3>
+              <h2>{{ reception.full_name }}</h2>
+              <h3>Reception</h3>
             </div>
           </div>
         </div>
@@ -369,196 +369,120 @@
               <ul class="nav nav-tabs nav-tabs-bordered">
 
                 <li class="nav-item">
-                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
-                </li>
-
-                <li class="nav-item">
-                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#medical-history">Medical History</button>
-                </li>
-
-                <li class="nav-item">
                   <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Update Health Status</button>
                 </li>
 
               </ul>
+
               <div class="tab-content pt-2">
 
                 <div class="tab-pane fade show active profile-overview" id="profile-overview">
-                  <h5 class="card-title">Profile Details</h5>
+                  <h5 class="card-title">Patient Details</h5>
 
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label ">Full Name</div>
-                    <div class="col-lg-9 col-md-8">{{ patient_info.full_name }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Date of Birth</div>
-                    <div class="col-lg-9 col-md-8">{{ patient_info.dob }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Gender</div>
-                    <div class="col-lg-9 col-md-8">{{ patient_info.gender }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">ID</div>
-                    <div class="col-lg-9 col-md-8"> {{ patient_info.ID }} </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Address</div>
-                    <div class="col-lg-9 col-md-8">{{ patient_info.address.street|safe }}, {{ patient_info.address.city|safe }}, {{ patient_info.address.state|safe }} {{ patient_info.address.zip|safe }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Phone</div>
-                    <div class="col-lg-9 col-md-8">{{ patient_info.contact.phone }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Email</div>
-                    <div class="col-lg-9 col-md-8">{{ patient_info.contact.email }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Emergency Contact</div>
-                    <div class="col-lg-9 col-md-8">{{ patient_profile.emergency_contact.name }}</div>
-                  </div>
-
-                </div>
-
-                <div class="tab-pane fade medical-history pt3" id="medical-history">
-                  <h5 class="card-title">Medical History</h5>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label ">Blood Type</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.blood_type }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Height</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.height }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Weight</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.weight }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Allergies</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.allergies }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Chronic Diseases</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.chronic_diseases }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Medications</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.medications }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Surgeries</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.surgeries }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Vaccines</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.vaccines }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Family History</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.family_history }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Insurance</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.insurance }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Insurance Number</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.insurance_number }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Insurance Company</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.insurance_company }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Visits</div>
-                    <div class="col-lg-9 col-md-8">
-                      <div class="row">
-                        <div class="col-lg-12">On: {{ medical_history.visits_history.0.date }}</div>
-                        <div class="col-lg-12">By: {{ medical_history.visits_history.0.by_who }}</div>
-                        <div class="col-lg-12">Reason: {{ medical_history.visits_history.0.reason }}</div>
-                        <div class="col-lg-12">Prescription: {{ medical_history.visits_history.0.prescription }}</div>
+                  <form method="POST" action="" id="patient-form">
+                    {% csrf_token %}
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Patient ID</div>
+                      <div class="col-lg-9 col-md-8">
+                        <input type="text" id="patient-id" value="{{ reception.patient_id }}">
+                        <button onclick="checkPatientExistence(event)" class="btn btn-sm">Check</button>
+                        <span id="patient-existence"></span>
                       </div>
                     </div>
-                  </div>
 
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Notes</div>
-                    <div class="col-lg-9 col-md-8">
-                      <div class="row">
-                        <div class="col-lg-12">
-                          <span class="notes-text">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                            eiusmod tempor incididunt ut labore et dolore magna aliqua."</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                    <script>
+                      function checkPatientExistence(event) {
+                        event.preventDefault();
+                        var patientId = document.getElementById("patient-id").value;
+                        // Perform an AJAX request to check patient existence in the database
+                        // Replace the following code with your actual implementation
+                        var patientExists = checkPatientInDatabase(patientId);
 
-                </div>
+                        var patientExistenceMessage = document.getElementById("patient-existence");
+                        if (patientExists) {
+                          patientExistenceMessage.textContent = "Exist";
+                        } else {
+                          patientExistenceMessage.textContent = "OK";
+                        }
+                      }
 
-                <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                      function checkPatientInDatabase(patientId) {
+                        // Replace this code with your actual implementation to check patient existence in the database
+                        // You can use the MongoDB Node.js driver or any other MongoDB library to query the database
 
-                  <!-- Profile Edit Form -->
-                  <form method="POST" action="">
-                    {% csrf_token %} 
-                    <div class="row mb-3">
-                      <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
-                      <div class="col-md-8 col-lg-9">
-                        <img src="{% static 'assets/img/profile-img.jpg' %}" alt="Profile">
-                        <div class="pt-2">
-                          <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i
-                              class="bi bi-upload"></i></a>
-                          <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i
-                              class="bi bi-trash"></i></a>
-                        </div>
-                      </div>
-                    </div>
+                        const MongoClient = require('mongodb').MongoClient;
+                        const uri = 'mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/';
+                        const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+                        async function checkPatientExistence() {
+                          try {
+                            await client.connect();
+                            const database = client.db('HospitalData');
+                            const collection = database.collection('EHR');
+                            const patient = await collection.findOne({ _id: patientId });
+
+                            if (patient && patient.patient_info && patient.patient_info.cccd === patientId) {
+                              return true;
+                            } else {
+                              return false;
+                            }
+                            return patient !== null;
+                          } catch (error) {
+                            console.error('Error checking patient existence:', error);
+                            return false;
+                          } finally {
+                            await client.close();
+                          }
+                        }
+                        return false;
+                        return checkPatientExistence();
+                      }
+                      
+                    </script>
                     
-                    <div class="tab-pane fade show active physical-health" id="physical-health">
-                      <h5 class="card-title">Physical Health</h5>
-
-                    <div class="row mb-3">
-                      <label for="medical_history.height" class="col-md-4 col-lg-3 col-form-label">Height</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="medical_history.height" type="text" class="form-control" id="medical_history.height"
-                          value="{{ medical_history.height }}">
-                      </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                      <label for="medical_history.weight" class="col-md-4 col-lg-3 col-form-label">Weight</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="medical_history.weight" type="text" class="form-control" id="medical_history.weight"
-                          value="{{ medical_history.weight }}">
-                      </div>
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label ">Full Name</div>
+                      <div class="col-lg-9 col-md-8"><input type="text" value="{{ reception.full_name }}"></div>
                     </div>
 
-                    <div class="text-center">
-                      <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Date of Birth</div>
+                      <div class="col-lg-9 col-md-8"><input type="text" value="{{ reception.dob }}"></div>
                     </div>
-                  </form><!-- End Profile Edit Form -->
-        
+
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Gender</div>
+                      <div class="col-lg-9 col-md-8"><input type="text" value="{{ reception.gender }}"></div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Address</div>
+                      <div class="col-lg-9 col-md-8"><input type="text" value="{{ reception.address }}"></div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Phone Number</div>
+                      <div class="col-lg-9 col-md-8"><input type="text" value="{{ reception.contact.phone }}"></div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Insurance Number</div>
+                      <div class="col-lg-9 col-md-8"><input type="text" value="{{ reception.insurance_number }}"></div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Height</div>
+                      <div class="col-lg-9 col-md-8"><input type="text" value="{{ medical_history.height }}"></div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Weight</div>
+                      <div class="col-lg-9 col-md-8"><input type="text" value="{{ medical_history.weight }}"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </form>
+                  
                 </div>
               </div><!-- End Bordered Tabs -->
 
