@@ -14,6 +14,8 @@ from.utils import create_new_EHR, get_data, insert_data, create_new_staff, get_e
 
 from .source.mypackages.ABAC import AttributeBaseAccessControl
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 
 server_CA = CentralizedAuthority()
 abac = AttributeBaseAccessControl()
@@ -184,37 +186,40 @@ def ehr_view(request):
     else:
         return redirect('myfirstapp:reference')
     
-def reception(request):
-    user = request.session['user']
-    if request.method == 'POST':
-        post_data = request.POST
-        update_data = {}
-        for key, value in post_data.items():
-            if key != 'csrfmiddlewaretoken':
-                update_data[key] = str(value)
-        update_data = unflatten(update_data, ".")
-        # print(update_data)
-        for key, value in update_data.items():
-            update_request = {
-                'database' : 'HospitalData', 
-                'collection' : 'EHR', 
-                '_id' : user['_id'], 
-                'source' : key,
-                'requester_id' : user['_id'],
-                '$set' : {key: value},
-            }
-            insert_data(update_request)
 
-    if request.method == 'GET' or request.method == 'POST':
-        new_request = {
-            'database' : 'data',
-            'collection' : 'ehr',
-            '_id' : user['_id'],
-            'requester_id' : user['_id'],
-            'source' : ['patient_info', 'medical_history'],
-        }
-        ehr_patient = get_data(new_request)
-        return render(request, 'patient-profile copy.html', ehr_patient)
+@csrf_exempt
+def reception(request):
+    if request.method == 'POST':
+        client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
+        db = client['HospitalData']
+        collection = db['EHR']
+        account_collection = db['Account']
+
+        # Get all CCCD from EHR documents
+        cccd_list = []
+        for document in collection.find():
+            cccd = document['patient_info']['cccd']
+            cccd_list.append(cccd)
+
+        # Check if the client wants to check if a patient ID exists
+        data = json.loads(request.body)
+        check_patient_id = data.get('check_patient_id')
+        if check_patient_id is not None:
+            if check_patient_id in cccd_list:
+                patient_info = collection.find_one({'patient_info.cccd': check_patient_id})
+                return JsonResponse({'exists': True, 'patient_info': patient_info})
+            else:
+                # Create an account for the patient
+                new_account = {
+                    'username': check_patient_id,
+                    'password': make_password(check_patient_id),
+                    'status': 'patient'
+                }
+                account_collection.insert_one(new_account)
+                return JsonResponse({'exists': False})
+            
+    return render(request, 'patient-profile copy.html')
+
 
 def reference_by_specialty(request):
     user = request.session['user']
