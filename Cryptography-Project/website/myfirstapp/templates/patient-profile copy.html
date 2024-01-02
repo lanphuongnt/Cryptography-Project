@@ -383,103 +383,107 @@
                     {% csrf_token %}
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Patient ID</div>
-                      <div class="col-lg-9 col-md-8">
-                        <input type="text" id="patient-id" value="{{ reception.patient_id }}">
-                        <button onclick="checkPatientExistence(event)" class="btn btn-sm">Check</button>
-                        <span id="patient-existence"></span>
+                      <div class="col-lg-6 col-md-6">
+                        <input type="text" name="patient_id" id="patient-id" value="{{ patient_info.patient_id }}">
+                      </div>
+                      <div class="col-lg-3 col-md-2">
+                        <button type="button" id="check-button" class="btn btn-primary">Check</button>
                       </div>
                     </div>
 
                     <script>
-                      function checkPatientExistence(event) {
-                        event.preventDefault();
-                        var patientId = document.getElementById("patient-id").value;
-
-                        // Send an AJAX request to the new endpoint
-                        fetch('', {
-                          method: 'POST',
-                          headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': getCookie('csrftoken')  // Assuming you have a function to get the CSRF token
-                          },
-                          body: JSON.stringify({ patient_id: patientId })
+                      document.getElementById('check-button').addEventListener('click', function () {
+                        var patientId = document.getElementById('patient-id').value;
+                        fetch('/get_patient_info?patient_id=' + patientId, {
+                          method: 'GET',
                         })
-                        .then(response => response.json())
-                        .then(data => {
-                          var patientExistenceMessage = document.getElementById("patient-existence");
-                          if (data.exists) {
-                            patientExistenceMessage.textContent = "Exist";
-                            // Display the patient's information
-                            document.getElementById("patient-id").value = data.patient_info.patient_id;
-                            // Make the disease input visible
-                            document.getElementById("disease-input").style.display = "block";
-                          } else {
-                            patientExistenceMessage.textContent = "OK";
-                            // Clear the patient's information
-                            document.getElementById("patient-id").value = "";
-                            // Hide the disease input
-                            document.getElementById("disease-input").style.display = "none";
-                          }
-                        })
-                        .catch(error => {
-                          console.error('Error:', error);
-                        });                      
-                      }
-                      function getCookie(name) {
-                        var cookieValue = null;
-                        if (document.cookie && document.cookie !== '') {
-                          var cookies = document.cookie.split(';');
-                          for (var i = 0; i < cookies.length; i++) {
-                            var cookie = cookies[i].trim();
-                            // Does this cookie string begin with the name we want?
-                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                              break;
+                          .then(response => response.json())
+                          .then(data => {
+                            if (data.patient_info) {
+                              document.getElementById('patient-id').value = data.patient_info.cccd || '';
+                              document.querySelector('input[name="fullname"]').value = data.patient_info.fullname || '';
+                              document.querySelector('input[name="dob"]').value = data.patient_info.dob || '';
+                              document.querySelector('select[name="gender"]').value = data.patient_info.gender || '';
+                              document.querySelector('input[name="address"]').value = data.patient_info.address || '';
+                              document.querySelector('input[name="phone"]').value = data.patient_info.phone || '';
                             }
-                          }
-                        }
-                        return cookieValue;
-                      }
+                            if (data.reception) {
+                              document.querySelector('input[name="insurance_number"]').value = data.reception.insurance_number || '';
+                            }
+                            if (data.medical_history) {
+                              document.querySelector('input[name="height"]').value = data.medical_history.height || '';
+                              document.querySelector('input[name="weight"]').value = data.medical_history.weight || '';
+                              document.querySelector('input[name="disease"]').value = data.medical_history.disease || '';
+                            }
+                          });
+                      });
                     </script>
+
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Full Name</div>
+                      <div class="col-lg-9 col-md-8">
+                        <input type="text" name="fullname" value="{{ patient_info.fullname }}">
+                      </div>
+                    </div>
                     
                     <div class="row">
-                      <div class="col-lg-3 col-md-4 label ">Full Name</div>
-                      <div class="col-lg-9 col-md-8"><input type="text" value="{{ patient_info.fullname }}"></div>
-                    </div>
-
-                    <div class="row">
                       <div class="col-lg-3 col-md-4 label">Date of Birth</div>
-                      <div class="col-lg-9 col-md-8"><input type="text" value="{{ patient_info.dob }}"></div>
+                      <div class="col-lg-9 col-md-8">
+                        <input type="text" name="dob" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy" value="{{ patient_info.dob }}">
+                      </div>
                     </div>
-
+                    
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Gender</div>
-                      <div class="col-lg-9 col-md-8"><input type="text" value="{{ patient_info.gender }}"></div>
+                      <div class="col-lg-9 col-md-8">
+                        <select name="gender">
+                          <option value="Male" {% if patient_info.gender == "Male" %}selected{% endif %}>Male</option>
+                          <option value="Female" {% if patient_info.gender == "Female" %}selected{% endif %}>Female</option>
+                          <option value="Other" {% if patient_info.gender == "Other" %}selected{% endif %}>Other</option>
+                        </select>
+                      </div>
                     </div>
 
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Address</div>
-                      <div class="col-lg-9 col-md-8"><input type="text" value="{{ patient_info.address }}"></div>
+                      <div class="col-lg-9 col-md-8">
+                        <input type="text" name="address" value="{{ patient_info.address }}">
+                      </div>
                     </div>
 
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Phone Number</div>
-                      <div class="col-lg-9 col-md-8"><input type="text" value="{{ reception.contact.phone }}"></div>
+                      <div class="col-lg-9 col-md-8">
+                        <input type="text" name="phone" value="{{ patient_info.phone }}">
+                      </div>
                     </div>
 
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Insurance Number</div>
-                      <div class="col-lg-9 col-md-8"><input type="text" value="{{ reception.insurance_number }}"></div>
+                      <div class="col-lg-9 col-md-8">
+                        <input type="text" name="insurance_number" value="{{ reception.insurance_number }}">
+                      </div>
                     </div>
 
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Height</div>
-                      <div class="col-lg-9 col-md-8"><input type="text" value="{{ medical_history.height }}"></div>
+                      <div class="col-lg-9 col-md-8">
+                        <input type="text" name="height" value="{{ medical_history.height }}">
+                      </div>
                     </div>
 
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Weight</div>
-                      <div class="col-lg-9 col-md-8"><input type="text" value="{{ medical_history.weight }}"></div>
+                      <div class="col-lg-9 col-md-8">
+                        <input type="text" name="weight" value="{{ medical_history.weight }}">
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Check-in Disease</div>
+                      <div class="col-lg-9 col-md-8">
+                        <input type="text" name="disease" value="{{ medical_history.disease }}">
+                      </div>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Submit</button>

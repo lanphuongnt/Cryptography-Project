@@ -189,45 +189,57 @@ def ehr_view(request):
 
 @csrf_exempt
 def reception(request):
-    if request.method == 'POST':
-        client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
-        db = client['HospitalData']
-        collection = db['EHR']
-        account_collection = db['Account']
+    client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
+    db = client['HospitalData']
+    collection = db['EHR']
+    account_collection = db['Account']
 
+    post_data = request.POST
+    patient_data = {}
+
+    if request.method == 'POST':
         # Get all CCCD from EHR documents
         cccd_list = []
         for document in collection.find():
             cccd = document['patient_info']['cccd']
             cccd_list.append(cccd)
 
-        # Check if the client wants to check if a patient ID exists
-        data = json.loads(request.body)
-        check_patient_id = data.get('check_patient_id')
-        if check_patient_id is not None:
-            if check_patient_id in cccd_list:
-                patient_info = collection.find_one({'patient_info.cccd': check_patient_id})
-                return JsonResponse({'exists': True, 'patient_info': patient_info})
-            else:
-                # Create an account for the patient
-                new_account = {
-                    'username': check_patient_id,
-                    'password': make_password(check_patient_id),
-                    'status': 'patient'
-                }
-                account_collection.insert_one(new_account)
-                return JsonResponse({'exists': False})
+        patient_id = request.POST.get('patient_id')
+
+        for key, value in post_data.items():
+            if key != 'csrfmiddlewaretoken':
+                patient_data[key] = str(value)
+        patient_data = unflatten(patient_data, ".")
+
+        if patient_id not in cccd_list:
+            # Create a new account for the patient
+            new_account = {
+                'username': f"{patient_id}",
+                'password': make_password(patient_id),
+                'status': 'patient'
+            }
+            account_collection.insert_one(new_account)
+            collection.insert_one(patient_data)
+            return HttpResponse("Patient account created and data inserted")
+        else:
+            # patient_data = collection.find_one({'patient_info.cccd': patient_id})
+            collection.insert_one(patient_data)
+            return HttpResponse("Patient data updated")
             
-    return render(request, 'patient-profile copy.html')
+    return render(request, 'patient-profile copy.html', patient_data)
 
+def get_patient_info(request):
+    client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
+    db = client['HospitalData']
+    collection = db['EHR']
 
-def reference_by_specialty(request):
-    user = request.session['user']
-    # list_patient_id = get_ehr_by_specialty(user['_id'])
-    list_patient_id = GetListOfPatientsWithFilter(request)
-    list_patient_id_json = json.dumps(list_patient_id)
-    return render(request, 'reference-data.html', {'list_patient_id' : list_patient_id_json})
-    # return JsonResponse(list_patient_id)
+    patient_id = request.GET.get('patient_id')
+    patient_data = collection.find_one({'patient_info.cccd': patient_id})
+    if patient_data is not None:
+        patient_data['_id'] = str(patient_data['_id'])
+    else:
+        patient_data = {}
+    return JsonResponse(patient_data)
 
 def get_medical_history(request): # Call when staff click userID (request is POST) 
     patient_id = request.POST.get('patient_id') # name in html is the same this ('userID')

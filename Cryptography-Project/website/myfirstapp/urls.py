@@ -13,8 +13,8 @@ urlpatterns = [
     path('reception/', views.reception, name='reception'),
     path('patient_profile/', views.patient_profile, name='patient_profile'),
     path('staff_profile/reference/patient_view/', views.ehr_view, name='patient_view'),
-    path('staff_profile/reference/', views.reference_by_specialty, name='reference'),
-
+    path('get_patient_info/', views.get_patient_info, name='get_patient_info'),
+    # path('staff_profile/reference/', views.reference_by_specialty, name='reference'),
     path('lanphuong/', views.Doctor, name='lanphuong'),
     # path('lanphuongresult/', views.result, name='result'),
 ]
