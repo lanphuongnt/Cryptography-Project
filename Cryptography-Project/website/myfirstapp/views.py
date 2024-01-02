@@ -201,7 +201,7 @@ def reception(request):
         # Get all CCCD from EHR documents
         cccd_list = []
         for document in collection.find():
-            cccd = document['patient_info']['cccd']
+            cccd = document['cccd']
             cccd_list.append(cccd)
 
         patient_id = request.POST.get('patient_id')
@@ -223,7 +223,7 @@ def reception(request):
             return HttpResponse("Patient account created and data inserted")
         else:
             # patient_data = collection.find_one({'patient_info.cccd': patient_id})
-            collection.insert_one(patient_data)
+            collection.update_one({'patient_info.cccd': patient_id}, {'$set': patient_data})
             return HttpResponse("Patient data updated")
             
     return render(request, 'patient-profile copy.html', patient_data)
@@ -234,7 +234,7 @@ def get_patient_info(request):
     collection = db['EHR']
 
     patient_id = request.GET.get('patient_id')
-    patient_data = collection.find_one({'patient_info.cccd': patient_id})
+    patient_data = collection.find_one({'cccd': patient_id})
     if patient_data is not None:
         patient_data['_id'] = str(patient_data['_id'])
     else:
