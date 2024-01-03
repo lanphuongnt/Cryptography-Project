@@ -378,7 +378,14 @@
 
                 <div class="tab-pane fade show active profile-overview" id="profile-overview">
                   <h5 class="card-title">Patient Details</h5>
-
+                  {% if messages %}
+                  <ul class="messages">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                  </ul>
+                  {% endif %}
+    
                   <form method="POST" action="" id="patient-form">
                     {% csrf_token %}
                     <div class="row">
@@ -489,9 +496,11 @@
 
                     <button type="submit" class="btn btn-primary">Submit</button>
                   </form>
+                  
+                  
                 </div>
               </div><!-- End Bordered Tabs -->
-
+              
             </div>
           </div>
 
