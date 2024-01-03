@@ -345,129 +345,110 @@
         <form action="" method="post">
             {% csrf_token %}
             <div>
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" readonly>
+                <div class="col-lg-3 col-md-4 label "><strong>Patient Full Name:</strong> {{ patient_info.fullname }}</div>
             </div>
             <br>
             <div>
-                <label for="dob">Day of birth:</label>
-                <input type="text" id="dob" name="dob" readonly>
+                <div class="col-lg-3 col-md-4 label "><strong>Day of birth:</strong> {{ patient_info.dob }}</div>
             </div>
             <br>
             <div>
-                <label for="disease">Disease:</label>
-                <input type="text" id="disease" name="disease" readonly>
+                <div class="col-lg-3 col-md-4 label "><strong>Gender:</strong> {{ patient_info.gender }}</div>
             </div>
             <br>
             <div>
-                <label for="appointment_date">Appointment Date:</label>
-                <input type="date" id="appointment_date" name="appointment_date" pattern="\d{2}/\d{2}/\d{4}" placeholder="dd/mm/yyyy">
+                <div class="col-lg-3 col-md-4 label "><strong>Height:</strong> {{ patient_info.height }}</div>
             </div>
             <br>
             <div>
-                <label for="symptoms">Symptoms:</label>
+                <div class="col-lg-3 col-md-4 label "><strong>Weight:</strong> {{ patient_info.weight }}</div>
+            </div>
+            <br>
+            <div>
+                <div class="col-lg-3 col-md-4 label "><strong>Gender:</strong> {{ patient_info.gender }}</div>
+            </div>
+            <br>
+            <label id="labletest1">LMAO</label>
+            <div>
+                <label for="visitSelect"><strong>Select Visit:</strong></label>
+                <select type="text" id="visitSelect" name="visit_history_time">
+                    <!-- <option value=1>Visit </option> -->
+                    <!-- Options will be dynamically populated based on server response -->
+                </select>
+            </div>
+            
+            <br>
+            <!-- Visit data will be displayed here -->
+            <div>
+                <label for="appointment_date"><strong>Appointment Date:</strong></label>
+                <input type="text" id="appointment_date" name="appointment_date">
+            </div>
+            <br>
+            <div>
+                <label for="symptoms"><strong>Symptoms:</strong></label>
                 <input type="text" id="symptoms" name="symptoms">
             </div>
             <br>
             <div>
-                <label for="diagnosis">Diagnosis:</label>
+                <label for="diagnosis"><strong>Diagnosis:</strong></label>
                 <input type="text" id="diagnosis" name="diagnosis">
             </div>
             <br>
             <div>
-                <label for="treatment">Treatment:</label>
+                <label for="treatment"><strong>Treatment:</strong></label>
                 <input type="text" id="treatment" name="treatment">
             </div>
             <br>
-            <button type="submit">Submit</button>
+            
+            <button type="submit"><strong>Submit</strong></button>
+            
+            <script>
+                var visit_history_list = {{ visit_history|safe }};
+                var visitSelect = document.getElementById("visitSelect");
+                var option = document.createElement("option");
+                option.value = "";
+                option.textContent = "--";
+                visitSelect.add(option);
+                visit_history_list.forEach((visit, index) => {
+                    var option = document.createElement("option");
+                    option.value = index;
+                    option.textContent = "Visit " + (index + 1);
+                    visitSelect.add(option);
+                });
+                </script>
+            <script>
+                    document.getElementById("visitSelect").onchange = function(){
+                        // var value = document.getElementById("comboA").value;
+                        var labeltest1 = document.getElementById("labletest1");
+                        var selectedVisit = document.getElementById("visitSelect").value;
+                        var _appointment_date = document.getElementById("appointment_date");
+                        var _symptoms = document.getElementById("symptoms");
+                        var _diagnosis = document.getElementById("diagnosis");
+                        var _treatment = document.getElementById("treatment");
+
+                        if (selectedVisit != "") {
+                            labeltest1.textContent = "OK";
+                            var visit = visit_history_list[selectedVisit];
+
+                            _appointment_date.value = visit['appointment_date'];
+                            _symptoms.value = visit['symptoms'];
+                            _treatment.value = visit['treatment'];
+                            _diagnosis.value = visit['diagnosis'];
+                        }
+                        else {
+                            labeltest1.textContent = "NOTHING";
+                            _appointment_date.value = "";
+                            _symptoms.value = "";
+                            _treatment.value = "";
+                            _diagnosis.value = "";
+                        }
+                    };
+
+            </script>
+            
         </form>
 
 
-        <!-- <div class="row">
-            <div class="col-lg-3 col-md-4 label ">Blood Type</div>
-            <div class="col-lg-9 col-md-8">{{ medical_history.blood_type }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-4 label">Height</div>
-            <div class="col-lg-9 col-md-8">{{ medical_history.height }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-4 label">Weight</div>
-            <div class="col-lg-9 col-md-8">{{ medical_history.weight }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-4 label">Allergies</div>
-            <div class="col-lg-9 col-md-8">{{ medical_history.allergies }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-4 label">Chronic Diseases</div>
-            <div class="col-lg-9 col-md-8">{{ medical_history.chronic_diseases }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-4 label">Medications</div>
-            <div class="col-lg-9 col-md-8">{{ medical_history.medications }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-4 label">Surgeries</div>
-            <div class="col-lg-9 col-md-8">{{ medical_history.surgeries }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-4 label">Vaccines</div>
-            <div class="col-lg-9 col-md-8">{{ medical_history.vaccines }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-4 label">Family History</div>
-            <div class="col-lg-9 col-md-8">{{ medical_history.family_history }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-4 label">Insurance</div>
-            <div class="col-lg-9 col-md-8">{{ medical_history.insurance }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-4 label">Insurance Number</div>
-            <div class="col-lg-9 col-md-8">{{ medical_history.insurance_number }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-4 label">Insurance Company</div>
-            <div class="col-lg-9 col-md-8">{{ medical_history.insurance_company }}</div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-3 col-md-4 label">Visits</div>
-            <div class="col-lg-9 col-md-8">
-                <div class="row">
-                    <div class="col-lg-12">On: {{ medical_history.visits_history.0.date }}</div>
-                    <div class="col-lg-12">By: {{ medical_history.visits_history.0.by_who }}</div>
-                    <div class="col-lg-12">Reason: {{ medical_history.visits_history.0.reason }}</div>
-                    <div class="col-lg-12">Prescription: {{ medical_history.visits_history.0.prescription }}
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
-        <div class="row">
-            <div class="col-lg-3 col-md-4 label">Notes</div>
-            <div class="col-lg-9 col-md-8">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <span class="notes-text">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                            do
-                            eiusmod tempor incididunt ut labore et dolore magna aliqua."</span>
-                    </div>
-                </div>
-            </div>
-        </div>
 
 
     </main><!-- End #main -->

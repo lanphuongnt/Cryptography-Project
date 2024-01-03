@@ -90,7 +90,7 @@ def patient_profile(request):
             'collection' : 'ehr',
             '_id' : user['_id'],
             'requester_id' : user['_id'],
-            'source' : ['patient_info', 'medical_history'],
+            'source' : ['patient_info', 'visit_history'],
         }
         ehr_patient = get_data(new_request)
         return render(request, 'patient-profile.html', ehr_patient)
@@ -181,11 +181,11 @@ def get_medical_history(request): # Call when staff click userID (request is POS
         'collection' : 'ehr', 
         '_id' : patient_id, 
         'requester_id' : staff_id,
-        'source' : 'medical_history',
+        'source' : 'visit_history',
     }
     patient_data = get_data(request)
     '''
-    {'medical_history' : ...}
+    {'visit_history' : ...}
     '''
     return JsonResponse(patient_data)    
 
@@ -251,7 +251,8 @@ def PatientHealthRecord(request):
     isAllowed = True
     if isAllowed:
         if request.method == "POST":
-            return JsonResponse(patient_ehr)
+            message = InsertMedicalData(request)
+            return redirect(request.META.get('HTTP_REFERER', 'myfirstapp:patient_ehr'))
         elif request.method == "GET":
             patient_ehr = GetHealthRecord(request)
             print("EHR", patient_ehr)
@@ -310,24 +311,39 @@ def GetHealthRecord(request):
             database = client['HospitalData']
             collection = database['EHR']
             cccd = request.GET.get('patient') # ID means CCCD
-            patient = collection.find_one({'cccd' : cccd})
+            patient = collection.find_one({'patient_info.cccd' : cccd})
+            
+
             if patient:
-                encrypted_data = {'medical_history' : patient['medical_history']}
-                encrypted_data = flatten(encrypted_data, ".")
-                recovered_data = {}
+                patient = collection.find_one({"patient_info.cccd": cccd, "visit_history": {"$exists": True}})
+                if patient:
+                    list_visit_history = patient['visit_history']
+                    # list_visit_history = flatten(list_visit_history, ".")
+                    print(f"Encrypted Data: {list_visit_history}")
+                    recovered_list_visit_history = []
 
-                private_key = server_CA.GetPrivateKey(request.session['user']['_id'])
-                public_key = server_CA.GetKey('public_key')
+                    private_key = server_CA.GetPrivateKey(request.session['user']['_id'])
+                    public_key = server_CA.GetKey('public_key')
 
-                for ed in encrypted_data.items():
-                    recovered_data[ed[0]] = server_CA.cpabe.AC17decrypt(public_key, ed[1], private_key)
+                    for visit_history in list_visit_history:
+                        recovered_visit_history = {}
+                        for ed in visit_history.items():
+                            if ed[1] == "" or ed[1] is None:
+                                recovered_visit_history[ed[0]] = ""
+                            else:
+                                recovered_visit_history[ed[0]] = server_CA.cpabe.AC17decrypt(public_key, ed[1], private_key)
+                        recovered_list_visit_history.append(recovered_visit_history)
 
-                recovered_data = flatten(recovered_data, ".")
-                recovered_data = unflatten(recovered_data, ".")
+                    # recovered_list_visit_history = flatten(recovered_list_visit_history, ".")
+                    # recovered_list_visit_history = unflatten(recovered_list_visit_history, ".")
 
-                patient['medical_history'] = recovered_data['medical_history']
-                print(f"PATIENT : {patient}")
-                return JsonResponse(patient)
+                    patient['visit_history'] = recovered_list_visit_history
+                    patient['_id'] = str(patient['_id'])
+                    print(f"PATIENT : {patient}")
+                    return patient
+                else:
+                    patient['visit_history']
+                    return 
             else:
                 return None
     else:
@@ -341,10 +357,38 @@ def InsertMedicalData(request):
     if isAllowed:
         database = client['HospitalData']
         collection = database['EHR']
-        patientID = request['patientID']
-        updateData = GetDictValue(request)
-        
-    return 
+        cccd_patient = request.GET.get('patient')
+        update_data = GetDictValue(request)
+
+        update_data = {
+            f"visit_history.{update_data['visit_history_time']}" : {
+                    'appointment_date' : update_data['appointment_date'],
+                    'symptoms' : update_data['symptoms'],
+                    'diagnosis' : update_data['diagnosis'],
+                    'treatment' : update_data['treatment'],            
+            }
+        }
+        update_data = flatten(update_data, ".")
+        print("Update Data:", update_data)
+        policy = server_CA.GetPolicy(request.session['user']['_id'])
+        print(f"POLICY : {policy}")
+        public_key = server_CA.GetKey('public_key')
+        encrypted_data = {}
+        for data in update_data.items():
+            encrypted_data[data[0]] = server_CA.cpabe.AC17encrypt(public_key, data[1], policy)
+        encrypted_data = flatten(encrypted_data, ".")
+        print("Encrypted data: ", encrypted_data)
+        collection.update_one({'patient_info.cccd': cccd_patient}, {'$set': encrypted_data})
+        response = collection.find_one({'patient_info.cccd': cccd_patient})
+        if response:
+            print("Insert sucessfully!")
+            return True
+        else:
+            print("Error!")
+            return False
+    else:
+        print("You don't have permission to access this resource!")
+        return False
 
 def doctor(request):
     # print(request.GET.items())

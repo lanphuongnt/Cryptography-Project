@@ -19,6 +19,6 @@ urlpatterns = [
     path('filter/', views.GetListOfPatientsWithFilter, name='filter'),
     # path('lanphuong/', views.Doctor, name='lanphuong'),
     path('lanphuong/filter', views.GetListOfPatientsWithFilter, name='filter'),
-    path('lanphuong/patient_ehr', views.ShowPatientHealthRecord, name='patient_ehr')
+    path('doctor/patient_ehr', views.PatientHealthRecord, name='patient_ehr')
     # path('lanphuongresult/', views.result, name='result'),
 ]

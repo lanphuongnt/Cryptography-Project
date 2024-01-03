@@ -66,18 +66,19 @@ class CentralizedAuthority:
         private_key = self.cpabe.ac17.keygen(public_key, master_key, list_attribute)
         return private_key
 
-    def AddPolicy(self): # Call by admin
-        policy1 = '(DOCTOR or NURSE or PATIENT)'
-        policy2 = '(DOCTOR and DERMATOLOGY)'
-        db = self.client['policy_repository']
-        collection = db['abe']
-        collection.insert_one({'policy' : policy1})
-        collection.insert_one({'policy' : policy2})
-        return 
+    def GetPolicy(self, userID): # Call by admin
+        requester_attribute = self.GetSubjectAttribute(userID)
+        policy = ""
+        if requester_attribute['status'] in ['doctor', 'patient']:
+            policy = f"((DOCTOR AND {requester_attribute['specialty'].upper()}) OR PATIENT)"
+        
+        # collection.insert_one({'policy' : policy1})
+        # collection.insert_one({'policy' : policy2})
+        return policy
     
     def GetSubjectAttribute(self, userID): # attribute name is a list string 
         CA_db = self.client['CA']
-        attribute_col = CA_db['subject_attribute']
+        attribute_col = CA_db['SubjectAttribute']
         user_attribute = attribute_col.find_one({'_id' : ObjectId(userID)})    
         user_attribute['_id'] = str(user_attribute['_id'])
         print("ATTRIBUTE:", user_attribute)
