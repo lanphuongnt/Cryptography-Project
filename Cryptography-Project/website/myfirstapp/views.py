@@ -130,7 +130,10 @@ def reception(request):
 
         cccd_list = set()
         for document in collection.find():
-            cccd = document['cccd']
+            try:
+                cccd = document['patient_info']['cccd']
+            except KeyError:
+                break # No patients in the database
             cccd_list.add(cccd)
         print(cccd_list)
         cccd = request.POST.get('cccd')
@@ -149,7 +152,21 @@ def reception(request):
             }
             account_collection.insert_one(new_account)
             patient_data['cccd'] = request.POST.get('cccd')
-            collection.insert_one(patient_data)
+            patient_data_insert = {
+                'patient_info': patient_data,
+            }
+            collection.insert_one(patient_data_insert)
+            patient_id = collection.find_one({'patient_info.cccd': cccd})['_id']
+            db = client['CA']
+            collection = db['SubjectAttribute']
+            new_subject_attribute = {
+                '_id': str(patient_id),
+                'attributes': {
+                    'status': 'patient',
+                    'specialty': request.POST.get('disease'),
+                }
+            }
+            collection.insert_one(new_subject_attribute)
             messages.success(request, "Patient account created and data inserted")
         else:
             # patient_data = collection.find_one({'patient_info.cccd': patient_id})
@@ -158,7 +175,7 @@ def reception(request):
         
         return redirect('myfirstapp:reception')
 
-    return render(request, 'patient-profile copy.html', patient_data)
+    return render(request, 'reception.html', patient_data)
 
 def get_patient_info(request):
     client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
@@ -166,7 +183,7 @@ def get_patient_info(request):
     collection = db['EHR']
 
     patient_id = request.GET.get('patient_id')
-    patient_data = collection.find_one({'cccd': patient_id})
+    patient_data = collection.find_one({'patient_info.cccd': patient_id})
     if patient_data is not None:
         patient_data['_id'] = str(patient_data['_id'])
     else:

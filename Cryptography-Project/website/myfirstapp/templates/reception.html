@@ -394,10 +394,8 @@
                         <div class="input-group">
                           <input type="text" name="cccd" id="patient-id" value="" class="form-control">
                           <button type="button" id="check-button" class="btn btn-sm">Check</button>
+                          <span id="not-exist-message" style="color: red;"></span>
                         </div>
-                      </div>
-                      <div>
-                        <span id="not-exist-message" style="color: red;"></span>
                       </div>
                     </div>
 
@@ -409,19 +407,29 @@
                         })
                           .then(response => response.json())
                           .then(data => {
-                            if (data === null) {
+                            console.log(data);
+                            if (Object.keys(data).length === 0) {
                               document.getElementById('not-exist-message').textContent = 'Patient does not exist.';
+                              document.querySelector('input[name="fullname"]').value = '';
+                              document.querySelector('input[name="dob"]').value = '';
+                              document.querySelector('select[name="gender"]').value = '';
+                              document.querySelector('input[name="address"]').value = '';
+                              document.querySelector('input[name="phone"]').value = '';
+                              document.querySelector('input[name="insurance_number"]').value = '';
+                              document.querySelector('input[name="height"]').value = '';
+                              document.querySelector('input[name="weight"]').value = '';
+                              document.querySelector('input[name="disease"]').value = '';
                             } else {
-                              // document.getElementById('not-exist-message').textContent = '';
-                              document.querySelector('input[name="fullname"]').value = data.fullname || '';
-                              document.querySelector('input[name="dob"]').value = data.dob || '';
-                              document.querySelector('select[name="gender"]').value = data.gender || '';
-                              document.querySelector('input[name="address"]').value = data.address || '';
-                              document.querySelector('input[name="phone"]').value = data.phone || '';
-                              document.querySelector('input[name="insurance_number"]').value = data.insurance_number || '';
-                              document.querySelector('input[name="height"]').value = data.height || '';
-                              document.querySelector('input[name="weight"]').value = data.weight || '';
-                              document.querySelector('input[name="disease"]').value = data.disease || '';
+                              document.getElementById('not-exist-message').textContent = 'Querry successful.';
+                              document.querySelector('input[name="fullname"]').value = data.patient_info.fullname || '';
+                              document.querySelector('input[name="dob"]').value = data.patient_info.dob || '';
+                              document.querySelector('select[name="gender"]').value = data.patient_info.gender || '';
+                              document.querySelector('input[name="address"]').value = data.patient_info.address || '';
+                              document.querySelector('input[name="phone"]').value = data.patient_info.phone || '';
+                              document.querySelector('input[name="insurance_number"]').value = data.patient_info.insurance_number || '';
+                              document.querySelector('input[name="height"]').value = data.patient_info.height || '';
+                              document.querySelector('input[name="weight"]').value = data.patient_info.weight || '';
+                              document.querySelector('input[name="disease"]').value = data.patient_info.disease || '';
                             }
                           });
                       });
