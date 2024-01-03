@@ -341,9 +341,11 @@ def GetListOfPatientsWithFilter(request):
         patients = collection.find(filter)
         list_patients = []
         for patient in patients:
+            patient["_id"] = str(patient["_id"])
             list_patients.append(patient)
         print({'patients' : list_patients})
-        return {'patients' : list_patients}
+        return JsonResponse({'patients' : list_patients})
+        # return {'patients' : list_patients}
     else:
         return None
 
@@ -399,13 +401,15 @@ def Doctor(request):
         1. Call GetPatient(request) to get a list of Patient which satisfies with param of request.
         2. Call UpdateRecord(request) to update health record of patient whose ID and update POST data.
     '''
-    list_patient_id = GetListOfPatientsWithFilter(request)
-    # list_patient_id_json = json.dumps(list_patient_id)
-    print(GetDictValue(request))
-    print(list_patient_id)
-    return render(request, 'lanphuong.html', list_patient_id)
+    # return render(request, 'lanphuong.html')
+    # list_patient_id = GetListOfPatientsWithFilter(request)
+    # # list_patient_id_json = json.dumps(list_patient_id)
+    # print(GetDictValue(request))
+    # print("HAHA", list_patient_id)
+    # return HttpResponse('lanphuong.html')
+    # return JsonResponse(list_patient_id)
  
     # print(request.method)
     # data = {'name' : 'ok', 'age':'25', 'email':'lmao@gmail.com'}
     # return JsonResponse({'data': data})
-    return render(request, 'lanphuong.html', data)
+    return render(request, 'lanphuong.html')
