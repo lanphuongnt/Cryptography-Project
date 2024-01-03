@@ -130,7 +130,10 @@ def reception(request):
 
         cccd_list = set()
         for document in collection.find():
-            cccd = document['patient_info']['cccd']
+            try:
+                cccd = document['patient_info']['cccd']
+            except KeyError:
+                break # No patients in the database
             cccd_list.add(cccd)
         print(cccd_list)
         cccd = request.POST.get('cccd')
@@ -151,16 +154,19 @@ def reception(request):
             patient_data['cccd'] = request.POST.get('cccd')
             patient_data_insert = {
                 'patient_info': patient_data,
-                'visit_history': [
-                    {
-                        'appointment_date': '',
-                        'symptoms': '',
-                        'diagnosis': '',
-                        'treament': '',
-                    }
-                ]
             }
             collection.insert_one(patient_data_insert)
+            patient_id = collection.find_one({'patient_info.cccd': cccd})['_id']
+            db = client['CA']
+            collection = db['SubjectAttribute']
+            new_subject_attribute = {
+                '_id': str(patient_id),
+                'attributes': {
+                    'status': 'patient',
+                    'specialty': request.POST.get('disease'),
+                }
+            }
+            collection.insert_one(new_subject_attribute)
             messages.success(request, "Patient account created and data inserted")
         else:
             # patient_data = collection.find_one({'patient_info.cccd': patient_id})
