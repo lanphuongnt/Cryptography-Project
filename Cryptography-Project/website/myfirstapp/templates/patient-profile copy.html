@@ -384,10 +384,13 @@
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Patient ID</div>
                       <div class="col-lg-6 col-md-6">
-                        <input type="text" name="patient_id" id="patient-id" value="{{ patient_info.patient_id }}">
+                        <div class="input-group">
+                          <input type="text" name="cccd" id="patient-id" value="" class="form-control">
+                          <button type="button" id="check-button" class="btn btn-sm">Check</button>
+                        </div>
                       </div>
-                      <div class="col-lg-3 col-md-2">
-                        <button type="button" id="check-button" class="btn btn-primary">Check</button>
+                      <div>
+                        <span id="not-exist-message" style="color: red;"></span>
                       </div>
                     </div>
 
@@ -399,21 +402,19 @@
                         })
                           .then(response => response.json())
                           .then(data => {
-                            if (data.patient_info) {
-                              document.getElementById('patient-id').value = data.patient_info.cccd || '';
-                              document.querySelector('input[name="fullname"]').value = data.patient_info.fullname || '';
-                              document.querySelector('input[name="dob"]').value = data.patient_info.dob || '';
-                              document.querySelector('select[name="gender"]').value = data.patient_info.gender || '';
-                              document.querySelector('input[name="address"]').value = data.patient_info.address || '';
-                              document.querySelector('input[name="phone"]').value = data.patient_info.phone || '';
-                            }
-                            if (data.reception) {
-                              document.querySelector('input[name="insurance_number"]').value = data.reception.insurance_number || '';
-                            }
-                            if (data.medical_history) {
-                              document.querySelector('input[name="height"]').value = data.medical_history.height || '';
-                              document.querySelector('input[name="weight"]').value = data.medical_history.weight || '';
-                              document.querySelector('input[name="disease"]').value = data.medical_history.disease || '';
+                            if (data === null) {
+                              document.getElementById('not-exist-message').textContent = 'Patient does not exist.';
+                            } else {
+                              // document.getElementById('not-exist-message').textContent = '';
+                              document.querySelector('input[name="fullname"]').value = data.fullname || '';
+                              document.querySelector('input[name="dob"]').value = data.dob || '';
+                              document.querySelector('select[name="gender"]').value = data.gender || '';
+                              document.querySelector('input[name="address"]').value = data.address || '';
+                              document.querySelector('input[name="phone"]').value = data.phone || '';
+                              document.querySelector('input[name="insurance_number"]').value = data.insurance_number || '';
+                              document.querySelector('input[name="height"]').value = data.height || '';
+                              document.querySelector('input[name="weight"]').value = data.weight || '';
+                              document.querySelector('input[name="disease"]').value = data.disease || '';
                             }
                           });
                       });
@@ -422,21 +423,21 @@
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Full Name</div>
                       <div class="col-lg-9 col-md-8">
-                        <input type="text" name="fullname" value="{{ patient_info.fullname }}">
+                        <input type="text" name="fullname" value="{{ patient_info.fullname }}" class="form-control">
                       </div>
                     </div>
-                    
+
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Date of Birth</div>
                       <div class="col-lg-9 col-md-8">
-                        <input type="text" name="dob" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy" value="{{ patient_info.dob }}">
+                        <input type="text" name="dob" pattern="\d{1,2}/\d{1,2}/\d{4}" placeholder="dd/mm/yyyy" value="{{ patient_info.dob }}" class="form-control">
                       </div>
                     </div>
-                    
+
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Gender</div>
                       <div class="col-lg-9 col-md-8">
-                        <select name="gender">
+                        <select name="gender" class="form-control">
                           <option value="Male" {% if patient_info.gender == "Male" %}selected{% endif %}>Male</option>
                           <option value="Female" {% if patient_info.gender == "Female" %}selected{% endif %}>Female</option>
                           <option value="Other" {% if patient_info.gender == "Other" %}selected{% endif %}>Other</option>
@@ -447,48 +448,47 @@
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Address</div>
                       <div class="col-lg-9 col-md-8">
-                        <input type="text" name="address" value="{{ patient_info.address }}">
+                        <input type="text" name="address" value="{{ patient_info.address }}" class="form-control">
                       </div>
                     </div>
 
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Phone Number</div>
                       <div class="col-lg-9 col-md-8">
-                        <input type="text" name="phone" value="{{ patient_info.phone }}">
+                        <input type="text" name="phone" value="{{ patient_info.phone }}" class="form-control">
                       </div>
                     </div>
 
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Insurance Number</div>
                       <div class="col-lg-9 col-md-8">
-                        <input type="text" name="insurance_number" value="{{ reception.insurance_number }}">
+                        <input type="text" name="insurance_number" value="{{ reception.insurance_number }}" class="form-control">
                       </div>
                     </div>
 
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Height</div>
                       <div class="col-lg-9 col-md-8">
-                        <input type="text" name="height" value="{{ medical_history.height }}">
+                        <input type="text" name="height" value="{{ medical_history.height }}" class="form-control">
                       </div>
                     </div>
 
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Weight</div>
                       <div class="col-lg-9 col-md-8">
-                        <input type="text" name="weight" value="{{ medical_history.weight }}">
+                        <input type="text" name="weight" value="{{ medical_history.weight }}" class="form-control">
                       </div>
                     </div>
 
                     <div class="row">
                       <div class="col-lg-3 col-md-4 label">Check-in Disease</div>
                       <div class="col-lg-9 col-md-8">
-                        <input type="text" name="disease" value="{{ medical_history.disease }}">
+                        <input type="text" name="disease" value="{{ medical_history.disease }}" class="form-control">
                       </div>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Submit</button>
                   </form>
-                  
                 </div>
               </div><!-- End Bordered Tabs -->
 
