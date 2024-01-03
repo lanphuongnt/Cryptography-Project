@@ -6,7 +6,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Tables / Data - NiceAdmin Bootstrap Template</title>
+  <title>Doctor Dashboard - KPI Hospital</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -127,7 +127,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="#">
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'myfirstapp:logout' %}">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
               </a>
@@ -474,7 +474,7 @@
                         .join('&');
 
                     // Gửi request GET đến server
-                    fetch('/lanphuong/filter?' + queryString, {
+                    fetch('/filter?' + queryString, {
                         method: 'GET',
                     })
                     .then(response => response.json())

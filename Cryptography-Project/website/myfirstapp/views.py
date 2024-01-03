@@ -15,6 +15,7 @@ from.utils import create_new_EHR, get_data, insert_data, create_new_staff, get_e
 from .source.mypackages.ABAC import AttributeBaseAccessControl
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
 
 
 server_CA = CentralizedAuthority()
@@ -25,45 +26,6 @@ client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.ne
 def index(request):
     template = loader.get_template('myfirst.html')
     return HttpResponse(template.render())
-
-# @never_cache
-# def signup(request):
-#     if request.method == 'POST':
-#         db = server_CA.client['user']
-#         log_and_auth = db['logAndAuth']
-
-#         username = request.POST['username']
-#         password = request.POST['password']
-#         status = request.POST['status']
-
-#         if status == 'Patient':
-#             role = 'user'
-#         else:
-#             role = 'staff'
-
-#         hashed_password = make_password(password)
-
-#         user_data = {
-#             'username': username,
-#             'password': hashed_password,
-#             'role': role,
-#         }
-#         result = log_and_auth.insert_one(user_data)
-
-#         # Get the ObjectId
-#         object_id = result.inserted_id
-
-#         # Generate public key master key for new user
-#         server_CA.Setup(str(object_id))
-#         if role == 'user':
-#             # Generate EHR document for new user
-#             create_new_EHR(request, str(object_id))
-#         else:
-#             create_new_staff(request, str(object_id))
-#         # return HttpResponse(lmao)
-#         return redirect('myfirstapp:index')
-#     else:
-#         return render(request, 'pages-register.html')
     
 def custom_login_required(view_func):
     def _wrapped_view_func(request, *args, **kwargs):
@@ -73,30 +35,6 @@ def custom_login_required(view_func):
             return redirect('myfirstapp:login')
     return _wrapped_view_func
 
-
-# @never_cache
-# def login_view(request):
-#     if request.method == 'POST':
-#         # client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
-#         db = server_CA.client['user']
-#         collection = db['logAndAuth']
-
-#         username = request.POST['username']
-#         password = request.POST['password']
-
-#         user = collection.find_one({'username': username})
-#         stored_password = user['password']
-#         if check_password(password, stored_password):
-#             user['_id'] = str(user['_id'])
-#             request.session['user'] = user
-#             if user['role'] == 'user':
-#                 return redirect('myfirstapp:patient_profile')
-#             else:
-#                 return redirect('myfirstapp:staff_profile')
-#         # If no matching username and password found
-#         return redirect('myfirstapp:index')
-#     else:
-#         return render(request, 'pages-login1.html')
 
 def logout(request):
     request.session.pop('user', None)
@@ -121,19 +59,6 @@ def staff_profile(request): # Tao lo code lon cho
     staff_info = get_data(new_request)
  
     return render(request, 'staff-profile.html', staff_info)
-# @never_cache
-# @custom_login_required
-# def patient_profile(request):
-#     user = request.session['user']
-#     new_request = {
-#         'database' : 'data',
-#         'collection' : 'ehr',
-#         '_id' : user['_id'],
-#         'requester_id' : user['_id']
-#     }
-#     staff_info = get_data(new_request)
- 
-#     return render(request, 'staff-profile.html', staff_info)
 
 @never_cache
 @custom_login_required
@@ -199,34 +124,40 @@ def reception(request):
 
     if request.method == 'POST':
         # Get all CCCD from EHR documents
-        cccd_list = []
+        client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
+        db = client['HospitalData']
+        collection = db['EHR']
+
+        cccd_list = set()
         for document in collection.find():
             cccd = document['cccd']
-            cccd_list.append(cccd)
-
-        patient_id = request.POST.get('patient_id')
+            cccd_list.add(cccd)
+        print(cccd_list)
+        cccd = request.POST.get('cccd')
 
         for key, value in post_data.items():
             if key != 'csrfmiddlewaretoken':
                 patient_data[key] = str(value)
         patient_data = unflatten(patient_data, ".")
 
-        if patient_id not in cccd_list:
+        if cccd not in cccd_list:
             # Create a new account for the patient
             new_account = {
-                'username': f"{patient_id}",
-                'password': make_password(patient_id),
+                'username': f"{cccd}",
+                'password': make_password(cccd),
                 'status': 'patient'
             }
             account_collection.insert_one(new_account)
             patient_data['cccd'] = request.POST.get('cccd')
             collection.insert_one(patient_data)
-            return HttpResponse("Patient account created and data inserted")
+            messages.success(request, "Patient account created and data inserted")
         else:
             # patient_data = collection.find_one({'patient_info.cccd': patient_id})
-            collection.update_one({'cccd': patient_id}, {'$set': patient_data})
-            return HttpResponse("Patient data updated")
-            
+            collection.update_one({'cccd': cccd}, {'$set': patient_data}, upsert=True)
+            messages.success(request, "Patient data updated")
+        
+        return redirect('myfirstapp:reception')
+
     return render(request, 'patient-profile copy.html', patient_data)
 
 def get_patient_info(request):
@@ -395,7 +326,7 @@ def InsertMedicalData(request):
         
     return 
 
-def Doctor(request):
+def doctor(request):
     # print(request.GET.items())
     # return JsonResponse(GetListOfPatientsWithFilter(request))
     '''
@@ -413,4 +344,4 @@ def Doctor(request):
     # print(request.method)
     # data = {'name' : 'ok', 'age':'25', 'email':'lmao@gmail.com'}
     # return JsonResponse({'data': data})
-    return render(request, 'lanphuong.html')
+    return render(request, 'doctor.html')
