@@ -154,6 +154,7 @@ def reception(request):
             patient_data['cccd'] = request.POST.get('cccd')
             patient_data_insert = {
                 'patient_info': patient_data,
+                'visit_history' : [],
             }
             collection.insert_one(patient_data_insert)
             patient_id = collection.find_one({'patient_info.cccd': cccd})['_id']
@@ -332,35 +333,30 @@ def GetHealthRecord(request):
             
 
             if patient:
-                patient = collection.find_one({"patient_info.cccd": cccd, "visit_history": {"$exists": True}})
-                if patient:
-                    list_visit_history = patient['visit_history']
-                    # list_visit_history = flatten(list_visit_history, ".")
-                    print(f"Encrypted Data: {list_visit_history}")
-                    recovered_list_visit_history = []
+                list_visit_history = patient['visit_history']
+                # list_visit_history = flatten(list_visit_history, ".")
+                print(f"Encrypted Data: {list_visit_history}")
+                recovered_list_visit_history = []
 
-                    private_key = server_CA.GetPrivateKey(request.session['user']['_id'])
-                    public_key = server_CA.GetKey('public_key')
+                private_key = server_CA.GetPrivateKey(request.session['user']['_id'])
+                public_key = server_CA.GetKey('public_key')
 
-                    for visit_history in list_visit_history:
-                        recovered_visit_history = {}
-                        for ed in visit_history.items():
-                            if ed[1] == "" or ed[1] is None:
-                                recovered_visit_history[ed[0]] = ""
-                            else:
-                                recovered_visit_history[ed[0]] = server_CA.cpabe.AC17decrypt(public_key, ed[1], private_key)
-                        recovered_list_visit_history.append(recovered_visit_history)
+                for visit_history in list_visit_history:
+                    recovered_visit_history = {}
+                    for ed in visit_history.items():
+                        if ed[1] == "" or ed[1] is None:
+                            recovered_visit_history[ed[0]] = ""
+                        else:
+                            recovered_visit_history[ed[0]] = server_CA.cpabe.AC17decrypt(public_key, ed[1], private_key)
+                    recovered_list_visit_history.append(recovered_visit_history)
 
-                    # recovered_list_visit_history = flatten(recovered_list_visit_history, ".")
-                    # recovered_list_visit_history = unflatten(recovered_list_visit_history, ".")
+                # recovered_list_visit_history = flatten(recovered_list_visit_history, ".")
+                # recovered_list_visit_history = unflatten(recovered_list_visit_history, ".")
 
-                    patient['visit_history'] = recovered_list_visit_history
-                    patient['_id'] = str(patient['_id'])
-                    print(f"PATIENT : {patient}")
-                    return patient
-                else:
-                    patient['visit_history']
-                    return 
+                patient['visit_history'] = recovered_list_visit_history
+                patient['_id'] = str(patient['_id'])
+                print(f"PATIENT : {patient}")
+                return patient
             else:
                 return None
     else:

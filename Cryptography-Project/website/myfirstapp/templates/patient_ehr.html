@@ -375,6 +375,7 @@
                     <!-- <option value=1>Visit </option> -->
                     <!-- Options will be dynamically populated based on server response -->
                 </select>
+                
             </div>
             
             <br>
@@ -406,8 +407,8 @@
                 var visit_history_list = {{ visit_history|safe }};
                 var visitSelect = document.getElementById("visitSelect");
                 var option = document.createElement("option");
-                option.value = "";
-                option.textContent = "--";
+                option.value = visit_history_list.length;
+                option.textContent = "New visit";
                 visitSelect.add(option);
                 visit_history_list.forEach((visit, index) => {
                     var option = document.createElement("option");
