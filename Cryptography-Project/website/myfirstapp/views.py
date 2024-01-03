@@ -313,8 +313,21 @@ def signup(request):
         return render(request, 'pages-register.html')
 
 
-def ShowPatientHealthRecord(request):
-    return render(request, 'patient_ehr.html')
+def PatientHealthRecord(request):
+    '''
+        ABAC
+    '''
+    isAllowed = True
+    if isAllowed:
+        if request.method == "POST":
+            return JsonResponse(patient_ehr)
+        elif request.method == "GET":
+            patient_ehr = GetHealthRecord(request)
+            print("EHR", patient_ehr)
+            return render(request, 'patient_ehr.html', patient_ehr)
+    else:
+        return redirect('myfirstapp:patient_ehr')
+        
 
 
 def GetDictValue(request):
@@ -357,33 +370,35 @@ def GetHealthRecord(request):
         Call ABAC 
     '''
     '''
+        GET
         request gồm cccd thôi :v tại vì lấy từ cái danh sách đã được lọc rồi.
     '''
     isAllowed = True
     if isAllowed:
-        database = client['HospitalData']
-        collection = database['EHR']
-        cccd = request['patient'] # ID means CCCD
-        patient = collection.findOne({'cccd' : cccd})
-        if patient:
-            encrypted_data = {'medical_history' : patient['medical_history']}
-            encrypted_data = flatten(encrypted_data, ".")
-            recovered_data = {}
+        if request.method == "GET":
+            database = client['HospitalData']
+            collection = database['EHR']
+            cccd = request.GET.get('patient') # ID means CCCD
+            patient = collection.find_one({'cccd' : cccd})
+            if patient:
+                encrypted_data = {'medical_history' : patient['medical_history']}
+                encrypted_data = flatten(encrypted_data, ".")
+                recovered_data = {}
 
-            private_key = server_CA.GetPrivateKey(request.session['user']['_id'])
-            public_key = server_CA.GetKey('public_key')
+                private_key = server_CA.GetPrivateKey(request.session['user']['_id'])
+                public_key = server_CA.GetKey('public_key')
 
-            for ed in encrypted_data.items():
-                recovered_data[ed[0]] = server_CA.cpabe.AC17decrypt(public_key, ed[1], private_key)
+                for ed in encrypted_data.items():
+                    recovered_data[ed[0]] = server_CA.cpabe.AC17decrypt(public_key, ed[1], private_key)
 
-            recovered_data = flatten(recovered_data, ".")
-            recovered_data = unflatten(recovered_data, ".")
+                recovered_data = flatten(recovered_data, ".")
+                recovered_data = unflatten(recovered_data, ".")
 
-            patient['medical_history'] = recovered_data['medical_history']
-            print(f"PATIENT : {patient}")
-            return patient
-        else:
-            return None
+                patient['medical_history'] = recovered_data['medical_history']
+                print(f"PATIENT : {patient}")
+                return JsonResponse(patient)
+            else:
+                return None
     else:
         return None
     

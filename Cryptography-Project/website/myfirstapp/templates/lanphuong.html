@@ -474,7 +474,7 @@
                         .join('&');
 
                     // Gửi request GET đến server
-                    fetch('/lanphuong/filter?' + queryString, {
+                    fetch('/lanphuong/filter/?' + queryString, {
                         method: 'GET',
                     })
                     .then(response => response.json())
@@ -495,7 +495,7 @@
                                 
 
                                 var linkItem = document.createElement("a");
-                                linkItem.href = "/lanphuong/patient_ehr?patient=" + patient.cccd;
+                                linkItem.href = "/lanphuong/patient_ehr/?patient=" + patient.cccd;
                                 linkItem.textContent = patient.cccd;
                                 var cccdCell = document.createElement("td");
                                 cccdCell.appendChild(linkItem);
