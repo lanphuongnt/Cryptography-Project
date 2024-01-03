@@ -244,6 +244,8 @@ def signup(request):
         return render(request, 'pages-register.html')
 
 
+def ShowPatientHealthRecord(request):
+    return render(request, 'patient_ehr.html')
 
 
 def GetDictValue(request):
@@ -285,12 +287,15 @@ def GetHealthRecord(request):
     '''
         Call ABAC 
     '''
+    '''
+        request gồm cccd thôi :v tại vì lấy từ cái danh sách đã được lọc rồi.
+    '''
     isAllowed = True
     if isAllowed:
         database = client['HospitalData']
         collection = database['EHR']
-        patientID = request['patientID'] # ID means CCCD
-        patient = collection.findOne({'patientID' : patientID})
+        cccd = request['patient'] # ID means CCCD
+        patient = collection.findOne({'cccd' : cccd})
         if patient:
             encrypted_data = {'medical_history' : patient['medical_history']}
             encrypted_data = flatten(encrypted_data, ".")

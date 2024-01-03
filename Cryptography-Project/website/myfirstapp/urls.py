@@ -17,5 +17,6 @@ urlpatterns = [
     # path('staff_profile/reference/', views.reference_by_specialty, name='reference'),
     path('doctor/', views.doctor, name='doctor'),
     path('lanphuong/filter', views.GetListOfPatientsWithFilter, name='filter')
+    path('lanphuong/patient_ehr', views.ShowPatientHealthRecord, name='patient_ehr')
     # path('lanphuongresult/', views.result, name='result'),
 ]
