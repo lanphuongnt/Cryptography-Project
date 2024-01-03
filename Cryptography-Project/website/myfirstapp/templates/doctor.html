@@ -458,35 +458,6 @@
 
                 // Trong JavaScript
                 document.getElementById('filterButton').addEventListener('click', function () {
-<<<<<<< HEAD:Cryptography-Project/website/myfirstapp/templates/lanphuong.html
-    
-                    // Lấy đối tượng table body
-                    var tableBody = document.getElementById('myTable');
-                    
-                    var inputIds = ["cccd-search","fullname-search", "gender-search", "dob-search", "disease-search"];
-                
-                    // Tạo một đối tượng chứa các tham số
-                    var params = {};
-                    
-                    // Lặp qua các ô input và thêm tham số vào đối tượng
-                    inputIds.forEach(function(id) {
-                        var value = document.getElementById(id).value.trim();
-                        if (value !== "") {
-                        // params["patient_info." + id.split('-')[0]] = value;
-                            params[id.split('-')[0]] = value;
-                        }
-                    });
-                    
-                    // Chuyển đổi đối tượng params thành chuỗi query
-                    var queryString = Object.keys(params)
-                        .map(key => key + '=' + encodeURIComponent(params[key]))
-                        .join('&');
-
-                    // Gửi request GET đến server
-                    fetch('/lanphuong/filter/?' + queryString, {
-                        method: 'GET',
-                    })
-=======
 
                   // Lấy đối tượng table body
                   var tableBody = document.getElementById('myTable');
@@ -514,7 +485,6 @@
                   fetch('/filter?' + queryString, {
                     method: 'GET',
                   })
->>>>>>> ac68563bee3c05a76a8b39afb2be11f04980ddc5:Cryptography-Project/website/myfirstapp/templates/doctor.html
                     .then(response => response.json())
                     .then(data => {
                       // document.getElementById("fullname-search").value = data.patients[0].fullname;
@@ -525,54 +495,6 @@
                   .catch(error => console.error('Error:', error));
 
                 function displayPatientList(patientList) {
-<<<<<<< HEAD:Cryptography-Project/website/myfirstapp/templates/lanphuong.html
-                    var listElement = document.getElementById("patient-table-data");
-                    listElement.innerHTML = '';
-                        if (patientList.length){
-                            patientList.forEach(function (patient) {
-                                var listRow = document.createElement("tr");
-                                
-
-                                var linkItem = document.createElement("a");
-                                linkItem.href = "/lanphuong/patient_ehr/?patient=" + patient.cccd;
-                                linkItem.textContent = patient.cccd;
-                                var cccdCell = document.createElement("td");
-                                cccdCell.appendChild(linkItem);
-                                listRow.appendChild(cccdCell);
-                                // Thêm cột "Name"
-                                var fullnameCell = document.createElement("td");
-                                fullnameCell.textContent = patient.fullname || "-";
-                                listRow.appendChild(fullnameCell);
-                                // Cot gender
-                                var genderCell = document.createElement("td");
-                                genderCell.textContent = patient.gender || "-";
-                                listRow.appendChild(genderCell);
-
-                                // Thêm cột "Age"
-                                var dobCell = document.createElement("td");
-                                dobCell.textContent = patient.dob || "-";
-                                listRow.appendChild(dobCell);
-
-                                // Thêm cột "City"
-                                var diseaseCell = document.createElement("td");
-                                diseaseCell.textContent = patient.disease || "-";
-                                listRow.appendChild(diseaseCell);
-                                listElement.appendChild(listRow);
-                            });
-                        }
-                        else {
-                            var listRow = document.createElement("tr");
-                            var notiCell = document.createElement("td");
-                            notiCell.textContent = "No results match your search query";
-                            listRow.appendChild(notiCell);
-                            listElement.appendChild(listRow);
-                        }
-                    
-                }
-
-
-                </script>
-=======
                   var listElement = document.getElementById("patient-table-data");
                   listElement.innerHTML = '';
                   if (patientList.length) {
@@ -614,7 +536,6 @@
                     listRow.appendChild(notiCell);
                     listElement.appendChild(listRow);
                   }
->>>>>>> ac68563bee3c05a76a8b39afb2be11f04980ddc5:Cryptography-Project/website/myfirstapp/templates/doctor.html
 
                 }
               </script>
