@@ -1,5 +1,4 @@
 from flatten_json import flatten, unflatten
-import json
 from .source.mypackages.CA import CentralizedAuthority
 from bson import ObjectId
 from faker import Faker
@@ -7,7 +6,6 @@ import random
 
 fake = Faker()        
 server_CA = CentralizedAuthority()
-# server_CA.AddPolicy()
 
 def get_policy(request):
     '''
