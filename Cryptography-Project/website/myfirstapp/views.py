@@ -106,12 +106,15 @@ def reception(request):
         patient_data = unflatten(patient_data, ".")
 
         if cccd not in cccd_list:
+            # Create new account
             new_account = {
                 'username': f"{cccd}",
                 'password': make_password(cccd),
                 'status': 'patient'
             }
             account_collection.insert_one(new_account)
+            
+            # Insert patient data
             patient_id = account_collection.find_one({'username': cccd})['_id']
             patient_data['cccd'] = request.POST.get('cccd')
             patient_data_insert = {
@@ -120,6 +123,8 @@ def reception(request):
                 'visit_history': [],
             }
             collection.insert_one(patient_data_insert)
+            
+            # Insert patient attribute
             db = client['CA']
             collection = db['SubjectAttribute']
             new_subject_attribute = {
@@ -132,12 +137,14 @@ def reception(request):
             messages.success(
                 request, "Patient account created and data inserted")
         else:
+            # Update patient data
             patient_data_update = {
                 'patient_info': patient_data,
             }
             collection.update_one({'patient_info.cccd': cccd}, {
                                   '$set': patient_data_update})
-
+            
+            # Update patient attribute
             patient_id = collection.find_one(
                 {'patient_info.cccd': cccd})['_id']
             db = client['CA']
