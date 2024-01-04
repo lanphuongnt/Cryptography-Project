@@ -419,7 +419,13 @@
                 </div>
 
                 <div class="tab-pane fade medical-history pt3" id="medical-history">
-                  <h5 class="card-title">Medical History</h5>
+                  <h5 class="card-title">Medical History
+                    <div class="dropdown d-inline">
+                      <select class="btn btn-secondary" id="visit-dropdown">
+                        <!-- <option value="">Select a visit</option> -->
+                      </select>
+                    </div>
+                  </h5>
 
                   <div class="row mb-3">
                     <div class="col-lg-3 col-md-4 label"><strong>Height</strong></div>
@@ -455,6 +461,66 @@
                     <div class="col-lg-3 col-md-4 label"><strong>Treatment</strong></div>
                     <div class="col-lg-9 col-md-8" id="treatment"></div>
                   </div>
+                  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                  <script>
+                    var username = "{{ username }}";
+                    if (username) {
+                      $(document).ready(function () {
+                        $.ajax({
+                          url: "{% url 'myfirstapp:get_health_record' %}",
+                          type: 'GET',
+                          data: { 'cccd': username },
+                          success: function (response) {
+                            $('#full_name').html(response.patient_info.fullname);
+                            $('#dob').html(response.patient_info.dob);
+                            $('#gender').html(response.patient_info.gender);
+                            $('#cccd').html(response.patient_info.cccd);
+                            $('#address').html(response.patient_info.address);
+                            $('#height').html(response.patient_info.height);
+                            $('#weight').html(response.patient_info.weight);
+                            $('#insurance_number').html(response.patient_info.insurance_number);
+
+                            // When the dropdown button is clicked, populate the dropdown with the visits
+                            $('#visit-dropdown').click(function() {
+                              populateDropdown(response);
+                            });
+
+                            // When a visit is selected from the dropdown, update the displayed visit information
+                            $('#visit-dropdown').change(function() {
+                              var index = $(this).val();
+                              if (index !== "") {
+                                populateVisitInfo(response, index);
+                                // Set the selected value of the dropdown to the selected visit
+                                $('#visit-dropdown').val(index);
+                              }
+                            });
+                          }
+                        });
+                      });
+                    } else {
+                      console.log("No username found");
+                    }
+
+                    function populateVisitInfo(response, index) {
+                      $('#appointment_date').html(response.visit_history[index].appointment_date);
+                      $('#diagnosis').html(response.visit_history[index].diagnosis);
+                      $('#symptoms').html(response.visit_history[index].symptoms);
+                      $('#treatment').html(response.visit_history[index].treatment);
+                    }
+
+                    function populateDropdown(response) {
+                      // Clear the dropdown
+                      $('#visit-dropdown').empty();
+
+                      // Add a default option
+                      $('#visit-dropdown').append('<option value="">Select a visit</option>');
+
+                      // Populate the dropdown with the visits
+                      for (var i = 0; i < response.visit_history.length; i++) {
+                        $('#visit-dropdown').append('<option value="' + i + '">Visit ' + (i + 1) + '</option>');
+                      }
+                    }
+                  </script>
                 </div>
                 
                 <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
@@ -498,36 +564,6 @@
                         <button type="submit" class="btn btn-primary">Save Changes</button>
                       </div>
                   </form><!-- End Profile Edit Form -->
-                  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-                  <script>
-                    var username = "{{ username }}";
-                    if (username) {
-                      $(document).ready(function () {
-                        $.ajax({
-                          url: "{% url 'myfirstapp:get_health_record' %}",
-                          type: 'GET',
-                          data: { 'cccd': username },  // replace 'patient_cccd' with the actual patient CCCD
-                          success: function (response) {
-                            $('#full_name').html(response.patient_info.fullname);
-                            $('#dob').html(response.patient_info.dob);
-                            $('#gender').html(response.patient_info.gender);
-                            $('#cccd').html(response.patient_info.cccd);
-                            $('#address').html(response.patient_info.address);
-                            $('#height').html(response.patient_info.height);
-                            $('#weight').html(response.patient_info.weight);
-                            $('#insurance_number').html(response.patient_info.insurance_number);
-                            
-                            $('#appointment_date').html(response.visit_history[0].appointment_date);
-                            $('#diagnosis').html(response.visit_history[0].diagnosis);
-                            $('#symptoms').html(response.visit_history[0].symptoms);
-                            $('#treatment').html(response.visit_history[0].treatment);
-                          }
-                        });
-                      });
-                    } else {
-                      console.log("No username found");
-                    }
-                  </script>
                 </div>
               </div><!-- End Bordered Tabs -->
 

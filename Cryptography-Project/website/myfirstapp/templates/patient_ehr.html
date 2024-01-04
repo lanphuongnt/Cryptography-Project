@@ -370,13 +370,13 @@
             <br>
             <div>
                 <label for="visitSelect"><strong>Select Visit:</strong></label>
-                <select type="text" id="visitSelect" >
+                <select type="text" id="visitSelect">
                     <!-- <option value=1>Visit </option> -->
                     <!-- Options will be dynamically populated based on server response -->
                 </select>
-                
+
             </div>
-            
+
             <br>
             <!-- Visit data will be displayed here -->
             <div>
@@ -399,11 +399,11 @@
                 <input type="text" id="treatment" name="treatment">
             </div>
             <br>
-            
+
             <button type="submit"><strong>Create new visit</strong></button>
             <lable id="submit-message"></lable>
             <script>
-                var visit_history_list = {{ visit_history|safe }};
+                var visit_history_list = {{ visit_history| safe }};
                 var visitSelect = document.getElementById("visitSelect");
                 var option = document.createElement("option");
                 option.value = "New-visit";
@@ -415,36 +415,36 @@
                     option.textContent = "Visit " + (index + 1);
                     visitSelect.add(option);
                 });
-                </script>
+            </script>
             <script>
-                    document.getElementById("visitSelect").onchange = function(){
-                        var submit_message = document.getElementById("submit-message");
-                        submit_message.textContent = "";
-                        
-                        var selectedVisit = document.getElementById("visitSelect").value;
-                        var _appointment_date = document.getElementById("appointment_date");
-                        var _symptoms = document.getElementById("symptoms");
-                        var _diagnosis = document.getElementById("diagnosis");
-                        var _treatment = document.getElementById("treatment");
+                document.getElementById("visitSelect").onchange = function () {
+                    var submit_message = document.getElementById("submit-message");
+                    submit_message.textContent = "";
 
-                        if (selectedVisit != "New-visit") {
-                            var visit = visit_history_list[selectedVisit];
+                    var selectedVisit = document.getElementById("visitSelect").value;
+                    var _appointment_date = document.getElementById("appointment_date");
+                    var _symptoms = document.getElementById("symptoms");
+                    var _diagnosis = document.getElementById("diagnosis");
+                    var _treatment = document.getElementById("treatment");
 
-                            _appointment_date.value = visit['appointment_date'];
-                            _symptoms.value = visit['symptoms'];
-                            _treatment.value = visit['treatment'];
-                            _diagnosis.value = visit['diagnosis'];
-                        }
-                        else {
-                            _appointment_date.value = "";
-                            _symptoms.value = "";
-                            _treatment.value = "";
-                            _diagnosis.value = "";
-                        }
-                    };
+                    if (selectedVisit != "New-visit") {
+                        var visit = visit_history_list[selectedVisit];
+
+                        _appointment_date.value = visit['appointment_date'];
+                        _symptoms.value = visit['symptoms'];
+                        _treatment.value = visit['treatment'];
+                        _diagnosis.value = visit['diagnosis'];
+                    }
+                    else {
+                        _appointment_date.value = "";
+                        _symptoms.value = "";
+                        _treatment.value = "";
+                        _diagnosis.value = "";
+                    }
+                };
 
             </script>
-            
+
         </form>
         <script>
             function validateSubmit() {
