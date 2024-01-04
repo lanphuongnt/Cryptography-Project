@@ -122,34 +122,34 @@ def reception(request):
                 'status': 'patient'
             }
             account_collection.insert_one(new_account)
+            patient_id = account_collection.find_one({'username': cccd})['_id']
             patient_data['cccd'] = request.POST.get('cccd')
             patient_data_insert = {
+                '_id' : patient_id,
                 'patient_info': patient_data,
                 'visit_history' : [],
             }
             collection.insert_one(patient_data_insert)
-            patient_id = collection.find_one({'patient_info.cccd': cccd})['_id']
             db = client['CA']
             collection = db['SubjectAttribute']
             new_subject_attribute = {
-                '_id': ObjectId(patient_id),
+                '_id': patient_id,
                 'status': 'patient',
-                'specialty': request.POST.get('disease'),
+                'specialty': request.POST.get('disease').lower(),
             }
             collection.insert_one(new_subject_attribute)
             messages.success(request, "Patient account created and data inserted")
         else:
             # patient_data = collection.find_one({'patient_info.cccd': patient_id})
-            patient_data_insert = {
+            patient_data_update = {
                 'patient_info': patient_data,
-                'visit_history' : [],
             }
-            collection.update_one({'patient_info.cccd': cccd}, {'$set': patient_data_insert})
+            collection.update_one({'patient_info.cccd': cccd}, {'$set': patient_data_update})
             
             patient_id = collection.find_one({'patient_info.cccd': cccd})['_id']
             db = client['CA']
             collection = db['SubjectAttribute']
-            collection.update_one({'_id': ObjectId(patient_id)}, {'$set': {'specialty': request.POST.get('disease')}})
+            collection.update_one({'_id': patient_id}, {'$set': {'specialty': request.POST.get('disease').lower()}})
             messages.success(request, "Patient data updated")
         
         return redirect('myfirstapp:reception')
@@ -336,15 +336,15 @@ def GetHealthRecord(request):
                 patient['visit_history'] = recovered_list_visit_history
                 patient['_id'] = str(patient['_id'])
                 print(f"PATIENT : {patient}")
-                return JsonResponse(patient)
+                return patient
             else:
-                return JsonResponse({'error': 'Patient not found!'}, status=404)
+                return None
     else:
         return None
     
 def InsertMedicalData(request):
     '''
-    Call ABAC maybe add in doctor.
+    Call ABAC maybe add in doctor.S
     '''
     isAllowed = True
     if isAllowed:
@@ -382,6 +382,13 @@ def InsertMedicalData(request):
     else:
         print("You don't have permission to access this resource!")
         return False
+
+def GetHealthRecordOfPatient(request):
+    data = GetHealthRecord(request)
+    if data is not None:
+        return JsonResponse(data)
+    else:
+        return JsonResponse({'error': 'Patient not found!'}, status=404)
 
 def doctor(request):
     # print(request.GET.items())
