@@ -135,6 +135,7 @@ def reception(request):
             new_subject_attribute = {
                 '_id': patient_id,
                 'status': 'patient',
+                'cccd': cccd,
                 'specialty': request.POST.get('disease').lower(),
             }
             collection.insert_one(new_subject_attribute)

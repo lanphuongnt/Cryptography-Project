@@ -393,22 +393,22 @@
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label ">Full Name</div>
-                    <div class="col-lg-9 col-md-8" id="full_name">{{ patient_info.full_name }}</div>
+                    <div class="col-lg-9 col-md-8" id="full_name"></div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Date of Birth</div>
-                    <div class="col-lg-9 col-md-8" id="dob">{{ patient_info.dob }}</div>
+                    <div class="col-lg-9 col-md-8" id="dob"></div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Gender</div>
-                    <div class="col-lg-9 col-md-8" id="gender">{{ patient_info.gender }}</div>
+                    <div class="col-lg-9 col-md-8" id="gender"></div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">ID</div>
-                    <div class="col-lg-9 col-md-8" id="cccd"> {{ patient_info.ID }} </div>
+                    <div class="col-lg-9 col-md-8" id="cccd"></div>
                   </div>
 
                   <div class="row">
@@ -421,43 +421,42 @@
                 <div class="tab-pane fade medical-history pt3" id="medical-history">
                   <h5 class="card-title">Medical History</h5>
 
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Height</div>
-                    <div class="col-lg-9 col-md-8" id="height">{{ patient_info.height }}</div>
+                  <div class="row mb-3">
+                    <div class="col-lg-3 col-md-4 label"><strong>Height</strong></div>
+                    <div class="col-lg-9 col-md-8" id="height"></div>
                   </div>
 
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Weight</div>
-                    <div class="col-lg-9 col-md-8" id="weight">{{ patient_info.weight }}</div>
+                  <div class="row mb-3">
+                    <div class="col-lg-3 col-md-4 label"><strong>Weight</strong></div>
+                    <div class="col-lg-9 col-md-8" id="weight"></div>
                   </div>
 
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Insurance Number</div>
-                    <div class="col-lg-9 col-md-8" id="insurance_number">{{ patient_info.insurance_number }}</div>
+                  <div class="row mb-3">
+                    <div class="col-lg-3 col-md-4 label"><strong>Insurance Number</strong></div>
+                    <div class="col-lg-9 col-md-8" id="insurance_number"></div>
                   </div>
 
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Appointment Date</div>
-                    <div class="col-lg-9 col-md-8" id="appointment_date">{{ visit_history.appointment_date }}</div>
+                  <div class="row mb-3">
+                    <div class="col-lg-3 col-md-4 label"><strong>Appointment Date</strong></div>
+                    <div class="col-lg-9 col-md-8" id="appointment_date"></div>
                   </div>
 
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Diagnosis</div>
-                    <div class="col-lg-9 col-md-8" id="diagnosis">{{ visit_history.diagnosis }}</div>
+                  <div class="row mb-3">
+                    <div class="col-lg-3 col-md-4 label"><strong>Diagnosis</strong></div>
+                    <div class="col-lg-9 col-md-8" id="diagnosis"></div>
                   </div>
 
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Symptoms</div>
-                    <div class="col-lg-9 col-md-8" id="symptoms">{{ visit_history.symptoms }}</div>
+                  <div class="row mb-3">
+                    <div class="col-lg-3 col-md-4 label"><strong>Symptoms</strong></div>
+                    <div class="col-lg-9 col-md-8" id="symptoms"></div>
                   </div>
 
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Treatment</div>
-                    <div class="col-lg-9 col-md-8" id="treatment">{{ visit_history.treatment }}</div>
+                  <div class="row mb-3">
+                    <div class="col-lg-3 col-md-4 label"><strong>Treatment</strong></div>
+                    <div class="col-lg-9 col-md-8" id="treatment"></div>
                   </div>
-
                 </div>
-
+                
                 <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
 
                   <!-- Profile Edit Form -->
@@ -510,7 +509,7 @@
                           data: { 'patient': username },  // replace 'patient_cccd' with the actual patient CCCD
                           success: function (response) {
                             // Use the response data to populate your HTML elements
-                            $('#full_name').html(response.patient_info.full_name);
+                            $('#full_name').html(response.patient_info.fullname);
                             $('#dob').html(response.patient_info.dob);
                             $('#gender').html(response.patient_info.gender);
                             $('#cccd').html(response.patient_info.cccd);
