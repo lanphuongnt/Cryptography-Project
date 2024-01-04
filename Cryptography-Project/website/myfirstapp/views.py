@@ -41,28 +41,6 @@ def logout(request):
     return redirect('myfirstapp:index')
 
 
-def forgot_password(request):
-    return render(request, 'forgot_password.html')
-
-# myfirstapp/views.py
-
-
-@never_cache
-@custom_login_required
-def staff_profile(request):
-    user = request.session['user']
-    new_request = {
-        'database': 'data',
-        'collection': 'staff',
-        '_id': user['_id'],
-        'requester_id': user['_id'],
-        'source': 'staff_info'
-    }
-    staff_info = get_data(new_request)
-
-    return render(request, 'staff-profile.html', staff_info)
-
-
 @custom_login_required
 def patient_profile(request):
     user = request.session['user']
@@ -185,23 +163,6 @@ def get_patient_info(request):
         patient_data['_id'] = str(patient_data['_id'])
     else:
         patient_data = {}
-    return JsonResponse(patient_data)
-
-
-def get_medical_history(request):
-    patient_id = request.POST.get('patient_id')
-    staff_id = request.POST.get('staff_id')
-    request = {
-        'database': 'data',
-        'collection': 'ehr',
-        '_id': patient_id,
-        'requester_id': staff_id,
-        'source': 'visit_history',
-    }
-    patient_data = get_data(request)
-    '''
-    {'visit_history' : ...}
-    '''
     return JsonResponse(patient_data)
 
 
