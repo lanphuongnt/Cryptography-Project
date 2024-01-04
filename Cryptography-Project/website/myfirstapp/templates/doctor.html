@@ -435,6 +435,7 @@
               <!-- Thêm nút Filter -->
               <button type="button" id="filterButton" class="btn btn-primary">Filter</button>
               <br>
+              <lable id="filter-message"></lable>
               <!-- Table with stripped rows -->
 
               <table id="myTable" class="table datatable">
@@ -472,7 +473,7 @@
                     var value = document.getElementById(id).value.trim();
                     if (value !== "") {
                       // params["patient_info." + id.split('-')[0]] = value;
-                      params["patient_info." + id.split('-')[0]] = value;
+                      params[id.split('-')[0]] = value;
                     }
                   });
 
@@ -489,7 +490,8 @@
                     .then(data => {
                       // document.getElementById("fullname-search").value = data.patients[0].fullname;
                       displayPatientList(data.patients);
-
+                      var filter_message = document.getElementById("filter-message");
+                      filter_message.textContent = data.message;
                     });
                 })
                   .catch(error => console.error('Error:', error));
@@ -502,7 +504,7 @@
                       var listRow = document.createElement("tr");
 
                       var linkItem = document.createElement("a");
-                      linkItem.href = "/doctor/patient_ehr?patient=" + patient.patient_info.cccd;
+                      linkItem.href = "/doctor/patient_ehr?cccd=" + patient.patient_info.cccd;
                       linkItem.textContent = patient.patient_info.cccd;
                       
                       var cccdCell = document.createElement("td");
@@ -536,7 +538,7 @@
                     listRow.appendChild(notiCell);
                     listElement.appendChild(listRow);
                   }
-
+                  
                 }
               </script>
             </div>

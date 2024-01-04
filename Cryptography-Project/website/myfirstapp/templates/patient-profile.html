@@ -507,7 +507,7 @@
                         $.ajax({
                           url: "{% url 'myfirstapp:get_health_record' %}",
                           type: 'GET',
-                          data: { 'patient': username },  // replace 'patient_cccd' with the actual patient CCCD
+                          data: { 'cccd': username },  // replace 'patient_cccd' with the actual patient CCCD
                           success: function (response) {
                             // Use the response data to populate your HTML elements
                             $('#full_name').html(response.patient_info.full_name);
