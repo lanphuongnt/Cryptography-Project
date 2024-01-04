@@ -342,7 +342,7 @@
             <h1>Medical History</h1>
         </div><!-- End Page Title -->
 
-        <form action="" method="post">
+        <form action="" method="post" onsubmit="return validateSubmit()">
             {% csrf_token %}
             <div>
                 <div class="col-lg-3 col-md-4 label "><strong>Full Name:</strong> {{ patient_info.fullname }}</div>
@@ -368,10 +368,9 @@
                 <div class="col-lg-3 col-md-4 label "><strong>Gender:</strong> {{ patient_info.gender }}</div>
             </div>
             <br>
-            <label id="labletest1">LMAO</label>
             <div>
                 <label for="visitSelect"><strong>Select Visit:</strong></label>
-                <select type="text" id="visitSelect" name="visit_history_time">
+                <select type="text" id="visitSelect" >
                     <!-- <option value=1>Visit </option> -->
                     <!-- Options will be dynamically populated based on server response -->
                 </select>
@@ -401,13 +400,13 @@
             </div>
             <br>
             
-            <button type="submit"><strong>Submit</strong></button>
-            
+            <button type="submit"><strong>Create new visit</strong></button>
+            <lable id="submit-message"></lable>
             <script>
                 var visit_history_list = {{ visit_history|safe }};
                 var visitSelect = document.getElementById("visitSelect");
                 var option = document.createElement("option");
-                option.value = visit_history_list.length;
+                option.value = "New-visit";
                 option.textContent = "New visit";
                 visitSelect.add(option);
                 visit_history_list.forEach((visit, index) => {
@@ -419,16 +418,16 @@
                 </script>
             <script>
                     document.getElementById("visitSelect").onchange = function(){
-                        // var value = document.getElementById("comboA").value;
-                        var labeltest1 = document.getElementById("labletest1");
+                        var submit_message = document.getElementById("submit-message");
+                        submit_message.textContent = "";
+                        
                         var selectedVisit = document.getElementById("visitSelect").value;
                         var _appointment_date = document.getElementById("appointment_date");
                         var _symptoms = document.getElementById("symptoms");
                         var _diagnosis = document.getElementById("diagnosis");
                         var _treatment = document.getElementById("treatment");
 
-                        if (selectedVisit != "") {
-                            labeltest1.textContent = "OK";
+                        if (selectedVisit != "New-visit") {
                             var visit = visit_history_list[selectedVisit];
 
                             _appointment_date.value = visit['appointment_date'];
@@ -437,7 +436,6 @@
                             _diagnosis.value = visit['diagnosis'];
                         }
                         else {
-                            labeltest1.textContent = "NOTHING";
                             _appointment_date.value = "";
                             _symptoms.value = "";
                             _treatment.value = "";
@@ -448,7 +446,21 @@
             </script>
             
         </form>
-
+        <script>
+            function validateSubmit() {
+                var selectedVisit = document.getElementById("visitSelect").value;
+                if (selectedVisit == "New-visit") {
+                    var submit_message = document.getElementById("submit-message");
+                    submit_message.textContent = "Successfully!";
+                    return true;
+                }
+                else {
+                    var submit_message = document.getElementById("submit-message");
+                    submit_message.textContent = "Can not modify existed visit!";
+                    return false;
+                }
+            }
+        </script>
 
 
 
