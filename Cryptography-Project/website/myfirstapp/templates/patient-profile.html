@@ -16,7 +16,9 @@
 
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -369,15 +371,18 @@
               <ul class="nav nav-tabs nav-tabs-bordered">
 
                 <li class="nav-item">
-                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+                  <button class="nav-link active" data-bs-toggle="tab"
+                    data-bs-target="#profile-overview">Overview</button>
                 </li>
 
                 <li class="nav-item">
-                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#medical-history">Medical History</button>
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#medical-history">Medical
+                    History</button>
                 </li>
 
                 <li class="nav-item">
-                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Update Health Status</button>
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Update Health
+                    Status</button>
                 </li>
 
               </ul>
@@ -388,42 +393,27 @@
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label ">Full Name</div>
-                    <div class="col-lg-9 col-md-8">{{ patient_info.full_name }}</div>
+                    <div class="col-lg-9 col-md-8" id="full_name">{{ patient_info.full_name }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Date of Birth</div>
-                    <div class="col-lg-9 col-md-8">{{ patient_info.dob }}</div>
+                    <div class="col-lg-9 col-md-8" id="dob">{{ patient_info.dob }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Gender</div>
-                    <div class="col-lg-9 col-md-8">{{ patient_info.gender }}</div>
+                    <div class="col-lg-9 col-md-8" id="gender">{{ patient_info.gender }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">ID</div>
-                    <div class="col-lg-9 col-md-8"> {{ patient_info.ID }} </div>
+                    <div class="col-lg-9 col-md-8" id="cccd"> {{ patient_info.ID }} </div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Address</div>
-                    <div class="col-lg-9 col-md-8">{{ patient_info.address.street|safe }}, {{ patient_info.address.city|safe }}, {{ patient_info.address.state|safe }} {{ patient_info.address.zip|safe }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Phone</div>
-                    <div class="col-lg-9 col-md-8">{{ patient_info.contact.phone }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Email</div>
-                    <div class="col-lg-9 col-md-8">{{ patient_info.contact.email }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Emergency Contact</div>
-                    <div class="col-lg-9 col-md-8">{{ patient_profile.emergency_contact.name }}</div>
+                    <div class="col-lg-9 col-md-8" id="address"></div>
                   </div>
 
                 </div>
@@ -432,87 +422,38 @@
                   <h5 class="card-title">Medical History</h5>
 
                   <div class="row">
-                    <div class="col-lg-3 col-md-4 label ">Blood Type</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.blood_type }}</div>
-                  </div>
-
-                  <div class="row">
                     <div class="col-lg-3 col-md-4 label">Height</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.height }}</div>
+                    <div class="col-lg-9 col-md-8" id="height">{{ patient_info.height }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Weight</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.weight }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Allergies</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.allergies }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Chronic Diseases</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.chronic_diseases }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Medications</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.medications }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Surgeries</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.surgeries }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Vaccines</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.vaccines }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Family History</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.family_history }}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Insurance</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.insurance }}</div>
+                    <div class="col-lg-9 col-md-8" id="weight">{{ patient_info.weight }}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Insurance Number</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.insurance_number }}</div>
+                    <div class="col-lg-9 col-md-8" id="insurance_number">{{ patient_info.insurance_number }}</div>
                   </div>
 
                   <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Insurance Company</div>
-                    <div class="col-lg-9 col-md-8">{{ medical_history.insurance_company }}</div>
+                    <div class="col-lg-3 col-md-4 label">Appointment Date</div>
+                    <div class="col-lg-9 col-md-8" id="appointment_date">{{ visit_history.appointment_date }}</div>
                   </div>
 
                   <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Visits</div>
-                    <div class="col-lg-9 col-md-8">
-                      <div class="row">
-                        <div class="col-lg-12">On: {{ medical_history.visits_history.0.date }}</div>
-                        <div class="col-lg-12">By: {{ medical_history.visits_history.0.by_who }}</div>
-                        <div class="col-lg-12">Reason: {{ medical_history.visits_history.0.reason }}</div>
-                        <div class="col-lg-12">Prescription: {{ medical_history.visits_history.0.prescription }}</div>
-                      </div>
-                    </div>
+                    <div class="col-lg-3 col-md-4 label">Diagnosis</div>
+                    <div class="col-lg-9 col-md-8" id="diagnosis">{{ visit_history.diagnosis }}</div>
                   </div>
 
                   <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Notes</div>
-                    <div class="col-lg-9 col-md-8">
-                      <div class="row">
-                        <div class="col-lg-12">
-                          <span class="notes-text">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                            eiusmod tempor incididunt ut labore et dolore magna aliqua."</span>
-                        </div>
-                      </div>
-                    </div>
+                    <div class="col-lg-3 col-md-4 label">Symptoms</div>
+                    <div class="col-lg-9 col-md-8" id="symptoms">{{ visit_history.symptoms }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Treatment</div>
+                    <div class="col-lg-9 col-md-8" id="treatment">{{ visit_history.treatment }}</div>
                   </div>
 
                 </div>
@@ -521,7 +462,7 @@
 
                   <!-- Profile Edit Form -->
                   <form method="POST" action="">
-                    {% csrf_token %} 
+                    {% csrf_token %}
                     <div class="row mb-3">
                       <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
                       <div class="col-md-8 col-lg-9">
@@ -534,31 +475,61 @@
                         </div>
                       </div>
                     </div>
-                    
+
                     <div class="tab-pane fade show active physical-health" id="physical-health">
                       <h5 class="card-title">Physical Health</h5>
 
-                    <div class="row mb-3">
-                      <label for="medical_history.height" class="col-md-4 col-lg-3 col-form-label">Height</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="medical_history.height" type="text" class="form-control" id="medical_history.height"
-                          value="{{ medical_history.height }}">
+                      <div class="row mb-3">
+                        <label for="medical_history.height" class="col-md-4 col-lg-3 col-form-label">Height</label>
+                        <div class="col-md-8 col-lg-9">
+                          <input name="medical_history.height" type="text" class="form-control"
+                            id="medical_history.height" value="{{ medical_history.height }}">
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                      <label for="medical_history.weight" class="col-md-4 col-lg-3 col-form-label">Weight</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="medical_history.weight" type="text" class="form-control" id="medical_history.weight"
-                          value="{{ medical_history.weight }}">
-                      </div>
-                    </div>
 
-                    <div class="text-center">
-                      <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
+                      <div class="row mb-3">
+                        <label for="medical_history.weight" class="col-md-4 col-lg-3 col-form-label">Weight</label>
+                        <div class="col-md-8 col-lg-9">
+                          <input name="medical_history.weight" type="text" class="form-control"
+                            id="medical_history.weight" value="{{ medical_history.weight }}">
+                        </div>
+                      </div>
+
+                      <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                      </div>
                   </form><!-- End Profile Edit Form -->
-        
+                  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                  <script>
+                    var username = "{{ username }}";
+                    if (username) {
+                      $(document).ready(function () {
+                        $.ajax({
+                          url: "{% url 'myfirstapp:get_health_record' %}",
+                          type: 'GET',
+                          data: { 'patient': username },  // replace 'patient_cccd' with the actual patient CCCD
+                          success: function (response) {
+                            // Use the response data to populate your HTML elements
+                            $('#full_name').html(response.patient_info.full_name);
+                            $('#dob').html(response.patient_info.dob);
+                            $('#gender').html(response.patient_info.gender);
+                            $('#cccd').html(response.patient_info.cccd);
+                            $('#address').html(response.patient_info.address);
+                            $('#height').html(response.patient_info.height);
+                            $('#weight').html(response.patient_info.weight);
+                            $('#insurance_number').html(response.patient_info.insurance_number);
+                            // Assuming visit_history is an array and you want to display the first visit's details
+                            $('#appointment_date').html(response.visit_history[0].appointment_date);
+                            $('#diagnosis').html(response.visit_history[0].diagnosis);
+                            $('#symptoms').html(response.visit_history[0].symptoms);
+                            $('#treatment').html(response.visit_history[0].treatment);
+                          }
+                        });
+                      });
+                    } else {
+                      console.log("No username found");
+                    }
+                  </script>
                 </div>
               </div><!-- End Bordered Tabs -->
 
@@ -585,7 +556,8 @@
     </div>
   </footer><!-- End Footer -->
 
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
   <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>

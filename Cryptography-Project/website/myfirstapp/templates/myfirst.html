@@ -31,15 +31,17 @@
 
 </body>
 </html>
-<form action="{% url 'myfirstapp:logout' %}" method="post">
-    {% csrf_token %}
-    <input type="submit" value="Logout">
-</form>
-<form action="{% url 'myfirstapp:signup' %}" method="get">
-    {% csrf_token %}
-    <input type="submit" value="Sign up">
-</form>
-<form action="{% url 'myfirstapp:login' %}" method="get">
-    {% csrf_token %}
-    <input type="submit" value="Login">
-</form>
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <form action="{% url 'myfirstapp:logout' %}" method="post">
+        {% csrf_token %}
+        <input type="submit" value="Logout">
+    </form>
+    <form action="{% url 'myfirstapp:signup' %}" method="get">
+        {% csrf_token %}
+        <input type="submit" value="Sign up">
+    </form>
+    <form action="{% url 'myfirstapp:login' %}" method="get">
+        {% csrf_token %}
+        <input type="submit" value="Login">
+    </form>
+</div>
