@@ -76,10 +76,16 @@ class CentralizedAuthority:
         # collection.insert_one({'policy' : policy2})
         return policy
     
-    def GetSubjectAttribute(self, userID): # attribute name is a list string 
+    def GetSubjectAttribute(self, filter): # attribute name is a list string 
+        # filter is userID or {'cccd' : cccd}
+        if type(filter) is not dict:
+            filter = {'_id' : ObjectId(filter)}
+        else:
+            filter = {'cccd' : filter['cccd']}
+        print("FILTER : ",filter)
         CA_db = self.client['CA']
         attribute_col = CA_db['SubjectAttribute']
-        user_attribute = attribute_col.find_one({'_id' : ObjectId(userID)})    
+        user_attribute = attribute_col.find_one(filter)    
         user_attribute['_id'] = str(user_attribute['_id'])
         print("ATTRIBUTE:", user_attribute)
         return user_attribute

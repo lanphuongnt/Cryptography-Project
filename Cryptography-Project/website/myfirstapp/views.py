@@ -227,7 +227,29 @@ def signup(request):
 
 
 def PatientHealthRecord(request):
-    isAllowed = True
+    # ABAC
+    # Get attribute of user whose cccd
+    
+    params = GetDictValue(request)
+    print("PARAMS:", params)
+    if params != {}:
+        print(request.GET.get('cccd'))
+        attribute = server_CA.GetSubjectAttribute({'cccd' : request.GET.get('cccd')})
+
+        handled_request = {
+            'method' : request.method,
+            'resource_attributes' : {
+                'cccd' : request.GET.get('cccd'),
+                'disease' : attribute['specialty'],
+            }
+        }
+        isAllowed = abac.request_access(handled_request, request.session['user']['_id'])
+    else:
+        isAllowed = True
+    print(f"method : {request.method}, isAllowed : {isAllowed}")
+    # # END ABAC
+
+    # isAllowed = True
     if isAllowed:
         if request.method == "POST":
             message = InsertMedicalData(request)
@@ -255,22 +277,43 @@ def GetDictValue(request):
 
 
 def GetListOfPatientsWithFilter(request):
-    isAllowed = True
+    '''
+        Call ABAC to verify that requester can access this resource.
+    '''
+
+    params = GetDictValue(request)
+    print("PARAMS:", params)
+    if params != {}:
+        # print(request.GET.get('cccd'))
+        # attribute = server_CA.GetSubjectAttribute({'cccd' : request.GET.get('cccd')})
+
+        handled_request = {
+            'method' : request.method,
+            'resource_attributes' : params,
+        }
+        isAllowed = abac.request_access(handled_request, request.session['user']['_id'])
+    else:
+        isAllowed = True
+    print(f"method : {request.method}, isAllowed : {isAllowed}")
+
+    # isAllowed = True
     if isAllowed:
         database = client['HospitalData']
         collection = database['EHR']
         filter = GetDictValue(request)
-        print("Filter: ", filter)
+        filter = flatten({'patient_info' : filter}, ".")
+        
+        print("Filter: ",filter)
         patients = collection.find(filter)
         list_patients = []
         for patient in patients:
             patient["_id"] = str(patient["_id"])
             list_patients.append(patient)
-        print({'patients': list_patients})
-        return JsonResponse({'patients': list_patients})
+        print({'patients' : list_patients})
+        return JsonResponse({'patients' : list_patients, 'message' : 'Query successfully'})
         # return {'patients' : list_patients}
     else:
-        return None
+        return JsonResponse({"patients" : [], "message" : "You don't have permission to access this resource!"})
 
 
 def GetHealthRecord(request):
@@ -279,10 +322,11 @@ def GetHealthRecord(request):
         if request.method == "GET":
             database = client['HospitalData']
             collection = database['EHR']
-            cccd = request.GET['patient']  # ID means CCCD
+            cccd = request.GET.get('cccd') # ID means CCCD
             if cccd is None:
-                return JsonResponse({'error': 'Patient not found!'}, status=404)
-            patient = collection.find_one({'patient_info.cccd': cccd})
+                return None
+            patient = collection.find_one({'patient_info.cccd' : cccd})
+            
 
             if patient:
                 list_visit_history = patient['visit_history']
@@ -319,7 +363,7 @@ def InsertMedicalData(request):
     if isAllowed:
         database = client['HospitalData']
         collection = database['EHR']
-        cccd_patient = request.GET.get('patient')
+        cccd_patient = request.GET.get('cccd')
         update_data = GetDictValue(request)
 
         update_data = {
@@ -356,7 +400,24 @@ def InsertMedicalData(request):
 
 
 def GetHealthRecordOfPatient(request):
-    data = GetHealthRecord(request)
+
+    params = GetDictValue(request)
+    print("PARAMS:", params)
+    if params != {}:
+        # print(request.GET.get('cccd'))
+        # attribute = server_CA.GetSubjectAttribute({'cccd' : request.GET.get('cccd')})
+        handled_request = {
+            'method' : request.method,
+            'resource_attributes' : params,
+        }
+        isAllowed = abac.request_access(handled_request, request.session['user']['_id'])
+    else:
+        isAllowed = True
+    print(f"method : {request.method}, isAllowed : {isAllowed}")
+    if isAllowed:
+        data = GetHealthRecord(request)
+    else:
+        data = None
     if data is not None:
         return JsonResponse(data)
     else:
@@ -368,4 +429,5 @@ def doctor(request):
         1. Call GetPatient(request) to get a list of Patient which satisfies with param of request.
         2. Call UpdateRecord(request) to update health record of patient whose ID and update POST data.
     '''
-    return render(request, 'doctor.html')
+    doctor_attribute = server_CA.GetSubjectAttribute(request.session['user']['_id'])
+    return render(request, 'doctor.html', doctor_attribute)

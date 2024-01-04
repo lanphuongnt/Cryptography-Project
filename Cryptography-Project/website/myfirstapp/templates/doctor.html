@@ -91,13 +91,13 @@
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
             <img src="{% static 'assets/img/profile-img.' %}" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{ status }}</span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
-              <h6>Kevin Anderson</h6>
-              <span>Web Designer</span>
+              <h6>{{ status }}</h6>
+              <span>{{ specialty }}</span>
             </li>
             <li>
               <hr class="dropdown-divider">
@@ -407,34 +407,34 @@
               <h5 class="card-title">Datatables</h5>
 
               <div>
-                <label for="cccd-search">CCCD:</label>
-                <input type="text" id="cccd-search" placeholder="Filter by CCCD.." class="table-search-filters">
+                <label for="cccd-search"><strong>CCCD:</strong></label>
+                <input type="text" id="cccd-search" placeholder="Filter by CCCD.." class="table-search-filters" style="width: 500px;">
               </div>
               <br>
               <div>
-                <label for="fullname-search">Name:</label>
-                <input type="text" id="fullname-search" placeholder="Filter by full name.."
-                  class="table-search-filters">
+                <label for="fullname-search"><strong>Name:</strong></label>
+                <input type="text" id="fullname-search" placeholder="Filter by full name.." class="table-search-filters" style="width: 500px;">
               </div>
               <br>
               <div>
-                <label for="gender-search">Gender:</label>
-                <input type="text" id="gender-search" placeholder="Filter by gender.." class="table-search-filters">
+                <label for="gender-search"><strong>Gender:</strong></label>
+                <input type="text" id="gender-search" placeholder="Filter by gender (Male/Female).." class="table-search-filters" style="width: 500px;">
               </div>
               <br>
               <div>
-                <label for="dob-search">Day of birth:</label>
-                <input type="text" id="dob-search" placeholder="Filter by dob.." class="table-search-filters">
+                <label for="dob-search"><strong>Day of birth:</strong></label>
+                <input type="text" id="dob-search" placeholder="Filter by dob (DD/MM/YYYY).." class="table-search-filters" style="width: 500px;">
               </div>
               <br>
               <div>
-                <label for="disease-search">Disease:</label>
-                <input type="text" id="disease-search" placeholder="Filter by disease.." class="table-search-filters">
+                <label for="disease-search"><strong>Disease:</strong></label>
+                <input type="text" id="disease-search" value="{{ specialty }}" placeholder="Filter by disease (lowercase) .." class="table-search-filters" style="width: 500px;">
               </div>
               <br>
               <!-- Thêm nút Filter -->
               <button type="button" id="filterButton" class="btn btn-primary">Filter</button>
               <br>
+              <lable id="filter-message"></lable>
               <!-- Table with stripped rows -->
 
               <table id="myTable" class="table datatable">
@@ -455,7 +455,6 @@
               <!-- End Table with stripped rows -->
 
               <script>
-
                 // Trong JavaScript
                 document.getElementById('filterButton').addEventListener('click', function () {
 
@@ -472,7 +471,7 @@
                     var value = document.getElementById(id).value.trim();
                     if (value !== "") {
                       // params["patient_info." + id.split('-')[0]] = value;
-                      params["patient_info." + id.split('-')[0]] = value;
+                      params[id.split('-')[0]] = value;
                     }
                   });
 
@@ -489,7 +488,8 @@
                     .then(data => {
                       // document.getElementById("fullname-search").value = data.patients[0].fullname;
                       displayPatientList(data.patients);
-
+                      var filter_message = document.getElementById("filter-message");
+                      filter_message.textContent = data.message;
                     });
                 })
                   .catch(error => console.error('Error:', error));
@@ -502,7 +502,7 @@
                       var listRow = document.createElement("tr");
 
                       var linkItem = document.createElement("a");
-                      linkItem.href = "/doctor/patient_ehr?patient=" + patient.patient_info.cccd;
+                      linkItem.href = "/doctor/patient_ehr?cccd=" + patient.patient_info.cccd;
                       linkItem.textContent = patient.patient_info.cccd;
                       
                       var cccdCell = document.createElement("td");
@@ -536,7 +536,7 @@
                     listRow.appendChild(notiCell);
                     listElement.appendChild(listRow);
                   }
-
+                  
                 }
               </script>
             </div>

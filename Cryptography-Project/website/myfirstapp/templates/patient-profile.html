@@ -469,7 +469,7 @@
                         $.ajax({
                           url: "{% url 'myfirstapp:get_health_record' %}",
                           type: 'GET',
-                          data: { 'patient': username },
+                          data: { 'cccd': username },
                           success: function (response) {
                             $('#full_name').html(response.patient_info.fullname);
                             $('#dob').html(response.patient_info.dob);
