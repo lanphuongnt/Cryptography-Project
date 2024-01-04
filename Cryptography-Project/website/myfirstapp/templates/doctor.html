@@ -481,7 +481,7 @@
                     .join('&');
 
                   // Gửi request GET đến server
-                  fetch('/filter?' + queryString, {
+                  fetch('/doctor/filter?' + queryString, {
                     method: 'GET',
                   })
                     .then(response => response.json())

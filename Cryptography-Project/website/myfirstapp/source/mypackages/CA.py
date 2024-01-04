@@ -57,25 +57,21 @@ class CentralizedAuthority:
             value = value.upper()
             list_attribute.append(value)
 
-        # DEBUG
-        # list_attribute = ['PATIENT', 'STOMACH', 'STOMATCH', 'ABE']
-
         public_key = self.GetKey('public_key')
         master_key = self.GetKey('master_key')
 
         private_key = self.cpabe.ac17.keygen(public_key, master_key, list_attribute)
         return private_key
 
-    def GetPolicy(self, userID): # Call by admin
+    def GetPolicy(self, userID): # Auto call when doctor encrypt data
         requester_attribute = self.GetSubjectAttribute(userID)
         policy = ""
         if requester_attribute['status'] in ['doctor', 'patient']:
             policy = f"((DOCTOR AND {requester_attribute['specialty'].upper()}) OR PATIENT)"
-        
-        # collection.insert_one({'policy' : policy1})
-        # collection.insert_one({'policy' : policy2})
+
         return policy
     
+    # Data user call this function when they want to get subject attribute
     def GetSubjectAttribute(self, filter): # attribute name is a list string 
         # filter is userID or {'cccd' : cccd}
         if type(filter) is not dict:

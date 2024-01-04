@@ -35,7 +35,6 @@ class CPABE:
         # Final ciphertext that will be sent to database
         ciphertext = nonce + ciphertext + authTag
         
-        # 
         len_encrypted_data = len(encrypted_key_b)
         encrypted_data = len_encrypted_data.to_bytes(8, byteorder='big') + encrypted_key_b.encode() + ciphertext
         # Encode Base64 for encrypted_key and ciphertext
