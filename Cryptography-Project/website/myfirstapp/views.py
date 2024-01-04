@@ -60,40 +60,11 @@ def staff_profile(request): # Tao lo code lon cho
  
     return render(request, 'staff-profile.html', staff_info)
 
-@never_cache
+# @never_cache
 @custom_login_required
 def patient_profile(request):
     user = request.session['user']
-    if request.method == 'POST':
-        post_data = request.POST
-        update_data = {}
-        for key, value in post_data.items():
-            if key != 'csrfmiddlewaretoken':
-                update_data[key] = str(value)
-        print(update_data)
-        update_data = unflatten(update_data, ".")
-        # print(update_data)
-        for key, value in update_data.items():
-            update_request = {
-                'database' : 'data', 
-                'collection' : 'ehr', 
-                '_id' : user['_id'], 
-                'source' : key,
-                'requester_id' : user['_id'],
-                '$set' : {key: value},
-            }
-            insert_data(update_request)
-
-    if request.method == 'GET' or request.method == 'POST':
-        new_request = {
-            'database' : 'data',
-            'collection' : 'ehr',
-            '_id' : user['_id'],
-            'requester_id' : user['_id'],
-            'source' : ['patient_info', 'visit_history'],
-        }
-        ehr_patient = get_data(new_request)
-        return render(request, 'patient-profile.html', ehr_patient)
+    return render(request, 'patient-profile.html', user)
     # return HttpResponse(template.render({'patient_info': patient_info}, request))
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
 # It is the default password hashing algorithm used by Django for user authentication.
@@ -328,7 +299,9 @@ def GetHealthRecord(request):
         if request.method == "GET":
             database = client['HospitalData']
             collection = database['EHR']
-            cccd = request.GET.get('patient') # ID means CCCD
+            cccd = request.GET['patient'] # ID means CCCD
+            if cccd is None:
+                return JsonResponse({'error': 'Patient not found!'}, status=404)
             patient = collection.find_one({'patient_info.cccd' : cccd})
             
 
@@ -356,9 +329,9 @@ def GetHealthRecord(request):
                 patient['visit_history'] = recovered_list_visit_history
                 patient['_id'] = str(patient['_id'])
                 print(f"PATIENT : {patient}")
-                return patient
+                return JsonResponse(patient)
             else:
-                return None
+                return JsonResponse({'error': 'Patient not found!'}, status=404)
     else:
         return None
     
