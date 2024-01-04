@@ -356,7 +356,7 @@ def InsertMedicalData(request):
         update_data = GetDictValue(request)
 
         update_data = {
-            f"visit_history.{update_data['visit_history_time']}" : {
+            "visit_history" : {
                     'appointment_date' : update_data['appointment_date'],
                     'symptoms' : update_data['symptoms'],
                     'diagnosis' : update_data['diagnosis'],
@@ -371,9 +371,9 @@ def InsertMedicalData(request):
         encrypted_data = {}
         for data in update_data.items():
             encrypted_data[data[0]] = server_CA.cpabe.AC17encrypt(public_key, data[1], policy)
-        encrypted_data = flatten(encrypted_data, ".")
+        encrypted_data = unflatten(encrypted_data, ".")
         print("Encrypted data: ", encrypted_data)
-        collection.update_one({'patient_info.cccd': cccd_patient}, {'$set': encrypted_data})
+        collection.update_one({'patient_info.cccd': cccd_patient}, {'$push': encrypted_data})
         response = collection.find_one({'patient_info.cccd': cccd_patient})
         if response:
             print("Insert sucessfully!")
