@@ -133,10 +133,8 @@ def reception(request):
             collection = db['SubjectAttribute']
             new_subject_attribute = {
                 '_id': ObjectId(patient_id),
-                'attributes': {
-                    'status': 'patient',
-                    'specialty': request.POST.get('disease'),
-                }
+                'status': 'patient',
+                'specialty': request.POST.get('disease'),
             }
             collection.insert_one(new_subject_attribute)
             messages.success(request, "Patient account created and data inserted")
@@ -151,7 +149,7 @@ def reception(request):
             patient_id = collection.find_one({'patient_info.cccd': cccd})['_id']
             db = client['CA']
             collection = db['SubjectAttribute']
-            collection.update_one({'_id': ObjectId(patient_id)}, {'$set': {'attributes.specialty': request.POST.get('disease')}})
+            collection.update_one({'_id': ObjectId(patient_id)}, {'$set': {'specialty': request.POST.get('disease')}})
             messages.success(request, "Patient data updated")
         
         return redirect('myfirstapp:reception')
