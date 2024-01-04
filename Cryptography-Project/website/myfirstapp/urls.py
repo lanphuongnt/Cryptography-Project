@@ -14,7 +14,6 @@ urlpatterns = [
     path('get_patient_info/', views.get_patient_info, name='get_patient_info'),
     path('get_health_record/', views.GetHealthRecordOfPatient, name='get_health_record'),
     path('doctor/', views.doctor, name='doctor'),
-    path('filter/', views.GetListOfPatientsWithFilter, name='filter'),
-    path('lanphuong/filter', views.GetListOfPatientsWithFilter, name='filter'),
+    path('doctor/filter/', views.GetListOfPatientsWithFilter, name='filter'),
     path('doctor/patient_ehr', views.PatientHealthRecord, name='patient_ehr')
 ]

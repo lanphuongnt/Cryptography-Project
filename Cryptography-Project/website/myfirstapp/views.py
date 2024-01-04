@@ -18,8 +18,7 @@ from .utils import get_data
 server_CA = CentralizedAuthority()
 abac = AttributeBaseAccessControl()
 
-client = MongoClient(
-    'mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
+client = MongoClient('mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
 
 
 def index(request):
@@ -74,8 +73,6 @@ def ehr_view(request):
 
 @csrf_exempt
 def reception(request):
-    client = MongoClient(
-        'mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
     db = client['HospitalData']
     collection = db['EHR']
     account_collection = db['Account']
@@ -85,8 +82,6 @@ def reception(request):
 
     if request.method == 'POST':
         # Get all CCCD from EHR documents
-        client = MongoClient(
-            'mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
         db = client['HospitalData']
         collection = db['EHR']
 
@@ -159,8 +154,6 @@ def reception(request):
 
 
 def get_patient_info(request):
-    client = MongoClient(
-        'mongodb+srv://keandk:mongodb12@cluster0.hfwbqyp.mongodb.net/')
     db = client['HospitalData']
     collection = db['EHR']
 
@@ -225,7 +218,7 @@ def signup(request):
     else:
         return render(request, 'pages-register.html')
 
-
+# MES : views.py
 def PatientHealthRecord(request):
     # ABAC
     # Get attribute of user whose cccd
@@ -241,7 +234,9 @@ def PatientHealthRecord(request):
             'resource_attributes' : {
                 'cccd' : request.GET.get('cccd'),
                 'disease' : attribute['specialty'],
-            }
+            },
+            'database' : 'HospitalData',
+            'collection' : 'EHR',
         }
         isAllowed = abac.request_access(handled_request, request.session['user']['_id'])
     else:
@@ -261,7 +256,7 @@ def PatientHealthRecord(request):
     else:
         return redirect('myfirstapp:patient_ehr')
 
-
+# MES : Cai nay maybe de o utils.py
 def GetDictValue(request):
     data = {}
     if request.method == "POST":
@@ -275,7 +270,7 @@ def GetDictValue(request):
             data[key] = value
     return data
 
-
+# MES : Cai nay de o views.py
 def GetListOfPatientsWithFilter(request):
     '''
         Call ABAC to verify that requester can access this resource.
@@ -290,6 +285,8 @@ def GetListOfPatientsWithFilter(request):
         handled_request = {
             'method' : request.method,
             'resource_attributes' : params,
+            'database' : 'HospitalData',
+            'collection' : 'EHR',
         }
         isAllowed = abac.request_access(handled_request, request.session['user']['_id'])
     else:
@@ -400,20 +397,21 @@ def InsertMedicalData(request):
 
 
 def GetHealthRecordOfPatient(request):
-
+    # Access Control with ABAC
     params = GetDictValue(request)
     print("PARAMS:", params)
     if params != {}:
-        # print(request.GET.get('cccd'))
-        # attribute = server_CA.GetSubjectAttribute({'cccd' : request.GET.get('cccd')})
         handled_request = {
             'method' : request.method,
             'resource_attributes' : params,
+            'database' : 'HospitalData',
+            'collection' : 'EHR',
         }
         isAllowed = abac.request_access(handled_request, request.session['user']['_id'])
     else:
         isAllowed = True
     print(f"method : {request.method}, isAllowed : {isAllowed}")
+    # -- -- --- -- -- #
     if isAllowed:
         data = GetHealthRecord(request)
     else:

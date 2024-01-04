@@ -19,7 +19,6 @@ class SerializeCTXT:
                 return ctxt
 
         def deserialize_ctxt(self, ctxt):
-            # print(type(ctxt))
             ctxt['policy'] = self.util.createPolicy(MSP,policy_string=ctxt['policy'])
             ctxt['Cp'] = self.group.deserialize(ctxt['Cp'])
             ctxt['C_0'] = list(map(self.group.deserialize, ctxt['C_0']))
