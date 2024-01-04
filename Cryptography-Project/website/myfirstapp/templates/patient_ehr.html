@@ -284,54 +284,6 @@
                 </a>
             </li><!-- End Dashboard Nav -->
 
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#">
-                    <i class="bi bi-menu-button-wide"></i><span>Appointments</span>
-                </a>
-            </li><!-- End Appointments Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#">
-                    <i class="bi bi-journal-text"></i><span>Reports</span>
-                </a>
-            </li><!-- End Reports Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
-                    <i class="bi bi-layout-text-window-reverse"></i><span>Billings</span>
-                </a>
-            </li><!-- End Biliings Nav -->
-
-            <li class="nav-heading">Pages</li>
-
-            <li class="nav-item">
-                <a class="nav-link " href="users-profile.html">
-                    <i class="bi bi-person"></i>
-                    <span>Profile</span>
-                </a>
-            </li><!-- End Profile Page Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-faq.html">
-                    <i class="bi bi-question-circle"></i>
-                    <span>F.A.Q</span>
-                </a>
-            </li><!-- End F.A.Q Page Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-contact.html">
-                    <i class="bi bi-envelope"></i>
-                    <span>Contact</span>
-                </a>
-            </li><!-- End Contact Page Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-register.html">
-                    <i class="bi bi-card-list"></i>
-                    <span>Register</span>
-                </a>
-            </li><!-- End Register Page Nav -->
-
         </ul>
 
     </aside><!-- End Sidebar-->
@@ -339,13 +291,19 @@
     <main id="main" class="main">
 
         <div class="pagetitle">
-            <h1>Medical History</h1>
-        </div><!-- End Page Title -->
+            <h1>Patient EHR</h1>
+            <nav>
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'myfirstapp:doctor' %}">Data Tables</a></li>
+                <li class="breadcrumb-item active">Patient EHR</li>
+              </ol>
+            </nav>
+          </div><!-- End Page Title -->
 
         <form action="" method="post" onsubmit="return validateSubmit()">
             {% csrf_token %}
             <div>
-                <div class="col-lg-3 col-md-4 label "><strong>Full Name:</strong> {{ patient_info.fullname }}</div>
+                <div class="col-lg-3 col-md-4 label " style="width: 500px;"><strong>Full Name:</strong> {{ patient_info.fullname }}</div>
             </div>
             <br>
             <div>
@@ -381,22 +339,22 @@
             <!-- Visit data will be displayed here -->
             <div>
                 <label for="appointment_date"><strong>Appointment Date:</strong></label>
-                <input type="text" id="appointment_date" name="appointment_date">
+                <input type="text" id="appointment_date" name="appointment_date" style="width: 500px;">
             </div>
             <br>
             <div>
                 <label for="symptoms"><strong>Symptoms:</strong></label>
-                <input type="text" id="symptoms" name="symptoms">
+                <input type="text" id="symptoms" name="symptoms" style="width: 500px;">
             </div>
             <br>
             <div>
                 <label for="diagnosis"><strong>Diagnosis:</strong></label>
-                <input type="text" id="diagnosis" name="diagnosis">
+                <input type="text" id="diagnosis" name="diagnosis" style="width: 500px;">
             </div>
             <br>
             <div>
                 <label for="treatment"><strong>Treatment:</strong></label>
-                <input type="text" id="treatment" name="treatment">
+                <input type="text" id="treatment" name="treatment" style="width: 500px;">
             </div>
             <br>
 

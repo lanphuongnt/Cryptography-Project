@@ -12,7 +12,7 @@ from bson import ObjectId
 from django.views.decorators.cache import never_cache
 from flatten_json import flatten, unflatten
 from .source.mypackages.CA import CentralizedAuthority
-from .utils import get_data
+# from .utils import get_data
 
 
 server_CA = CentralizedAuthority()
@@ -57,18 +57,18 @@ def patient_profile(request):
     return render(request, 'patient-profile.html', user)
 
 
-def ehr_view(request):
-    user = request.session['user']
-    print("user : ", user)
-    ok = abac.request_access(request, requester_id=user['_id'])
-    print(ok, user['_id'])
-    if ok:
-        response_data = get_data({'source': request.GET.get('source'), 'database': 'data',
-                                 'collection': 'ehr', '_id': request.GET.get('patient_id'), 'requester_id': user['_id']})
-        print(response_data)
-        return render(request, "patient-view.html", response_data)
-    else:
-        return redirect('myfirstapp:reference')
+# def ehr_view(request):
+#     user = request.session['user']
+#     print("user : ", user)
+#     ok = abac.request_access(request, requester_id=user['_id'])
+#     print(ok, user['_id'])
+#     if ok:
+#         response_data = get_data({'source': request.GET.get('source'), 'database': 'data',
+#                                  'collection': 'ehr', '_id': request.GET.get('patient_id'), 'requester_id': user['_id']})
+#         print(response_data)
+#         return render(request, "patient-view.html", response_data)
+#     else:
+#         return redirect('myfirstapp:reference')
 
 
 @csrf_exempt
