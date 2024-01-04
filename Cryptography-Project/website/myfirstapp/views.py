@@ -132,17 +132,24 @@ def reception(request):
             db = client['CA']
             collection = db['SubjectAttribute']
             new_subject_attribute = {
-                '_id': str(patient_id),
-                'attributes': {
-                    'status': 'patient',
-                    'specialty': request.POST.get('disease'),
-                }
+                '_id': ObjectId(patient_id),
+                'status': 'patient',
+                'specialty': request.POST.get('disease'),
             }
             collection.insert_one(new_subject_attribute)
             messages.success(request, "Patient account created and data inserted")
         else:
             # patient_data = collection.find_one({'patient_info.cccd': patient_id})
-            collection.update_one({'cccd': cccd}, {'$set': patient_data}, upsert=True)
+            patient_data_insert = {
+                'patient_info': patient_data,
+                'visit_history' : [],
+            }
+            collection.update_one({'patient_info.cccd': cccd}, {'$set': patient_data_insert})
+            
+            patient_id = collection.find_one({'patient_info.cccd': cccd})['_id']
+            db = client['CA']
+            collection = db['SubjectAttribute']
+            collection.update_one({'_id': ObjectId(patient_id)}, {'$set': {'specialty': request.POST.get('disease')}})
             messages.success(request, "Patient data updated")
         
         return redirect('myfirstapp:reception')
