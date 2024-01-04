@@ -15,11 +15,8 @@ urlpatterns = [
     path('staff_profile/reference/patient_view/', views.ehr_view, name='patient_view'),
     path('get_patient_info/', views.get_patient_info, name='get_patient_info'),
     path('get_health_record/', views.GetHealthRecordOfPatient, name='get_health_record'),
-    # path('staff_profile/reference/', views.reference_by_specialty, name='reference'),
     path('doctor/', views.doctor, name='doctor'),
     path('filter/', views.GetListOfPatientsWithFilter, name='filter'),
-    # path('lanphuong/', views.Doctor, name='lanphuong'),
     path('lanphuong/filter', views.GetListOfPatientsWithFilter, name='filter'),
     path('doctor/patient_ehr', views.PatientHealthRecord, name='patient_ehr')
-    # path('lanphuongresult/', views.result, name='result'),
 ]

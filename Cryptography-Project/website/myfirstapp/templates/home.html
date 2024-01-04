@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>KPI Hospital</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("https://dam.northwell.edu/m/78b87fcc218f1673/Drupal-NEWS_Can-doctors-refuse-to-treat-a-patient.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h1 {
+            color: black;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        p {
+            color: black;
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .button-container form {
+            margin-left: 10px;
+        }
+
+        .button-container input[type="submit"] {
+            padding: 10px 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Welcome to KPI Hospital!</h1>
+    <p>Providing quality healthcare services.</p>
+
+    <div class="button-container">
+        <form action="{% url 'myfirstapp:logout' %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Logout">
+        </form>
+        <form action="{% url 'myfirstapp:signup' %}" method="get">
+            {% csrf_token %}
+            <input type="submit" value="Sign up">
+        </form>
+        <form action="{% url 'myfirstapp:login' %}" method="get">
+            {% csrf_token %}
+            <input type="submit" value="Login">
+        </form>
+    </div>
+
+</body>
+
+</html>

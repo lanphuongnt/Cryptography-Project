@@ -506,9 +506,8 @@
                         $.ajax({
                           url: "{% url 'myfirstapp:get_health_record' %}",
                           type: 'GET',
-                          data: { 'patient': username },  // replace 'patient_cccd' with the actual patient CCCD
+                          data: { 'patient': username },
                           success: function (response) {
-                            // Use the response data to populate your HTML elements
                             $('#full_name').html(response.patient_info.fullname);
                             $('#dob').html(response.patient_info.dob);
                             $('#gender').html(response.patient_info.gender);
@@ -517,7 +516,7 @@
                             $('#height').html(response.patient_info.height);
                             $('#weight').html(response.patient_info.weight);
                             $('#insurance_number').html(response.patient_info.insurance_number);
-                            // Assuming visit_history is an array and you want to display the first visit's details
+                            
                             $('#appointment_date').html(response.visit_history[0].appointment_date);
                             $('#diagnosis').html(response.visit_history[0].diagnosis);
                             $('#symptoms').html(response.visit_history[0].symptoms);

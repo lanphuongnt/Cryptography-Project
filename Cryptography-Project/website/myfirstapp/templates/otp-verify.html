@@ -1,8 +1,0 @@
-<form method="POST">
-    {% csrf_token %}
-    <input type="text" name="otp" placeholder="Enter OTP">
-    <input type="submit" value="Verify">
-    {% if error %}
-        <p>{{ error }}</p>
-    {% endif %}
-</form>
