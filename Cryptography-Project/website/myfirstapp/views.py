@@ -301,7 +301,8 @@ def GetListOfPatientsWithFilter(request):
         database = client['HospitalData']
         collection = database['EHR']
         filter = GetDictValue(request)
-        filter = {'patient_info' : filter}
+        filter = flatten({'patient_info' : filter}, ".")
+        
         print("Filter: ",filter)
         patients = collection.find(filter)
         list_patients = []
@@ -428,4 +429,5 @@ def doctor(request):
         1. Call GetPatient(request) to get a list of Patient which satisfies with param of request.
         2. Call UpdateRecord(request) to update health record of patient whose ID and update POST data.
     '''
-    return render(request, 'doctor.html')
+    doctor_attribute = server_CA.GetSubjectAttribute(request.session['user']['_id'])
+    return render(request, 'doctor.html', doctor_attribute)
