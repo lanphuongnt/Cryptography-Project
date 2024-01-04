@@ -64,6 +64,17 @@ def staff_profile(request): # Tao lo code lon cho
 @custom_login_required
 def patient_profile(request):
     user = request.session['user']
+    if request.method == 'POST':
+        # Update height and weight
+        height = request.POST.get('height')
+        weight = request.POST.get('weight')
+        patient_id = user['_id']
+        db = client['HospitalData']
+        collection = db['EHR']
+        collection.update_one({'_id': ObjectId(patient_id)}, {
+                              '$set': {'patient_info.height': request.POST.get('medical_history.height'), 
+                                       'patient_info.weight': request.POST.get('medical_history.height')}})
+
     return render(request, 'patient-profile.html', user)
     # return HttpResponse(template.render({'patient_info': patient_info}, request))
 # The check_password function in Django uses the PBKDF2 algorithm with a SHA-256 hash. 
