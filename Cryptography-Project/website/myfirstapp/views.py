@@ -52,11 +52,11 @@ def patient_profile(request):
         collection = db['EHR']
         collection.update_one({'_id': ObjectId(patient_id)}, {
                               '$set': {'patient_info.height': request.POST.get('medical_history.height'),
-                                       'patient_info.weight': request.POST.get('medical_history.height')}})
+                                       'patient_info.weight': request.POST.get('medical_history.weight')}})
 
     return render(request, 'patient-profile.html', user)
 
-
+@custom_login_required
 def ehr_view(request):
     user = request.session['user']
     print("user : ", user)
@@ -72,6 +72,7 @@ def ehr_view(request):
 
 
 @csrf_exempt
+@custom_login_required
 def reception(request):
     db = client['HospitalData']
     collection = db['EHR']
@@ -421,7 +422,7 @@ def GetHealthRecordOfPatient(request):
     else:
         return JsonResponse({'error': 'Patient not found!'}, status=404)
 
-
+@custom_login_required
 def doctor(request):
     '''
         1. Call GetPatient(request) to get a list of Patient which satisfies with param of request.
