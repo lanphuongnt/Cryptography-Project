@@ -254,14 +254,16 @@ def PatientHealthRecord(request):
     if isAllowed:
         if request.method == "POST":
             message = InsertMedicalData(request)
+            messages.success(request, message)  # Add success message
             return redirect(request.META.get('HTTP_REFERER', 'myfirstapp:patient_ehr'))
         elif request.method == "GET":
             patient_ehr = GetHealthRecord(request)
             print("EHR", patient_ehr)
             return render(request, 'patient_ehr.html', patient_ehr)
     else:
+        messages.error(request, "Access denied!")  # Add error message
         return redirect('myfirstapp:patient_ehr')
-
+    
 # MES : Cai nay maybe de o utils.py
 def GetDictValue(request):
     data = {}
