@@ -303,8 +303,7 @@
         <form action="" method="post" onsubmit="return validateSubmit()">
             {% csrf_token %}
             <div>
-                <div class="col-lg-3 col-md-4 label " style="width: 500px;"><strong>Full Name:</strong> {{
-                    patient_info.fullname }}</div>
+                <div class="col-lg-3 col-md-4 label " style="width: 500px;"><strong>Full Name:</strong> {{ patient_info.fullname }}</div>
             </div>
             <br>
             <div>
@@ -333,17 +332,17 @@
                     <!-- <option value=1>Visit </option> -->
                     <!-- Options will be dynamically populated based on server response -->
                 </select>
-                
-                <lable id="submit-message">{{ message }}</lable>
+
+                <lable id="submit-message"></lable>
             </div>
             <br>
-            <!-- {% if messages %}
+            {% if messages %}
                 <ul class="messages">
                     {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-                        {% endfor %}
+                    <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                    {% endfor %}
                 </ul>
-                {% endif %} -->
+            {% endif %}
             <!-- Visit data will be displayed here -->
             <div>
                 <label for="appointment_date"><strong>Appointment Date:</strong></label>
@@ -368,13 +367,13 @@
 
             <button type="submit"><strong>Create new visit</strong></button>
             <lable id="submit-message"></lable>
-            {% if messages %}
+            <!-- {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-                    {% endfor %}
+                    <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                {% endfor %}
             </ul>
-            {% endif %}
+            {% endif %} -->
             <script>
                 var visit_history_list = {{ visit_history| safe }};
                 var visitSelect = document.getElementById("visitSelect");
@@ -420,7 +419,7 @@
                     }
                 };
             </script>
-            
+
         </form>
         <script>
             function validateSubmit() {
