@@ -393,13 +393,13 @@ def InsertMedicalData(request):
         response = collection.find_one({'patient_info.cccd': cccd_patient})
         if response:
             print("Insert sucessfully!")
-            return True
+            return {'message' : 'Successfully!'}
         else:
             print("Error!")
-            return False
+            return {'message' : 'Error!'} 
     else:
-        print("You don't have permission to access this resource!")
-        return False
+        # print("You don't have permission to access this resource!")
+        return {'message' : "You don't have permission to access this resource!"}
 
 
 def GetHealthRecordOfPatient(request):

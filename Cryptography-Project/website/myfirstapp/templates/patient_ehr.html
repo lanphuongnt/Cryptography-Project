@@ -360,6 +360,13 @@
 
             <button type="submit"><strong>Create new visit</strong></button>
             <lable id="submit-message"></lable>
+            {% if messages %}
+                <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
             <script>
                 var visit_history_list = {{ visit_history| safe }};
                 var visitSelect = document.getElementById("visitSelect");
