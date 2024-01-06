@@ -227,19 +227,25 @@ def PatientHealthRecord(request):
     params = GetDictValue(request)
     print("PARAMS:", params)
     if params != {}:
-        print(request.GET.get('cccd'))
-        attribute = server_CA.GetSubjectAttribute({'cccd' : request.GET.get('cccd')})
+        cccd = request.GET.get('cccd')
+        if cccd:
+            attribute = server_CA.GetSubjectAttribute({'cccd' : cccd})
 
-        handled_request = {
-            'method' : request.method,
-            'resource_attributes' : {
-                'cccd' : request.GET.get('cccd'),
-                'disease' : attribute['specialty'],
-            },
-            'database' : 'HospitalData',
-            'collection' : 'EHR',
-        }
-        isAllowed = abac.request_access(handled_request, request.session['user']['_id'])
+            if 'cccd' in attribute:
+                handled_request = {
+                    'method' : request.method,
+                    'resource_attributes' : {
+                        'cccd' : cccd,
+                        'disease' : attribute['specialty'],
+                    },
+                    'database' : 'HospitalData',
+                    'collection' : 'EHR',
+                }
+                isAllowed = abac.request_access(handled_request, request.session['user']['_id'])
+            else:
+                isAllowed = False
+        else:
+            isAllowed = False
     else:
         isAllowed = True
     print(f"method : {request.method}, isAllowed : {isAllowed}")
