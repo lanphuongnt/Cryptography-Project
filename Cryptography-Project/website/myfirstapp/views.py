@@ -230,7 +230,6 @@ def PatientHealthRecord(request):
         cccd = request.GET.get('cccd')
         if cccd:
             attribute = server_CA.GetSubjectAttribute({'cccd' : cccd})
-
             if 'cccd' in attribute:
                 handled_request = {
                     'method' : request.method,
