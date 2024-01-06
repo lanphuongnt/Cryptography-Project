@@ -255,8 +255,8 @@ def PatientHealthRecord(request):
         if request.method == "POST":
             message = InsertMedicalData(request)
             # messages.success(request, message)  # Add success message
-            return redirect('')
-            # return redirect(request.META.get('HTTP_REFERER', 'myfirstapp:patient_ehr'), message)
+            # return redirect('')
+            return redirect(request.META.get('HTTP_REFERER', 'myfirstapp:patient_ehr'), context=message)
         elif request.method == "GET":
             patient_ehr = GetHealthRecord(request)
             print("EHR", patient_ehr)

@@ -332,10 +332,17 @@
                     <!-- <option value=1>Visit </option> -->
                     <!-- Options will be dynamically populated based on server response -->
                 </select>
-
+                
+                <lable id="submit-message">{{ message }}</lable>
             </div>
-
             <br>
+            <!-- {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                        {% endfor %}
+                </ul>
+                {% endif %} -->
             <!-- Visit data will be displayed here -->
             <div>
                 <label for="appointment_date"><strong>Appointment Date:</strong></label>
@@ -359,14 +366,7 @@
             <br>
 
             <button type="submit"><strong>Create new visit</strong></button>
-            <lable id="submit-message"></lable>
-            {% if messages %}
-                <ul class="messages">
-                {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-                </ul>
-            {% endif %}
+            
             <script>
                 var visit_history_list = {{ visit_history| safe }};
                 var visitSelect = document.getElementById("visitSelect");
@@ -415,8 +415,8 @@
             function validateSubmit() {
                 var selectedVisit = document.getElementById("visitSelect").value;
                 if (selectedVisit == "New-visit") {
-                    var submit_message = document.getElementById("submit-message");
-                    submit_message.textContent = "Successfully!";
+                    // var submit_message = document.getElementById("submit-message");
+                    // submit_message.textContent = "Successfully!";
                     return true;
                 }
                 else {
