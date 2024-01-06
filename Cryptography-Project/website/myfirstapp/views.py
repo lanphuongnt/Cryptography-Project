@@ -254,15 +254,17 @@ def PatientHealthRecord(request):
     if isAllowed:
         if request.method == "POST":
             message = InsertMedicalData(request)
-            messages.success(request, message)  # Add success message
-            return redirect(request.META.get('HTTP_REFERER', 'myfirstapp:patient_ehr'))
+            # messages.success(request, message)  # Add success message
+            return redirect('')
+            # return redirect(request.META.get('HTTP_REFERER', 'myfirstapp:patient_ehr'), message)
         elif request.method == "GET":
             patient_ehr = GetHealthRecord(request)
             print("EHR", patient_ehr)
+
             return render(request, 'patient_ehr.html', patient_ehr)
     else:
-        messages.error(request, "Access denied!")  # Add error message
-        return redirect('myfirstapp:patient_ehr')
+        # messages.error(request, "Access denied!")  # Add error message
+        return redirect('myfirstapp:patient_ehr', {'message' : 'Access denied!'})
     
 # MES : Cai nay maybe de o utils.py
 def GetDictValue(request):
@@ -318,7 +320,7 @@ def GetListOfPatientsWithFilter(request):
         return JsonResponse({'patients' : list_patients, 'message' : 'Query successfully'})
         # return {'patients' : list_patients}
     else:
-        return JsonResponse({"patients" : [], "message" : "You don't have permission to access this resource!"})
+        return JsonResponse({"patients" : [], "message" : "Access denied!"})
 
 
 def GetHealthRecord(request):
@@ -398,7 +400,7 @@ def InsertMedicalData(request):
             return {'message' : 'Successfully!'}
         else:
             print("Error!")
-            return {'message' : 'Error!'} 
+            return {'message' : 'Error!'}
     else:
         # print("You don't have permission to access this resource!")
         return {'message' : "You don't have permission to access this resource!"}
