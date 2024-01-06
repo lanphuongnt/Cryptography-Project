@@ -293,17 +293,18 @@
         <div class="pagetitle">
             <h1>Patient EHR</h1>
             <nav>
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'myfirstapp:doctor' %}">Data Tables</a></li>
-                <li class="breadcrumb-item active">Patient EHR</li>
-              </ol>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'myfirstapp:doctor' %}">Data Tables</a></li>
+                    <li class="breadcrumb-item active">Patient EHR</li>
+                </ol>
             </nav>
-          </div><!-- End Page Title -->
+        </div><!-- End Page Title -->
 
         <form action="" method="post" onsubmit="return validateSubmit()">
             {% csrf_token %}
             <div>
-                <div class="col-lg-3 col-md-4 label " style="width: 500px;"><strong>Full Name:</strong> {{ patient_info.fullname }}</div>
+                <div class="col-lg-3 col-md-4 label " style="width: 500px;"><strong>Full Name:</strong> {{
+                    patient_info.fullname }}</div>
             </div>
             <br>
             <div>
@@ -366,7 +367,14 @@
             <br>
 
             <button type="submit"><strong>Create new visit</strong></button>
-            
+            <lable id="submit-message"></lable>
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                    {% endfor %}
+            </ul>
+            {% endif %}
             <script>
                 var visit_history_list = {{ visit_history| safe }};
                 var visitSelect = document.getElementById("visitSelect");
@@ -383,8 +391,12 @@
             </script>
             <script>
                 document.getElementById("visitSelect").onchange = function () {
-                    var submit_message = document.getElementById("submit-message");
-                    submit_message.textContent = "";
+                    // Select the messages element
+                    var messages = document.querySelector(".messages");
+                    // Reset the messages when the dropdown selection changes
+                    if (messages) {
+                        messages.innerHTML = "";
+                    }
 
                     var selectedVisit = document.getElementById("visitSelect").value;
                     var _appointment_date = document.getElementById("appointment_date");
@@ -407,9 +419,8 @@
                         _diagnosis.value = "";
                     }
                 };
-
             </script>
-
+            
         </form>
         <script>
             function validateSubmit() {
